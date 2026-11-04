@@ -75,10 +75,10 @@ Sequence 4 of 8 – 7 seconds. Top-down close-up of the second old cream paper p
 ```
 
 ## SÉQUENCE 5 — Chapitre 3 : Apprendre à partager (0:28–0:35)
-**Image :** `SEQ05_chapter3_learning_to_share` (la photo est un tirage délavé : générez d'abord le souvenir avec le prompt B, puis glissez-le dans le cadre)
+**Image :** `SEQ05_chapter3_learning_to_share` (photo : les mains de deux enfants qui partagent pinceaux et pots de peinture). Pour la scène du jouet partagé, générez le souvenir avec le prompt B puis glissez-le dans le cadre.
 **A. Tout-en-un**
 ```
-Sequence 5 of 8 – 7 seconds. Top-down close-up of the third old cream paper page with torn edges on sunlit terracotta tiles, a faded rectangular photograph held by brown photo corners. The paper stays perfectly still; inside the photograph, the faded image slowly develops into colour and comes alive: a 3-year-old boy with dark curly hair, wearing a blue graduation cap with a gold tassel and a blue cape trimmed with gold, sits on a woven rug with a little girl of the same age; he holds a colourful wooden toy against his chest, hesitates, then offers it to her; she smiles and they start playing together. Camera: slow dolly-in. Mood: connection, empathy. Photorealistic, warm, film grain. No new text, no logo.
+Sequence 5 of 8 – 7 seconds. Top-down close-up of the third old cream paper page with torn edges on sunlit terracotta tiles, a rectangular printed photograph held by brown photo corners. The paper stays perfectly still; only the photograph comes alive: close on the hands of two children painting on the same big sheet of paper – the small hand of a 3-year-old boy in a blue cape trimmed with gold dips his brush into a shared pot of paint, then pushes the pot towards the other child's hand so she can use it too; their brushes paint side by side. Warm golden light. Camera: slow dolly-in. Mood: connection, empathy. Photorealistic, warm, film grain. No new text, no logo.
 ```
 **B. Souvenir seul**
 ```

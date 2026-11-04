@@ -16,8 +16,9 @@ CHAPTERS = {
             caption="Soap, water, and a song to count to twenty.", img="05_MEMORY_ASSETS/mem_ch2_taking_care.png",
             kb=((0.50, 0.45, 1.00), (0.42, 0.42, 1.10))),
     3: dict(color=PALETTE["magenta"], title="Learning to Share", age="AGE 3",
-            caption="One toy, two friends, a first idea of fairness.", img=None,
-            kb=((0.5, 0.5, 1.0), (0.5, 0.5, 1.06))),
+            caption="Two brushes, one pot of paint, a first idea of fairness.",
+            img="05_MEMORY_ASSETS/mem_ch5_creating_together.png", crop=(250, 435, 1150, 941),
+            kb=((0.50, 0.50, 1.00), (0.52, 0.55, 1.08))),
     4: dict(color=PALETTE["orange"], title="Discovering the World", age="AGE 4",
             caption="Every leaf was a question.", img="05_MEMORY_ASSETS/mem_ch4_discovering_world.png",
             kb=((0.50, 0.48, 1.00), (0.44, 0.52, 1.12))),
@@ -127,7 +128,11 @@ class Memory:
         c = CHAPTERS[ch]
         self.ch = ch
         if c["img"]:
-            src = grade_photo(load_rgb(p(c["img"])))
+            raw = load_rgb(p(c["img"]))
+            if c.get("crop"):
+                x0, y0, x1, y1 = c["crop"]
+                raw = raw[y0:y1, x0:x1]
+            src = grade_photo(raw)
             self.src = upscale(src, 1.6)
         else:
             self.src = None
