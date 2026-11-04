@@ -131,7 +131,8 @@ def seq8():
     S = 2.5
     CW, CHh = int(W * S), int(H * S)
     wood, light = wood_texture(CHh, CW, 88, blur=11)
-    canvas = wood.copy()
+    canvas = wood
+    del wood
     rng = np.random.default_rng(8)
     sc, spacing = 0.6, 1470
     centers = []
@@ -141,17 +142,23 @@ def seq8():
         cx = CW / 2 + (k - 2.5) * spacing
         cy = CHh / 2 + (40 if k % 2 else -40) + rng.uniform(-20, 20)
         ang = rng.uniform(-2.6, 2.6)
+        # work inside a padded region of interest only (memory-safe)
+        pad = 260
+        x0, y0 = int(cx - pw / 2 - pad), int(cy - ph / 2 - pad)
+        rw, rh = pw + 2 * pad, ph + 2 * pad
         M = cv2.getRotationMatrix2D((pw / 2, ph / 2), ang, 1.0)
-        M[0, 2] += cx - pw / 2; M[1, 2] += cy - ph / 2
-        warped = cv2.warpAffine(rgba, M, (CW, CHh), flags=cv2.INTER_LINEAR)
+        M[0, 2] += pad; M[1, 2] += pad
+        warped = cv2.warpAffine(rgba, M, (rw, rh), flags=cv2.INTER_LINEAR)
         a = warped[..., 3]
         shadow = cv2.GaussianBlur(np.roll(np.roll(a, 34, 0), 22, 1), (0, 0), 28)
-        canvas *= (1 - 0.4 * shadow)[..., None]
-        lit = warped[..., :3] * cv2.resize(light, (CW, CHh))[..., None] ** 0.5
-        canvas = canvas * (1 - a[..., None]) + lit * a[..., None]
+        roi = canvas[y0:y0 + rh, x0:x0 + rw]
+        roi *= (1 - 0.4 * shadow)[..., None]
+        lit = warped[..., :3] * light[y0:y0 + rh, x0:x0 + rw, None] ** 0.5
+        canvas[y0:y0 + rh, x0:x0 + rw] = roi * (1 - a[..., None]) + lit * a[..., None]
+        del warped, rgba, lit, shadow
         centers.append((cx, cy))
     canvas_u8 = (np.clip(canvas, 0, 1) * 255 + 0.5).astype(np.uint8)
-    del canvas, wood
+    del canvas, light
     bg, L1, L2 = end_card_layers()
     fin = Finisher(seed=88, dust=30)
     wr = Writer(out_path(8))
