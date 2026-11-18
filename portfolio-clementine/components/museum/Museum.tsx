@@ -44,6 +44,8 @@ function Museum3D() {
   const [leaving, setLeaving] = useState(false);
   const [ready, setReady] = useState(false);
   const [plan, setPlan] = useState(false);
+  const [openJ, setOpenJ] = useState<number | null>(null);
+  const [overFrieze, setOverFrieze] = useState(false);
   const cursor = useRef<HTMLDivElement>(null);
   const formBox = useRef<HTMLDivElement>(null);
   const [formOn, setFormOn] = useState(false);
@@ -118,10 +120,14 @@ function Museum3D() {
       const h = api.current?.hit(x, y) ?? null;
       setHover(h);
       api.current?.setHover(h);
+      setOverFrieze(h === null && (api.current?.hitFrieze(x, y) ?? null) !== null);
       if (cursor.current) cursor.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setPlan(false);
+      if (e.key === "Escape") {
+        setPlan(false);
+        setOpenJ(null);
+      }
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -155,9 +161,8 @@ function Museum3D() {
 
   const here = stations[Math.min(station, stations.length - 1)];
   const art = here?.art !== undefined ? here.art : null;
-  const atExit = here?.room === "exit";
   const atContact = !!here?.contact;
-  const jr = here?.j !== undefined ? journey[here.j] : null;
+
 
   return (
     <>
@@ -165,12 +170,14 @@ function Museum3D() {
       <canvas
         ref={canvas}
         className="fixed inset-0 h-screen w-screen"
-        style={{ cursor: hover !== null ? "none" : "default" }}
+        style={{ cursor: hover !== null || overFrieze ? "none" : "default" }}
         onClick={(e) => {
           const x = (e.clientX / window.innerWidth) * 2 - 1;
           const y = -(e.clientY / window.innerHeight) * 2 + 1;
           const h = api.current?.hit(x, y) ?? null;
-          if (h !== null) enter(h);
+          if (h !== null) return enter(h);
+          const f = api.current?.hitFrieze(x, y) ?? null;
+          if (f !== null) setOpenJ(f);
         }}
         aria-hidden
       />
@@ -209,35 +216,40 @@ function Museum3D() {
           )}
         </div>
       </div>
-      {/* journey panel, readable on any screen */}
-      <div className={`pointer-events-none fixed bottom-14 left-4 right-4 z-20 max-w-sm text-[#1c1916] transition-all duration-700 md:bottom-16 md:left-8 ${jr ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}>
-        {jr && (
-          <div className="bg-[#faf9f5]/92 p-4 shadow-[0_10px_30px_-18px_rgba(30,22,15,0.5)] backdrop-blur">
-            <p className="text-[19px] leading-tight">{jr.years}</p>
-            <p className="mt-1 text-[14px]">{jr.title}</p>
-            <p className="text-[12px] text-[#6b6259]">{jr.org}</p>
-            <ul className="mt-2 space-y-0.5 text-[12px] leading-snug text-[#3a332d]">
-              {jr.details.map((d) => (
+      {/* timeline hint */}
+      <p className={`pointer-events-none fixed bottom-24 left-4 z-20 text-[12px] text-[#6b6259] transition-opacity duration-700 md:bottom-28 md:left-8 ${here?.frieze ? "opacity-100" : "opacity-0"}`}>
+        {narrowScreen ? "Touchez une date pour la dérouler" : "Cliquez sur une date pour la dérouler"}
+      </p>
+
+      {/* a timeline entry, unrolled */}
+      {openJ !== null && (
+        <div role="dialog" aria-modal="true" aria-label={journey[openJ].title} className="fixed inset-0 z-40 flex items-center justify-center bg-[#1c1916]/25 p-4" onClick={() => setOpenJ(null)}>
+          <div className="w-full max-w-md bg-[#faf9f5] p-7 shadow-[0_30px_70px_-30px_rgba(30,22,15,0.6)]" onClick={(e) => e.stopPropagation()}>
+            <p className="text-[11px] tracking-[0.2em] text-[#8a8178]">{String(openJ + 1).padStart(2, "0")}</p>
+            <p className="mt-3 text-3xl">{journey[openJ].years}</p>
+            <p className="mt-3 text-lg leading-snug">{journey[openJ].title}</p>
+            <p className="mt-1 text-sm text-[#6b6259]">{journey[openJ].org}</p>
+            <ul className="mt-5 space-y-2 text-[15px] leading-snug text-[#3a332d]">
+              {journey[openJ].details.map((d) => (
                 <li key={d}>— {d}</li>
               ))}
             </ul>
+            <div className="mt-7 flex justify-between text-[13px]">
+              <button onClick={() => setOpenJ((j) => (j! > 0 ? j! - 1 : j))} disabled={openJ === 0} className="disabled:opacity-30">← Précédent</button>
+              <button onClick={() => setOpenJ(null)} className="text-[#6b6259]">Fermer ✕</button>
+              <button onClick={() => setOpenJ((j) => (j! < journey.length - 1 ? j! + 1 : j))} disabled={openJ === journey.length - 1} className="disabled:opacity-30">Suivant →</button>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
       <p className={`pointer-events-none fixed bottom-14 right-4 z-20 text-[11px] md:bottom-8 md:right-8 uppercase tracking-[0.22em] text-[#6b6259] transition-opacity duration-700 ${station === 0 ? "opacity-100" : "opacity-0"}`}>
         Faites défiler pour entrer ↓
       </p>
 
-      {/* exit: contact */}
-      <div className={`fixed inset-x-0 bottom-[10vh] z-20 flex flex-col items-center gap-4 text-[15px] md:flex-row md:justify-center md:gap-10 text-[#1c1916] transition-all duration-700 ${atExit ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"}`}>
-        <a href={`mailto:${site.email}`} className="border-b border-current pb-0.5 hover:opacity-60">{site.email}</a>
-        <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="border-b border-current pb-0.5 hover:opacity-60">LinkedIn ↗</a>
-        <a href={site.cv} download className="border-b border-current pb-0.5 hover:opacity-60">Télécharger le CV ↓</a>
-      </div>
-
       <div ref={cursor} className="pointer-events-none fixed left-0 top-0 z-30">
-        <div className={`-translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1c1916] px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-white transition-opacity duration-300 ${hover !== null ? "opacity-100" : "opacity-0"}`}>
-          Explorer
+        <div className={`-translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1c1916] px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-white transition-opacity duration-300 ${hover !== null || overFrieze ? "opacity-100" : "opacity-0"}`}>
+          {overFrieze ? "Dérouler" : "Explorer"}
         </div>
       </div>
 
@@ -245,11 +257,22 @@ function Museum3D() {
       <div
         ref={formBox}
         className={`z-20 transition-opacity duration-500 ${formOn ? "opacity-100" : "pointer-events-none opacity-0"} ${
-          narrowScreen ? "fixed inset-x-4 top-[22%] bottom-[22%] bg-[#faf9f5]/95 p-5 shadow-[0_20px_50px_-25px_rgba(30,22,15,0.5)]" : "fixed px-[1.6%] py-[1.4%]"
+          narrowScreen ? "fixed inset-x-4 top-[11%] bottom-[12%] bg-[#faf9f5]/97 p-5 shadow-[0_20px_50px_-25px_rgba(30,22,15,0.5)]" : "fixed px-[1.6%] py-[1.2%]"
         }`}
       >
-        {narrowScreen && <p className="mb-3 text-xl">Écrivez-moi</p>}
-        <ContactForm compact={narrowScreen} />
+        <div className="flex h-full flex-col">
+          {narrowScreen && <p className="mb-4 text-2xl leading-tight">{exit.line}</p>}
+          <p className={narrowScreen ? "mb-1 text-lg" : "text-[clamp(16px,2.2vh,22px)]"}>Écrivez-moi</p>
+          <p className="mb-3 text-[12px] text-[#6b6259]">Votre message arrive directement dans ma boîte mail.</p>
+          <div className="min-h-0 flex-1">
+            <ContactForm compact={narrowScreen} />
+          </div>
+          <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 border-t border-[#1c1916]/15 pt-3 text-[12px]">
+            <a href={`mailto:${site.email}`} className="border-b border-current">{site.email}</a>
+            <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="border-b border-current">LinkedIn ↗</a>
+            <a href={site.cv} download className="border-b border-current">CV ↓</a>
+          </div>
+        </div>
       </div>
 
       {/* soft photographic vignette */}
@@ -305,11 +328,8 @@ function Plan({ onClose, onRoom, onWork, onContact }: { onClose: () => void; onR
         <div className="space-y-3">
           <p className={head}>03</p>
           <button className={`${item} block`} onClick={() => onRoom("journey")}>Parcours</button>
-          <p className={`${head} pt-6`}>04</p>
-          <button className={`${item} block`} onClick={() => onRoom("about")}>À propos</button>
-          <p className={`${head} pt-6`}>05</p>
-          <button className={`${item} block`} onClick={onContact}>Écrivez-moi</button>
-          <button className={`${item} block`} onClick={() => onRoom("exit")}>Sortie · Contact</button>
+          <button className={`${item} block`} onClick={() => onRoom("about")}>Portrait & compétences</button>
+          <button className={`${item} block`} onClick={onContact}>Contact</button>
           <button onClick={onClose} className="block pt-10 text-[13px] text-[#6b6259]">Fermer ✕</button>
         </div>
       </div>
