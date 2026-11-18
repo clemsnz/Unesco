@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { about, entrance, exit, journey, rooms, works, type Work } from "@/content/museum";
+import { about, entrance, exit, journey, rooms, shop, works, type Work } from "@/content/museum";
 import { site } from "@/content/site";
 import ContactForm from "./ContactForm";
 
@@ -87,45 +87,53 @@ export default function MuseumLite() {
         </ol>
       </section>
 
-      <section className="px-6 py-28">
-        <p className={`${label} text-center`}>{rooms.about}</p>
-        <div data-approach className="mx-auto mt-14 w-[78%] max-w-sm border-[6px] border-[#2b2622] bg-[#fbfaf6] p-[7%] shadow-[8px_18px_40px_-12px_rgba(30,22,15,0.45)]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={about.portrait.src} alt={about.portrait.alt} loading="lazy" className="block w-full object-cover" style={{ aspectRatio: String(about.portrait.ratio) }} />
-        </div>
-        <p className="mx-auto mt-14 max-w-sm text-2xl leading-snug">« {about.quote} »</p>
-        <div className="mx-auto mt-6 max-w-sm space-y-1 text-sm text-[#6b6259]">
-          {about.lines.map((l) => (
-            <p key={l}>{l}</p>
+      <section id="sortie" className="px-6 py-28" style={{ background: "linear-gradient(#f1eee9, #f1eee9 30%, #7a2f35 30%)" }}>
+        <p className={`${label} text-center`}>{shop.title}</p>
+        <p className="mt-2 text-center text-sm text-[#6b6259]">{shop.sub}</p>
+        <div className="mx-auto mt-12 max-w-sm space-y-5">
+          {shop.items.map((it) => (
+            <details key={it.id} className="bg-[#faf9f5] p-5 shadow-[6px_14px_30px_-14px_rgba(30,22,15,0.35)]">
+              <summary className="flex cursor-pointer items-baseline justify-between gap-4">
+                <span>
+                  <span className="block text-[11px] uppercase tracking-[0.2em] text-[#8a8178]">{it.object}</span>
+                  <span className="text-xl">{it.name}</span>
+                </span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#7a2f35]">Offert</span>
+              </summary>
+              <div className="mt-4 text-[14px] leading-relaxed">
+                {it.id === "cv" && <a href={site.cv} download className="border-b border-current">Télécharger le CV ↓</a>}
+                {it.id === "portrait" && (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={about.portrait.src} alt={about.portrait.alt} loading="lazy" className="mb-4 w-full" style={{ aspectRatio: String(about.portrait.ratio) }} />
+                    <p className="text-lg">« {about.quote} »</p>
+                    {about.lines.map((l) => (
+                      <p key={l} className="mt-1 text-[#6b6259]">{l}</p>
+                    ))}
+                    <p className="mt-1 text-[#7a2f35]">{about.seeking}</p>
+                  </>
+                )}
+                {it.id === "skills" &&
+                  about.skills.map((k) => (
+                    <p key={k.title} className="mb-3">
+                      <span className="block text-[11px] uppercase tracking-[0.2em] text-[#8a8178]">{k.title}</span>
+                      {k.text}
+                    </p>
+                  ))}
+                {it.id === "linkedin" && (
+                  <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="border-b border-current">Voir mon profil LinkedIn ↗</a>
+                )}
+                {it.id === "contact" && (
+                  <>
+                    <ContactForm compact />
+                    <p className="mt-4">Ou : <a href={`mailto:${site.email}`} className="border-b border-current">{site.email}</a></p>
+                  </>
+                )}
+              </div>
+            </details>
           ))}
-          <p className="pt-3 text-[#1c1916]">{about.seeking}</p>
         </div>
-        <dl className="mx-auto mt-14 max-w-sm space-y-6">
-          {about.skills.map((k) => (
-            <div key={k.title}>
-              <dt className="text-[11px] uppercase tracking-[0.2em] text-[#8a8178]">{k.title}</dt>
-              <dd className="mt-2 text-[15px] leading-relaxed">{k.text}</dd>
-            </div>
-          ))}
-        </dl>
-      </section>
-
-      <section className="px-6 pb-10">
-        <div className="mx-auto max-w-sm bg-[#faf9f5] p-6 shadow-[6px_14px_30px_-14px_rgba(30,22,15,0.35)]">
-          <p className="text-2xl">Écrivez-moi</p>
-          <p className="mb-5 mt-1 text-sm text-[#6b6259]">Votre message arrive directement dans ma boîte mail.</p>
-          <ContactForm compact />
-        </div>
-      </section>
-
-      <section id="sortie" className="flex min-h-[90svh] flex-col items-center justify-center px-6 text-center">
-        <p className={label}>{rooms.exit}</p>
-        <p className="mt-8 max-w-md text-4xl leading-tight">{exit.line}</p>
-        <div className="mt-12 flex flex-col items-center gap-4 text-[15px]">
-          <a href={`mailto:${site.email}`} className="border-b border-current pb-0.5">{site.email}</a>
-          <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="border-b border-current pb-0.5">LinkedIn ↗</a>
-          <a href={site.cv} download className="border-b border-current pb-0.5">Télécharger le CV ↓</a>
-        </div>
+        <p className="mx-auto mt-16 max-w-sm text-center text-3xl leading-tight text-[#f6ece4]">{exit.line}</p>
       </section>
     </div>
   );

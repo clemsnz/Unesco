@@ -55,8 +55,8 @@ export const rooms = {
   main: "Galerie 02 — Œuvres choisies",
   cabinet: "Cabinet d’études",
   journey: "Galerie 03 — Parcours",
-  about: "Galerie 03 — Portrait",
-  exit: "Galerie 03 — Contact",
+  about: "Boutique du musée",
+  exit: "Boutique du musée",
 };
 
 export const works: Work[] = [
@@ -261,6 +261,20 @@ export const about = {
     { title: "Compétences", text: "Communication de marque · Influence & RP · Événementiel · Social media · CRM & e-mailing · Rédaction · Plan média" },
     { title: "Outils", text: "Klaviyo · Wix · Uscreen · Canva · Adobe Suite · Office 365 · Instagram · TikTok" },
     { title: "Langues", text: "Français (langue maternelle) · Anglais C1 · Espagnol B1" },
+  ],
+};
+
+/** La boutique du musée : chaque souvenir ouvre un contenu. */
+export type ShopId = "cv" | "portrait" | "skills" | "linkedin" | "contact";
+export const shop: { title: string; sub: string; items: { id: ShopId; object: string; name: string; tag: string }[] } = {
+  title: "Boutique du musée",
+  sub: "Souvenirs à emporter",
+  items: [
+    { id: "cv", object: "Le livret", name: "Le CV", tag: "À télécharger" },
+    { id: "portrait", object: "La carte postale", name: "Portrait", tag: "Qui je suis" },
+    { id: "skills", object: "Le tote bag", name: "Compétences", tag: "Outils & langues" },
+    { id: "linkedin", object: "La carte de visite", name: "LinkedIn", tag: "Restons en contact" },
+    { id: "contact", object: "La papeterie", name: "Écrivez-moi", tag: "Formulaire & e-mail" },
   ],
 };
 
