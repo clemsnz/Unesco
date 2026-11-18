@@ -844,12 +844,6 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const tmp = new THREE.Vector3();
   const right = new THREE.Vector3();
 
-  const curve = new THREE.CatmullRomCurve3(
-    stations.map((st) => st.pos.clone()),
-    false,
-    "catmullrom",
-    0.2,
-  );
   const quats = stations.map((st) => {
     const m = new THREE.Matrix4().lookAt(st.pos, st.look, new THREE.Vector3(0, 1, 0));
     return new THREE.Quaternion().setFromRotationMatrix(m);
@@ -870,7 +864,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     const c = Math.min(Math.max(s, 0), max);
     const i = Math.min(Math.floor(c), max - 1);
     const f = segEase(c - i, stations[i], stations[i + 1]);
-    curve.getPoint((i + f) / max, pos);
+    pos.lerpVectors(stations[i].pos, stations[i + 1].pos, f);
     quat.slerpQuaternions(quats[i], quats[i + 1], f);
     fwd.set(0, 0, -1).applyQuaternion(quat);
     look.copy(pos).addScaledVector(fwd, 5);
