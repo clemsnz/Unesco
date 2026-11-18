@@ -10,8 +10,8 @@ import type { Work } from "@/content/museum";
 
 const WALL = 0xf1eee9;
 const EYE = 1.62;
-const HALF_W = 6;
-const H = 4.6;
+const HALF_W = 8;
+const H = 5.0;
 const Z_FRONT = 10;
 const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
 
@@ -265,33 +265,28 @@ function vinyl(w: number, h: number, draw: (c: CanvasRenderingContext2D) => void
 
 /* ───────── layout ───────── */
 
-const MAIN_START = -15;
-const MAIN_STEP = 6.5;
+const MAIN_START = -13;
+const MAIN_STEP = 3.5;
 const ENTRY_W = 2.1; // width of one timeline entry on the wall (m)
 
 function layout(input: MuseumInput) {
-  const main = input.works.map((w, i) => ({ w, i })).filter((x) => x.w.room === "main");
-  const cab = input.works.map((w, i) => ({ w, i })).filter((x) => x.w.room === "cabinet");
+  // the great hall: every work, alternating left and right walls
+  const order = [...input.works.map((w, i) => ({ w, i })).filter((x) => x.w.room === "main"), ...input.works.map((w, i) => ({ w, i })).filter((x) => x.w.room === "cabinet")];
   const z: number[] = [];
   const side: (-1 | 1)[] = [];
-  main.forEach(({ i }, k) => {
+  order.forEach(({ i }, k) => {
     z[i] = MAIN_START - k * MAIN_STEP;
     side[i] = k % 2 === 0 ? -1 : 1;
   });
-  const wallCab = MAIN_START - (main.length - 1) * MAIN_STEP - 4.5;
-  cab.forEach(({ i }, k) => {
-    z[i] = wallCab - 4.5 - k * 5;
-    side[i] = k % 2 === 0 ? -1 : 1;
-  });
-  const wallJourney = wallCab - 4.5 - (cab.length - 1) * 5 - 4.5;
+  const lastZ = MAIN_START - (order.length - 1) * MAIN_STEP;
+  const wallJourney = lastZ - 5;
   // Galerie 03: the timeline on the left wall
   const fz0 = wallJourney - 1.5;
   const fz1 = fz0 - input.journey.length * ENTRY_W;
   // the museum shop
   const wallShop = fz1 - 2;
-  const tableZ = wallShop - 6.2;
-  const back = wallShop - 9.5;
-  return { z, side, wallCab, wallJourney, fz0, fz1, wallShop, tableZ, back };
+  const back = wallShop - 10;
+  return { z, side, order: order.map((o) => o.i), wallJourney, fz0, fz1, wallShop, back };
 }
 
 /* ───────── scene ───────── */
@@ -354,7 +349,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), floorMat);
   floor.rotation.x = -Math.PI / 2;
   floor.position.set(0, 0.002, midZ);
-  scene.add(floor);
+  floor.visible = false; // parquet covers the whole building
   if (!narrow) {
     const mirror = new Reflector(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), {
       color: 0x6c6862,
@@ -373,6 +368,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   scene.add(ceil);
   const slotMat = keep(new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }));
   // lighting tracks along both walls
+  const lampMatSign = keep(new THREE.MeshStandardMaterial({ color: 0xe8e4dc, roughness: 0.6 }));
   const trackMat = keep(new THREE.MeshStandardMaterial({ color: 0x2c2926, roughness: 0.45, metalness: 0.2 }));
   for (const x of [-(HALF_W - 1.5), HALF_W - 1.5]) {
     const track = new THREE.Mesh(keep(new THREE.BoxGeometry(0.03, 0.022, len - 2)), trackMat);
@@ -405,9 +401,10 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const skyFrameGeo = keep(new THREE.PlaneGeometry(1.34, 2.84));
   const skyFrameMat = keep(new THREE.MeshBasicMaterial({ color: 0xbdb8b0 }));
   /** recessed ceiling light panels, every few metres, kept clear of partition walls */
-  const skylights = (avoid: number[]) => {
+  const skylights = (avoid: number[], skip?: [number, number]) => {
     for (let z = Z_FRONT - 3; z > Z_BACK + 2; z -= 4.5) {
       if (avoid.some((a) => Math.abs(a - z) < 2)) continue;
+      if (skip && z > skip[0] && z < skip[1]) continue;
       for (const x of [-1.5, 1.5]) {
         const f = new THREE.Mesh(skyFrameGeo, skyFrameMat);
         f.rotation.x = Math.PI / 2;
@@ -542,46 +539,103 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   g2m.position.set(HALF_W - 0.01, 2.6, -9.5);
   scene.add(g2m);
 
-  /* the cabinet: deep green walls, oak parquet — like a historic museum cabinet */
-  const green = keep(new THREE.MeshStandardMaterial({ color: 0x3a4a40, roughness: 0.9 }));
-  partition(L.wallCab, { label: input.rooms.cabinet, sub: "Études & projets personnels", back: green });
+  /* Galerie 03 and the shop are separate rooms; the great hall holds every work */
   const [jName] = input.rooms.journey.split(" — ");
-  partition(L.wallJourney, { label: jName, sub: "Parcours, portrait & contact", front: green });
-  const cabLen = L.wallCab - L.wallJourney - 0.3;
-  const cabMid = (L.wallCab + L.wallJourney) / 2;
-  for (const sd of [-1, 1] as const) {
-    const gw = new THREE.Mesh(keep(new THREE.PlaneGeometry(cabLen, H)), green);
-    gw.rotation.y = sd === -1 ? Math.PI / 2 : -Math.PI / 2;
-    gw.position.set(sd * (HALF_W - 0.004), H / 2, cabMid);
-    scene.add(gw);
-  }
-  // main gallery cut into three rooms by walls with off-centre doorways
-  const mainIdxs = works.map((w, i) => (w.room === "main" ? i : -1)).filter((i) => i >= 0);
-  const roomWalls: { z: number; doorX: number }[] = [];
-  [1, 3].forEach((k, r) => {
-    if (mainIdxs[k + 1] === undefined) return;
-    const z = (L.z[mainIdxs[k]] + L.z[mainIdxs[k + 1]]) / 2;
-    const doorX = r % 2 === 0 ? 2.6 : -2.6;
-    roomWalls.push({ z, doorX });
-    partition(z, { doorX, half: 1.35 });
-  });
-  // oak parquet in the cabinet and in Galerie 03
+  partition(L.wallJourney, { label: jName, sub: "Parcours" });
+  partition(L.wallShop, { label: input.shop.title, sub: input.shop.sub });
+  // oak parquet everywhere, with a hint of the polished finish on desktop
   const parquet = keep(parquetTexture());
   const floorPiece = (z0: number, z1: number) => {
     const l = z0 - z1;
     const tex = keep(parquet.clone());
     tex.needsUpdate = true;
     tex.repeat.set(HALF_W / 1.6, l / 1.6);
-    const m = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, l)), keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.48 })));
+    const m = new THREE.Mesh(
+      keep(new THREE.PlaneGeometry(HALF_W * 2, l)),
+      keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, transparent: !narrow, opacity: narrow ? 1 : 0.9 })),
+    );
     m.rotation.x = -Math.PI / 2;
     m.position.set(0, 0.004, (z0 + z1) / 2);
     scene.add(m);
   };
-  floorPiece(L.wallCab - 0.15, L.wallJourney + 0.15);
+  floorPiece(Z_FRONT, L.wallJourney + 0.15);
   floorPiece(L.wallJourney - 0.15, L.wallShop + 0.15);
   floorPiece(L.wallShop - 0.15, Z_BACK);
-  partition(L.wallShop, { label: input.shop.title, sub: input.shop.sub });
-  skylights(partitionZs.concat([-6]));
+  // the great hall's glass roof: a long lantern of frosted panes
+  const hallZ0 = -7;
+  const hallZ1 = L.wallJourney + 1;
+  const lanternTex = keep(
+    canvasTex(512, 1024, (c) => {
+      c.fillStyle = "#ffffff";
+      c.fillRect(0, 0, 512, 1024);
+      c.fillStyle = "#bdb6ac";
+      for (let y = 0; y <= 1024; y += 128) c.fillRect(0, y - 4, 512, 8);
+      c.fillRect(252, 0, 8, 1024);
+      c.fillRect(0, 0, 10, 1024);
+      c.fillRect(502, 0, 10, 1024);
+    }),
+  );
+  lanternTex.wrapT = THREE.RepeatWrapping;
+  lanternTex.repeat.set(1, (hallZ0 - hallZ1) / 4);
+  const lantern = new THREE.Mesh(keep(new THREE.PlaneGeometry(5, hallZ0 - hallZ1)), keep(new THREE.MeshBasicMaterial({ map: lanternTex, toneMapped: false })));
+  lantern.rotation.x = Math.PI / 2;
+  lantern.position.set(0, H - 0.01, (hallZ0 + hallZ1) / 2);
+  scene.add(lantern);
+  const lanternEdge = keep(new THREE.MeshBasicMaterial({ color: 0x9d968c }));
+  for (const x of [-2.6, 2.6]) {
+    const e = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.2, hallZ0 - hallZ1)), lanternEdge);
+    e.rotation.x = Math.PI / 2;
+    e.position.set(x, H - 0.012, (hallZ0 + hallZ1) / 2);
+    scene.add(e);
+  }
+  skylights(partitionZs.concat([-6]), [hallZ1, hallZ0]);
+  // green emergency exit signs above the doorways
+  const exitSign = keep(
+    canvasTex(512, 180, (c) => {
+      c.fillStyle = "#1f8a4c";
+      c.fillRect(0, 0, 512, 180);
+      c.fillStyle = "#ffffff";
+      c.font = `600 70px ${SANS}`;
+      c.fillText("SORTIE", 150, 115);
+      c.fillRect(40, 60, 70, 60);
+      c.fillStyle = "#1f8a4c";
+      c.fillRect(60, 75, 30, 45);
+    }),
+  );
+  for (const z of [L.wallJourney, L.wallShop]) {
+    const sign = new THREE.Mesh(keep(new THREE.BoxGeometry(0.42, 0.15, 0.05)), [lampMatSign, lampMatSign, lampMatSign, lampMatSign, basic(exitSign, false), lampMatSign]);
+    sign.position.set(0, 3.55, z + 0.18);
+    scene.add(sign);
+  }
+  // soft shading in the corners where walls meet
+  const cornerTex = keep(
+    canvasTex(256, 4, (c) => {
+      const g = c.createLinearGradient(0, 0, 256, 0);
+      g.addColorStop(0, "rgba(40,30,20,0.22)");
+      g.addColorStop(1, "rgba(40,30,20,0)");
+      c.fillStyle = g;
+      c.fillRect(0, 0, 256, 4);
+    }),
+  );
+  const cornerMat = keep(new THREE.MeshBasicMaterial({ map: cornerTex, transparent: true, depthWrite: false }));
+  const corner = (sd: -1 | 1, z: number, dir: -1 | 1) => {
+    const m = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.9, H)), cornerMat);
+    m.rotation.y = sd === -1 ? Math.PI / 2 : -Math.PI / 2;
+    // the dark edge of the gradient must sit against the corner
+    m.scale.x = sd === -1 ? -dir : dir;
+    m.position.set(sd * (HALF_W - 0.006), H / 2, z + dir * 0.45);
+    scene.add(m);
+  };
+  for (const z of [L.wallJourney, L.wallShop]) {
+    for (const sd of [-1, 1] as const) {
+      corner(sd, z + 0.15, 1);
+      corner(sd, z - 0.15, -1);
+    }
+  }
+  for (const sd of [-1, 1] as const) {
+    corner(sd, Z_BACK, 1);
+    corner(sd, Z_FRONT, -1);
+  }
 
   /* works */
   const loader = new THREE.TextureLoader();
@@ -717,61 +771,30 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const exitMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(8.6, 8.6 * (900 / 3600))), basic(exitTex));
   exitMesh.position.set(0, 2.35, Z_BACK + 0.012);
   scene.add(exitMesh);
-  // side shelves with stock, for atmosphere
-  const shelfMat = keep(new THREE.MeshStandardMaterial({ color: 0xe8e2d8, roughness: 0.7 }));
-  const stockColors = [0xcfc4b4, 0x7a2f35, 0x2b2622, 0xb9a07e, 0xe3d6c6, 0x3a4a40];
-  for (const sd of [-1, 1] as const) {
-    for (const y of [1.0, 1.55, 2.1]) {
-      const shelf = new THREE.Mesh(keep(new THREE.BoxGeometry(0.34, 0.035, 4.2)), shelfMat);
-      shelf.position.set(sd * (HALF_W - 0.17), y, L.tableZ + 1.2);
-      scene.add(shelf);
-      let z = L.tableZ + 1.2 - 1.95;
-      let k = 0;
-      while (z < L.tableZ + 1.2 + 1.9) {
-        const w = 0.05 + ((k * 37) % 7) * 0.012;
-        const h = 0.22 + ((k * 13) % 5) * 0.03;
-        const book = new THREE.Mesh(keep(new THREE.BoxGeometry(0.24, h, w)), keep(new THREE.MeshStandardMaterial({ color: stockColors[(k + (y > 1.5 ? 2 : 0)) % stockColors.length], roughness: 0.8 })));
-        book.position.set(sd * (HALF_W - 0.17), y + 0.018 + h / 2, z + w / 2);
-        scene.add(book);
-        z += w + 0.012 + (k % 6 === 5 ? 0.25 : 0);
-        k++;
-      }
-    }
-  }
-  // display table
-  const tableTop = keep(new THREE.MeshStandardMaterial({ color: 0xc8b192, roughness: 0.5 }));
-  const tableBase = keep(new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: 0.85 }));
-  const TW = 3.6;
-  const TD = 1.0;
-  const TH = 0.86;
-  const base = new THREE.Mesh(keep(new THREE.BoxGeometry(TW - 0.1, TH - 0.04, TD - 0.1)), tableBase);
-  base.position.set(0, (TH - 0.04) / 2, L.tableZ);
-  scene.add(base);
-  const top = new THREE.Mesh(keep(new THREE.BoxGeometry(TW, 0.04, TD)), tableTop);
-  top.position.set(0, TH - 0.02, L.tableZ);
-  scene.add(top);
-  const tableShadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(TW * 1.25, TD * 1.6)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.55, depthWrite: false })));
-  tableShadow.rotation.x = -Math.PI / 2;
-  tableShadow.position.set(0, 0.008, L.tableZ);
-  scene.add(tableShadow);
-  // pendant lamps above the table
+  // a low cash desk by the back wall, and a postcard spinner, for atmosphere
+  const deskMat = keep(new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: 0.8 }));
+  const deskTop = keep(new THREE.MeshStandardMaterial({ color: 0xc8b192, roughness: 0.5 }));
   const lampMat = keep(new THREE.MeshStandardMaterial({ color: 0x1b1916, roughness: 0.4 }));
-  for (const x of [-1.1, 0, 1.1]) {
-    const cord = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.004, 0.004, 1.1, 6)), lampMat);
-    cord.position.set(x, H - 0.55, L.tableZ);
-    scene.add(cord);
-    const shade = new THREE.Mesh(keep(new THREE.ConeGeometry(0.17, 0.18, 28, 1, true)), lampMat);
-    shade.position.set(x, H - 1.18, L.tableZ);
-    scene.add(shade);
-    const bulb = new THREE.Mesh(keep(new THREE.CircleGeometry(0.15, 24)), lensMat);
-    bulb.rotation.x = Math.PI / 2;
-    bulb.position.set(x, H - 1.27, L.tableZ);
-    scene.add(bulb);
-  }
-  const glow = new THREE.Mesh(keep(new THREE.PlaneGeometry(TW * 1.1, TD * 1.3)), keep(new THREE.MeshBasicMaterial({ map: keep(scallop()), transparent: true, opacity: 0.25, depthWrite: false, blending: THREE.AdditiveBlending })));
-  glow.rotation.x = -Math.PI / 2;
-  glow.position.set(0, TH + 0.002, L.tableZ);
-  scene.add(glow);
+  const desk = new THREE.Mesh(keep(new THREE.BoxGeometry(2.2, 0.95, 0.6)), deskMat);
+  desk.position.set(HALF_W - 2.2, 0.475, Z_BACK + 1.6);
+  scene.add(desk);
+  const deskT = new THREE.Mesh(keep(new THREE.BoxGeometry(2.3, 0.04, 0.68)), deskTop);
+  deskT.position.set(HALF_W - 2.2, 0.97, Z_BACK + 1.6);
+  scene.add(deskT);
+  const deskShadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.9, 1.2)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.5, depthWrite: false })));
+  deskShadow.rotation.x = -Math.PI / 2;
+  deskShadow.position.set(HALF_W - 2.2, 0.008, Z_BACK + 1.6);
+  scene.add(deskShadow);
+  const caisseTex = keep(
+    canvasTex(512, 128, (c) => {
+      c.fillStyle = "#1c1916";
+      c.font = `500 46px ${SANS}`;
+      spaced(c, "CAISSE", 256, 82, 14, "center");
+    }),
+  );
+  const caisse = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.9, 0.22)), basic(caisseTex));
+  caisse.position.set(HALF_W - 2.2, 0.68, Z_BACK + 1.91);
+  scene.add(caisse);
 
   // the souvenirs
   const paper = (w: number, h: number, draw: (c: CanvasRenderingContext2D) => void) => keep(canvasTex(w, h, draw));
@@ -878,46 +901,72 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       c.font = `500 20px ${SANS}`;
       spaced(c, "OFFERT", 20, 126, 4);
     });
-  const sizes: Record<string, [number, number]> = { cv: [0.42, 0.59], portrait: [0.36, 0.48], skills: [0.46, 0.59], linkedin: [0.42, 0.25], contact: [0.5, 0.35] };
-  const nItems = input.shop.items.length;
+  const sizes: Record<string, [number, number]> = { cv: [0.74, 1.04], portrait: [0.68, 0.9], skills: [0.86, 1.1], linkedin: [0.84, 0.5], contact: [0.92, 0.64] };
+  const shelfMat = keep(new THREE.MeshStandardMaterial({ color: 0xf6f3ee, roughness: 0.7 }));
+  const brass = keep(new THREE.MeshStandardMaterial({ color: 0xb08d57, roughness: 0.35, metalness: 0.8 }));
+  // left wall: the first half of the souvenirs, right wall: the rest
+  const half = Math.ceil(input.shop.items.length / 2);
+  const shopSpots: { side: -1 | 1; z: number }[] = [];
+  const shopZ0 = L.wallShop - 2.4;
   input.shop.items.forEach((it, k) => {
-    const [w, h] = sizes[it.id] ?? [0.4, 0.4];
-    const x = -TW / 2 + 0.38 + (k * (TW - 0.76)) / Math.max(nItems - 1, 1);
+    const sd: -1 | 1 = k < half ? -1 : 1;
+    const idx = k < half ? k : k - half;
+    const z = shopZ0 - idx * 2.05 - (sd === 1 ? 1.0 : 0);
+    shopSpots.push({ side: sd, z });
+    const [w, h] = sizes[it.id] ?? [0.5, 0.5];
     const g = new THREE.Group();
-    g.position.set(x, TH, L.tableZ + 0.05);
-    const tilt = new THREE.Group();
-    tilt.rotation.x = -0.18;
+    g.position.set(sd * (HALF_W - 0.02), 0, z);
+    g.rotation.y = sd === -1 ? Math.PI / 2 : -Math.PI / 2;
+    const hanging = it.id === "skills";
+    const shelfY = 1.15;
+    if (hanging) {
+      const hook = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.012, 0.012, 0.12, 8)), brass);
+      hook.rotation.x = Math.PI / 2;
+      hook.position.set(0, 2.3, 0.06);
+      g.add(hook);
+    } else {
+      const shelf = new THREE.Mesh(keep(new THREE.BoxGeometry(Math.max(w + 0.3, 0.8), 0.04, 0.32)), shelfMat);
+      shelf.position.set(0, shelfY, 0.16);
+      g.add(shelf);
+      const sShadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(Math.max(w + 0.3, 0.8) * 1.3, 0.5)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.45, depthWrite: false })));
+      sShadow.position.set(0, shelfY - 0.1, 0.004);
+      g.add(sShadow);
+    }
     let map: THREE.Texture;
     if (it.id === "portrait") {
       map = keep(loader.load(input.about.portrait.src));
       map.colorSpace = THREE.SRGBColorSpace;
     } else map = souvenirTex[it.id]();
-    const card = new THREE.Mesh(keep(new THREE.BoxGeometry(w + (it.id === "portrait" ? 0.04 : 0), h + (it.id === "portrait" ? 0.04 : 0), 0.012)), keep(new THREE.MeshStandardMaterial({ color: 0xfbfaf7, roughness: 0.8 })));
-    card.position.set(0, h / 2 + 0.01, 0);
-    tilt.add(card);
-    const face = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, h)), keep(new THREE.MeshBasicMaterial({ map, transparent: it.id === "skills", toneMapped: false })));
-    face.position.set(0, h / 2 + 0.01, 0.0065);
-    tilt.add(face);
-    g.add(tilt);
-    // small easel foot
-    const foot = new THREE.Mesh(keep(new THREE.BoxGeometry(w * 0.6, 0.012, 0.12)), lampMat);
-    foot.position.set(0, 0.006, -0.02);
-    g.add(foot);
-    const sh = new THREE.Mesh(keep(new THREE.PlaneGeometry(w * 1.5, 0.35)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.5, depthWrite: false })));
-    sh.rotation.x = -Math.PI / 2;
-    sh.position.set(0.02, 0.003, -0.06);
-    g.add(sh);
-    // price tag lying in front
-    const tag = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.3, 0.125)), basic(tagTex(it), false));
-    tag.rotation.x = -Math.PI / 2 + 0.35;
-    tag.position.set(0, 0.012, 0.27);
+    const holder = new THREE.Group();
+    if (hanging) {
+      holder.position.set(0, 2.34 - h, 0.03);
+    } else {
+      holder.position.set(0, shelfY + 0.02, 0.14);
+      holder.rotation.x = -0.12;
+    }
+    const border = it.id === "portrait" ? 0.05 : 0;
+    const card = new THREE.Mesh(keep(new THREE.BoxGeometry(w + border, h + border, hanging ? 0.004 : 0.014)), keep(new THREE.MeshStandardMaterial({ color: hanging ? 0xe7dccb : 0xfbfaf7, roughness: 0.8, transparent: hanging, opacity: hanging ? 0 : 1 })));
+    card.position.set(0, h / 2, 0);
+    holder.add(card);
+    const face = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, h)), keep(new THREE.MeshBasicMaterial({ map, transparent: hanging, toneMapped: false })));
+    face.position.set(0, h / 2, 0.008);
+    holder.add(face);
+    g.add(holder);
+    // the price tag on the wall, under the souvenir
+    const tag = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.36, 0.15)), basic(tagTex(it), false));
+    tag.position.set(0, hanging ? 2.34 - h - 0.25 : shelfY - 0.3, 0.004);
     g.add(tag);
+    // its own light from the ceiling track
+    const poolMat = keep(new THREE.MeshBasicMaterial({ map: poolMap, transparent: true, opacity: 0.4, depthWrite: false, blending: THREE.AdditiveBlending }));
+    const pool = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.8, H - 0.6)), poolMat);
+    pool.position.set(0, (H + 0.6) / 2, 0.002);
+    g.add(pool);
+    spot(sd, z);
     [card, face, tag].forEach((m) => {
       m.userData.shop = it.id;
       shopHits.push(m);
     });
     scene.add(g);
-    shopGroups.push(g);
   });
 
   /* ───────── the walk ───────── */
@@ -934,23 +983,15 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   /** walking down the middle of the room, looking ahead */
   const walkThrough = (x: number, z: number, room: Station["room"]) => stations.push({ pos: v3(x, EYE, z), look: v3(x * 0.4, EYE - 0.08, z - 9), room, walk: true });
   let prevZ: number | null = null;
-  works.forEach((w, i) => {
-    if (w.room === "cabinet" && !stations.some((s) => s.room === "cabinet")) {
-      stations.push({ pos: v3(0, EYE, L.wallCab + 6.5), look: v3(-2.5, 2.1, L.wallCab), room: "main" });
-      walkThrough(0, L.wallCab, "cabinet");
-      prevZ = null;
-    }
-    if (prevZ !== null) {
-      const door = roomWalls.find((r) => r.z < prevZ! && r.z > L.z[i]);
-      if (door) walkThrough(door.doorX, door.z, w.room);
-      else walkThrough(0, (prevZ + L.z[i]) / 2, w.room);
-    }
+  L.order.forEach((i) => {
+    const w = works[i];
+    if (prevZ !== null) walkThrough(0, (prevZ + L.z[i]) / 2, "main");
     prevZ = L.z[i];
     const wide = w.height * w.art.ratio > 1.9;
-    const d = narrow ? (wide ? 5.4 : 4.3) : w.room === "cabinet" ? 4.2 : 4.9;
-    stations.push({ ...facing(L.side[i], L.z[i], d, narrow ? 0.25 : 0.45), room: w.room, art: i });
+    const d = narrow ? (wide ? 5.4 : 4.3) : 4.9;
+    stations.push({ ...facing(L.side[i], L.z[i], d, narrow ? 0.25 : 0.45), room: "main", art: i });
   });
-  stations.push({ pos: v3(0, EYE, L.wallJourney + 6.5), look: v3(-2.5, 2.1, L.wallJourney), room: "cabinet" });
+  stations.push({ pos: v3(0, EYE, L.wallJourney + 5), look: v3(-3, 2.1, L.wallJourney), room: "main" });
   walkThrough(0, L.wallJourney - 0.5, "journey");
   if (narrow) {
     input.journey.forEach((_, k) => {
@@ -965,9 +1006,15 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     }
   }
   walkThrough(0, L.wallShop + 1.2, "about");
-  // the shop: first the whole room, then the table up close
-  stations.push({ pos: v3(0, EYE, L.wallShop - 0.6), look: v3(0, 2.0, Z_BACK), room: "about" });
-  stations.push({ pos: v3(0, narrow ? 1.75 : 1.5, L.tableZ + (narrow ? 3.3 : 2.2)), look: v3(0, narrow ? 0.95 : 0.82, L.tableZ - 0.05), room: "exit", contact: true });
+  // the shop: the whole room, then each wall of souvenirs, then the closing line
+  stations.push({ pos: v3(0, EYE, L.wallShop - 0.8), look: v3(0, 2.0, Z_BACK), room: "about" });
+  const leftZ = shopSpots.filter((p) => p.side === -1).map((p) => p.z);
+  const rightZ = shopSpots.filter((p) => p.side === 1).map((p) => p.z);
+  const mid = (a: number[]) => (Math.max(...a) + Math.min(...a)) / 2;
+  const dShop = narrow ? 4.6 : 4.3;
+  stations.push({ pos: v3(-HALF_W + dShop, EYE, mid(leftZ)), look: v3(-HALF_W, 1.45, mid(leftZ)), room: "about" });
+  stations.push({ pos: v3(HALF_W - dShop, EYE, mid(rightZ)), look: v3(HALF_W, 1.45, mid(rightZ)), room: "exit", contact: true });
+  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 10 : 7)), look: v3(0, 2.2, Z_BACK), room: "exit" });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let target = 0;
