@@ -1,18 +1,19 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import "@fontsource/playfair-display/400.css";
-import "@fontsource/playfair-display/400-italic.css";
-import "@fontsource/playfair-display/500.css";
-import "@fontsource/manrope/300.css";
-import "@fontsource/manrope/400.css";
-import "@fontsource/manrope/500.css";
-import "@fontsource/jetbrains-mono/400.css";
+import "@fontsource/newsreader/300.css";
+import "@fontsource/newsreader/400.css";
+import "@fontsource/newsreader/400-italic.css";
+import "@fontsource/instrument-sans/400.css";
+import "@fontsource/instrument-sans/500.css";
 import "./globals.css";
 import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: site.name,
+  title: `${site.name} — Portfolio`,
+  description: site.description,
+  openGraph: { type: "website", siteName: site.name, title: `${site.name} — Portfolio`, description: site.description, locale: "fr_FR", images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image" },
   authors: [{ name: site.name }],
   icons: {
     icon: [
@@ -24,27 +25,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0e0c0a",
-  colorScheme: "dark light",
+  themeColor: "#f1eee9",
+  colorScheme: "light",
 };
 
-/**
- * Root layout. The visible language is set per route in app/[lang]/;
- * this inline script keeps <html lang> in sync for assistive tech.
- */
+/** Root layout. */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var m=location.pathname.match(/^\\/(fr|en)(\\/|$)/);if(m)document.documentElement.lang=m[1];})();`,
-          }}
-        />
-        <noscript>
-          <style>{`#intro,[data-curtain]{display:none!important}[data-page]{opacity:1!important}`}</style>
-        </noscript>
-      </head>
       <body>{children}</body>
     </html>
   );
