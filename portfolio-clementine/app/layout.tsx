@@ -10,7 +10,10 @@ import { site } from "@/content/site";
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
-  title: site.name,
+  title: `${site.name} — Portfolio`,
+  description: site.description,
+  openGraph: { type: "website", siteName: site.name, title: `${site.name} — Portfolio`, description: site.description, locale: "fr_FR", images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image" },
   authors: [{ name: site.name }],
   icons: {
     icon: [
@@ -22,24 +25,14 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f0e8",
+  themeColor: "#f1eee9",
   colorScheme: "light",
 };
 
-/**
- * Root layout. The visible language is set per route in app/[lang]/;
- * this inline script keeps <html lang> in sync for assistive tech.
- */
+/** Root layout. */
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var m=location.pathname.match(/^\\/(fr|en)(\\/|$)/);if(m)document.documentElement.lang=m[1];document.documentElement.classList.add('js');})();`,
-          }}
-        />
-      </head>
       <body>{children}</body>
     </html>
   );
