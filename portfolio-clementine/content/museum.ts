@@ -36,6 +36,8 @@ export type Work = {
   result?: string;
   /** Œuvres accrochées dans la salle (3 maximum) */
   gallery: Img[];
+  /** Salle en chapitres (facultatif) : titre, une phrase, des œuvres */
+  chapters?: { title: string; text?: string; imgs: Img[] }[];
   /** Reel Instagram (identifiant après /reel/) */
   reel?: { id: string; cartel: string };
   press?: { outlet: string; note: string; url: string }[];
@@ -57,46 +59,54 @@ export const rooms = {
 
 export const works: Work[] = [
   {
-    slug: "lancement-mini-mat",
+    slug: "charlotte-muller",
     room: "main",
-    title: "Lancement du Mini Mat",
-    line: "Charlotte Muller · Lancement produit · 2025",
-    role: "Packaging, dîner de lancement, presse",
+    title: "Charlotte Muller",
+    line: "Charlotte Muller Method · Lancement, presse & influence · 2025 — 2026",
+    role: "Stage, puis freelance",
     kind: "photo",
     art: { src: "/images/mini-mat/diner-table.webp", alt: "Table du dîner de lancement du Mini Mat, avec la grille « Le P-ingo »", ratio: 1179 / 1651 },
-    height: 2.15,
-    brief: "Lancer le Mini Mat, tapis infrarouge PEMF de 30 cm, auprès de la presse beauté et bien-être.",
-    did: "Packaging conçu de A à Z. Dîner de lancement imaginé de A à Z : P-ingo, carte cadeau « A Gift for You », menus, décoration de la salle. Événement presse au Four Seasons George V, avec le bureau de presse Pascale Venot.",
-    result: "Le lancement a été repris par la presse spécialisée.",
-    gallery: [
-      { src: "/images/mini-mat/packaging.webp", alt: "Packaging du Mini Mat, à plat", ratio: 2000 / 777, cartel: "Packaging du Mini Mat · Fichier de conception" },
-      { src: "/images/mini-mat/diner-cadeaux.webp", alt: "Cartes cadeaux « A Gift for You » et grilles P-ingo sur la table d’accueil", ratio: 841 / 656, cartel: "Carte cadeau « A Gift for You » et P-ingo · Dîner de lancement" },
-      { src: "/images/mini-mat/george-v-presse.webp", alt: "Démonstration du matelas pendant l’événement presse au George V", ratio: 1500 / 2000, cartel: "Événement presse · Four Seasons George V" },
+    height: 2.4,
+    brief: "Faire connaître une marque de wellness tech premium : lancer le Mini Mat, tapis infrarouge PEMF de 30 cm, et faire venir chaque mois la presse et les créatrices de contenu.",
+    did: "Packaging du Mini Mat et dîner de lancement imaginés de A à Z. Événement presse au Four Seasons George V avec le bureau de presse Pascale Venot. Une quinzaine d’événements presse & influence : sélection des influenceuses, invitations, relances, organisation, photos et vidéos.",
+    result: "Le lancement a été repris par la presse spécialisée, et les invitées ont partagé leur venue en story.",
+    gallery: [],
+    chapters: [
+      {
+        title: "Le lancement du Mini Mat",
+        text: "Packaging, puis un dîner pensé de A à Z : P-ingo, carte cadeau « A Gift for You », menus et décoration de la salle.",
+        imgs: [
+          { src: "/images/mini-mat/packaging.webp", alt: "Packaging du Mini Mat, à plat", ratio: 2000 / 777, cartel: "Packaging du Mini Mat · Fichier de conception" },
+          { src: "/images/mini-mat/diner-charlotte.webp", alt: "La salle du dîner de lancement, bougies et table dressée", ratio: 678 / 904, cartel: "La salle du dîner de lancement" },
+          { src: "/images/mini-mat/diner-cadeaux.webp", alt: "Cartes cadeaux « A Gift for You » et grilles P-ingo sur la table d’accueil", ratio: 841 / 656, cartel: "Carte cadeau « A Gift for You » et P-ingo" },
+        ],
+      },
+      {
+        title: "La presse au Four Seasons George V",
+        text: "Organisation, invitations et coordination avec le bureau de presse Pascale Venot.",
+        imgs: [
+          { src: "/images/mini-mat/george-v-spa.webp", alt: "Le spa du George V équipé des matelas Charlotte Muller", ratio: 1125 / 2000, cartel: "Le spa du Four Seasons George V" },
+          { src: "/images/mini-mat/george-v-presse.webp", alt: "Démonstration du matelas pendant l’événement presse", ratio: 1500 / 2000, cartel: "Démonstration pendant l’événement presse" },
+        ],
+      },
+      {
+        title: "Une quinzaine d’événements presse & influence",
+        text: "Un par mois, au studio et au George V. Sélection des influenceuses, invitations, relances, et les photos : c’est moi qui étais derrière l’appareil.",
+        imgs: [
+          { src: "/images/influence/studio-groupe.webp", alt: "Invitées d’un événement influence au studio", ratio: 2000 / 1500, cartel: "Événement influence au studio" },
+          { src: "/images/influence/shooting-miroir.webp", alt: "Clémentine avec son appareil photo au studio", ratio: 1400 / 1867, cartel: "Au studio, appareil en main" },
+          { src: "/images/influence/story-1.webp", alt: "Story d’une invitée sur le matelas Charlotte Muller", ratio: 700 / 1203, cartel: "Story d’une invitée" },
+          { src: "/images/influence/story-2.webp", alt: "Story de deux invitées au studio", ratio: 700 / 961, cartel: "Story d’une invitée" },
+          { src: "/images/influence/story-6.webp", alt: "Story d’une invitée après un soin au studio", ratio: 700 / 937, cartel: "Story d’une invitée" },
+        ],
+      },
     ],
+    reel: { id: "DR9Am21CL52", cartel: "Reel réalisé pour @charlottemullermethod" },
     press: [
       { outlet: "Le Journal des Palaces", note: "Article · octobre 2025", url: "https://www.journaldespalaces.com/article-76280-innovation-la-revolution-des-spas-commence-avec-les-matelas-charlotte-muller.html" },
       { outlet: "Le Journal des Palaces", note: "Communiqué · novembre 2025", url: "https://www.journaldespalaces.com/communique-76483-charlotte-muller-lance-le-mini-mat-pemf-l-objet-bien-etre-de-30-cm-qui-magnetise-paris-et-les-spas-d-hotels-de-luxe.html" },
       { outlet: "S-Quive", note: "Article · décembre 2025", url: "https://www.s-quive.com/article/charlotte-muller-method-lexcellence-au-service-du-bien-etre-feminin" },
     ],
-  },
-  {
-    slug: "evenements-presse-influence",
-    room: "main",
-    title: "Événements presse & influence",
-    line: "Charlotte Muller · Événementiel · 2025 — 2026",
-    role: "Une quinzaine d’événements, un par mois",
-    kind: "photo",
-    art: { src: "/images/influence/studio-groupe.webp", alt: "Invitées d’un événement influence au studio Charlotte Muller", ratio: 2000 / 1500 },
-    height: 1.75,
-    brief: "Faire découvrir la marque et ses matelas aux créatrices de contenu et aux journalistes, chaque mois.",
-    did: "Sélection et qualification des influenceuses, invitations, relances, coordination avec le bureau de presse Pascale Venot. Organisation d’une quinzaine d’événements, au studio et au Four Seasons George V. Photos, vidéos et lives Instagram.",
-    result: "Les invitées ont partagé leur venue en story.",
-    gallery: [
-      { src: "/images/influence/shooting-miroir.webp", alt: "Clémentine avec son appareil photo au studio", ratio: 1400 / 1867, cartel: "Au studio, appareil en main : c’est moi qui faisais les photos" },
-      { src: "/images/influence/story-1.webp", alt: "Story d’une invitée sur le matelas Charlotte Muller", ratio: 700 / 1203, cartel: "Story d’une invitée" },
-      { src: "/images/influence/story-6.webp", alt: "Story d’une invitée après un soin au studio", ratio: 700 / 937, cartel: "Story d’une invitée" },
-    ],
-    reel: { id: "DR9Am21CL52", cartel: "Reel réalisé pour @charlottemullermethod" },
   },
   {
     slug: "dossier-entreprise",

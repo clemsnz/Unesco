@@ -76,6 +76,36 @@ export default async function Room({ params }: Params) {
         ))}
       </section>
 
+      {/* chapters: a sequence of walls, each introduced by a short wall text */}
+      {w.chapters?.map((ch, ci) => {
+        const roman = ["I", "II", "III", "IV", "V"][ci];
+        const wideImgs = ch.imgs.filter(wide);
+        const rest = ch.imgs.filter((x) => !wide(x));
+        const cols = rest.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2";
+        return (
+          <section key={ch.title} className="pt-16 md:pt-24">
+            <div className="mx-auto max-w-5xl px-6" data-fade>
+              <div className="h-px bg-[#1c1916]/15" />
+              <p className="mt-10 text-[11px] uppercase tracking-[0.24em] text-[#8a8178]">Salle {roman}</p>
+              <h2 className="mt-3 text-3xl leading-tight md:text-4xl">{ch.title}</h2>
+              {ch.text && <p className="mt-4 max-w-2xl text-lg leading-snug text-[#3a332d]">{ch.text}</p>}
+            </div>
+            {wideImgs.map((img) => (
+              <Wall key={img.src}>
+                <Hung img={img} kind="print" className="mx-auto max-w-5xl" />
+              </Wall>
+            ))}
+            {rest.length > 0 && (
+              <div className={`mx-auto grid max-w-5xl items-end gap-12 px-6 py-16 md:gap-14 md:py-24 ${cols}`}>
+                {rest.map((img, k) => (
+                  <Hung key={img.src} img={img} kind={img.ratio > 1 || img.src.includes("story") ? "print" : "photo"} className={cols === "md:grid-cols-2" && k % 2 === 1 ? "md:mb-24" : ""} />
+                ))}
+              </div>
+            )}
+          </section>
+        );
+      })}
+
       {/* works of the room: one wide work alone on its wall, others in pairs */}
       {g.filter(wide).map((img) => (
         <Wall key={img.src}>
