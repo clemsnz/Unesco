@@ -244,7 +244,7 @@ function Museum3D() {
       </div>
 
       {/* the shop: every souvenir is also listed, for quick access */}
-      <div className={`fixed inset-x-4 bottom-14 z-20 transition-all duration-700 md:inset-x-auto md:bottom-auto md:right-8 md:top-20 ${inShop ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
+      <div className={`fixed inset-x-4 bottom-14 z-20 transition-all duration-700 md:inset-x-auto md:bottom-8 md:right-8 ${inShop ? "opacity-100" : "pointer-events-none translate-y-2 opacity-0"}`}>
         <div className="bg-[#faf9f5]/92 p-4 shadow-[0_14px_40px_-22px_rgba(30,22,15,0.5)] backdrop-blur md:w-64 md:p-5">
           <p className="text-[11px] uppercase tracking-[0.22em] text-[#7a2f35]">{shop.title}</p>
           <p className="mt-1 text-[12px] text-[#6b6259]">{narrowScreen ? "Touchez" : "Cliquez sur"} un souvenir pour l’emporter.</p>
@@ -293,7 +293,7 @@ function Plan({ onClose, onRoom, onWork, onContact }: { onClose: () => void; onR
         <div className="space-y-3">
           <p className={head}>01</p>
           <button className={item} onClick={() => onRoom("entrance")}>Entrée</button>
-          <p className={`${head} pt-8`}>Cabinet d’études</p>
+          <p className={`${head} pt-8`}>Études</p>
           {works.map((w, i) =>
             w.room === "cabinet" ? (
               <button key={w.slug} className={`${item} block`} onClick={() => onWork(i)}>{w.title}</button>
