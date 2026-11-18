@@ -85,7 +85,7 @@ export default function MuseumLite() {
         <p className={`${label} text-center`}>{rooms.about}</p>
         <div data-approach className="mx-auto mt-14 w-[78%] max-w-sm border-[6px] border-[#2b2622] bg-[#fbfaf6] p-[7%] shadow-[8px_18px_40px_-12px_rgba(30,22,15,0.45)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={about.portrait.src} alt={about.portrait.alt} loading="lazy" className="block aspect-square w-full object-cover" />
+          <img src={about.portrait.src} alt={about.portrait.alt} loading="lazy" className="block w-full object-cover" style={{ aspectRatio: String(about.portrait.ratio) }} />
         </div>
         <p className="mx-auto mt-14 max-w-sm text-2xl leading-snug">« {about.quote} »</p>
         <div className="mx-auto mt-6 max-w-sm space-y-1 text-sm text-[#6b6259]">

@@ -210,7 +210,7 @@ export const journey = [
 ];
 
 export const about = {
-  portrait: { src: "/images/about/portrait-studio.webp", alt: "Portrait de Clémentine Sanchez", ratio: 1 },
+  portrait: { src: "/images/about/portrait.webp", alt: "Clémentine Sanchez en plateau à l’EFAP", ratio: 1050 / 1400 },
   quote: "Organiser le détail pour que l’ensemble paraisse simple.",
   lines: [
     "Étudiante en Master 1 à l’EFAP Paris.",

@@ -21,7 +21,7 @@ export type MuseumInput = {
   entrance: { room: string; name: string; line: string };
   rooms: RoomNames;
   journey: { years: string; title: string; org: string }[];
-  about: { portrait: { src: string }; quote: string; lines: string[] };
+  about: { portrait: { src: string; ratio: number }; quote: string; lines: string[] };
   exit: { line: string };
 };
 
@@ -446,7 +446,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   });
 
   /* Galerie 04 — about: portrait + wall text */
-  const portrait = hang({ src: input.about.portrait.src, ratio: 1, height: 1.6, kind: "photo", side: -1, z: L.aboutZ });
+  const portrait = hang({ src: input.about.portrait.src, ratio: input.about.portrait.ratio, height: 1.9, kind: "photo", side: -1, z: L.aboutZ });
   const aboutTex = keep(
     vinyl(2000, 1300, (c) => {
       c.font = `400 104px ${SANS}`;
