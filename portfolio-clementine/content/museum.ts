@@ -264,6 +264,18 @@ export const about = {
   ],
 };
 
+/** Galerie 03, mur de droite : « En coulisses » (photos accrochées façon salon). */
+export const coulisses = [
+  { src: "/images/medias/plateau-equipe.webp", ratio: 1800 / 1350 },
+  { src: "/images/mini-mat/george-v-photographe.webp", ratio: 1152 / 1536 },
+  { src: "/images/big-battle/finale-mascottes.webp", ratio: 1179 / 1358 },
+  { src: "/images/medias/live-shopping-1.webp", ratio: 1400 / 1867 },
+  { src: "/images/influence/tournage-contenus.webp", ratio: 1159 / 1170 },
+  { src: "/images/about/bureau.webp", ratio: 1600 / 1200 },
+  { src: "/images/influence/shooting-miroir.webp", ratio: 1400 / 1867 },
+  { src: "/images/medias/live-shopping-2.webp", ratio: 1400 / 1867 },
+];
+
 /** La boutique du musée : chaque souvenir ouvre un contenu. */
 export type ShopId = "cv" | "portrait" | "skills" | "linkedin" | "contact";
 export const shop: { title: string; sub: string; items: { id: ShopId; object: string; name: string; tag: string }[] } = {

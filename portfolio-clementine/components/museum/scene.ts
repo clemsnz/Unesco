@@ -14,6 +14,7 @@ const HALF_W = 8;
 const H = 5.0;
 const Z_FRONT = 10;
 const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
+const SERIF = '"Newsreader", Georgia, "Times New Roman", serif';
 
 export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; frieze?: boolean; contact?: boolean; /** a point the visitor walks through without stopping */ walk?: boolean };
 type RoomNames = { main: string; cabinet: string; journey: string; about: string; exit: string };
@@ -24,6 +25,7 @@ export type MuseumInput = {
   works: Work[];
   entrance: { room: string; name: string; line: string };
   rooms: RoomNames;
+  coulisses: { src: string; ratio: number }[];
   journey: { years: string; title: string; org: string; details: string[] }[];
   about: { portrait: { src: string; ratio: number }; quote: string; lines: string[]; skills: { title: string; text: string }[] };
   exit: { line: string };
@@ -645,7 +647,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const pools: THREE.MeshBasicMaterial[] = [];
   const groups: THREE.Group[] = [];
 
-  function hang(opts: { src: string; ratio: number; height: number; kind: "photo" | "print"; side: -1 | 1; z: number; y?: number; index?: number; cartel?: THREE.Texture }) {
+  function hang(opts: { src: string; ratio: number; height: number; kind: "photo" | "print"; side: -1 | 1; z: number; y?: number; index?: number; cartel?: THREE.Texture; lit?: boolean }) {
     const g = new THREE.Group();
     g.position.set(opts.side * (HALF_W - 0.02), opts.y ?? EYE + 0.08, opts.z);
     g.rotation.y = opts.side === -1 ? Math.PI / 2 : -Math.PI / 2;
@@ -663,8 +665,10 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     const bottom = 0.25;
     const pool = new THREE.Mesh(keep(new THREE.PlaneGeometry(Math.max(W * 1.9, 2.2), top - bottom)), poolMat);
     pool.position.set(0, (top + bottom) / 2 - gy, 0.002);
-    g.add(pool);
-    spot(opts.side, opts.z);
+    if (opts.lit !== false) {
+      g.add(pool);
+      spot(opts.side, opts.z);
+    }
     const shadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(W * 1.45, Hh * 1.45)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.55, depthWrite: false })));
     shadow.position.set(0.04, -0.09, 0.004);
     g.add(shadow);
@@ -749,6 +753,40 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   scene.add(frieze);
   for (let k = 0; k < n; k += 2) spot(-1, L.fz0 - (k + 0.5) * ENTRY_W);
 
+  /* Galerie 03 — right wall: "En coulisses", a salon-style hang of behind-the-scenes photos */
+  const cols = Math.ceil(input.coulisses.length / 2);
+  const colStep = 1.75;
+  // hung towards the end of the room, so the visitor just turns round after the timeline
+  const coulZ = L.fz1 + (cols * colStep) / 2 + 0.8;
+  input.coulisses.forEach((ph, k) => {
+    const col = Math.floor(k / 2);
+    const row = k % 2;
+    const z = coulZ + ((cols - 1) / 2 - col) * colStep;
+    const h = ph.ratio < 1 ? 0.82 : 0.64;
+    hang({ src: ph.src, ratio: ph.ratio, height: h, kind: "photo", side: 1, z, y: row === 0 ? 2.6 : 1.3, lit: false });
+  });
+  for (let col = 0; col < cols; col += 1) spot(1, coulZ + ((cols - 1) / 2 - col) * colStep);
+  const coulWash = new THREE.Mesh(keep(new THREE.PlaneGeometry(cols * colStep + 1.5, H - 0.4)), keep(new THREE.MeshBasicMaterial({ map: keep(gradientTex([[0, "rgba(255,248,235,0.0)"], [0.2, "rgba(255,248,235,0.22)"], [1, "rgba(255,248,235,0)"]])), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+  coulWash.rotation.y = -Math.PI / 2;
+  coulWash.position.set(HALF_W - 0.005, (H + 0.4) / 2, coulZ);
+  scene.add(coulWash);
+  const coulTitle = keep(
+    vinyl(1600, 420, (c) => {
+      c.font = `italic 400 130px ${SERIF}`;
+      c.fillText("En coulisses", 20, 170);
+      c.fillStyle = "#6b6259";
+      c.font = `400 46px ${SANS}`;
+      c.fillText("Studio, palace, plateau, finale : là où ça se passe.", 20, 290);
+    }),
+  );
+  const coulTitleMat = basic(coulTitle);
+  coulTitleMat.depthWrite = false;
+  const coulTitleMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.9, 0.76)), coulTitleMat);
+  coulTitleMesh.renderOrder = 2;
+  coulTitleMesh.rotation.y = -Math.PI / 2;
+  coulTitleMesh.position.set(HALF_W - 0.012, 3.75, coulZ);
+  scene.add(coulTitleMesh);
+
   /* ───────── the museum shop ───────── */
   // coloured end wall with the closing line
   const shopWall = keep(new THREE.MeshStandardMaterial({ color: 0x7a2f35, roughness: 0.9 }));
@@ -757,20 +795,20 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   scene.add(endPaint);
   const exitTex = keep(
     canvasTex(3600, 900, (c) => {
-      c.textAlign = "center";
       c.fillStyle = "#e9d9cf";
-      c.font = `500 64px ${SANS}`;
+      c.font = `500 60px ${SANS}`;
       spaced(c, input.shop.title.toUpperCase(), 1800, 170, 22, "center");
       c.textAlign = "center";
       c.fillStyle = "#f6ece4";
-      c.font = `400 200px ${SANS}`;
-      c.fillText(input.exit.line, 1800, 520);
+      c.font = `italic 400 250px ${SERIF}`;
+      c.fillText(input.exit.line, 1800, 560);
       c.textAlign = "left";
     }),
   );
   const exitMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(8.6, 8.6 * (900 / 3600))), basic(exitTex));
-  exitMesh.position.set(0, 2.35, Z_BACK + 0.012);
+  exitMesh.position.set(0, 3.3, Z_BACK + 0.012);
   scene.add(exitMesh);
+  const paper0 = (w: number, h: number, draw: (c: CanvasRenderingContext2D) => void) => keep(canvasTex(w, h, draw));
   // a low cash desk by the back wall, and a postcard spinner, for atmosphere
   const deskMat = keep(new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: 0.8 }));
   const deskTop = keep(new THREE.MeshStandardMaterial({ color: 0xc8b192, roughness: 0.5 }));
@@ -796,8 +834,160 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   caisse.position.set(HALF_W - 2.2, 0.68, Z_BACK + 1.91);
   scene.add(caisse);
 
+  // ── merchandise, like a real museum shop ──
+  const merchColors = [0x7a2f35, 0xe7dccb, 0x1c1916, 0xc9a66b, 0x3a4a40, 0xf4efe6, 0xb5b0a8, 0x8c5a3c];
+  const mat = (c: number, r = 0.8) => keep(new THREE.MeshStandardMaterial({ color: c, roughness: r }));
+  const merchMats = merchColors.map((c) => mat(c));
+  const rnd = (() => {
+    let x = 7;
+    return () => ((x = (x * 9301 + 49297) % 233280) / 233280);
+  })();
+  /** a tall white shelving unit against a side wall, filled with books, boxes and mugs */
+  const bookcase = (sd: -1 | 1, z: number, w: number) => {
+    const g = new THREE.Group();
+    g.position.set(sd * (HALF_W - 0.2), 0, z);
+    g.rotation.y = sd === -1 ? Math.PI / 2 : -Math.PI / 2;
+    const unit = mat(0xf6f3ee, 0.7);
+    for (const x of [-w / 2, w / 2]) {
+      const side = new THREE.Mesh(keep(new THREE.BoxGeometry(0.03, 2.3, 0.36)), unit);
+      side.position.set(x, 1.15, 0);
+      g.add(side);
+    }
+    for (let k = 0; k < 5; k++) {
+      const y = 0.08 + k * 0.52;
+      const shelf = new THREE.Mesh(keep(new THREE.BoxGeometry(w, 0.03, 0.36)), unit);
+      shelf.position.set(0, y, 0);
+      g.add(shelf);
+      if (k === 4) break;
+      let x = -w / 2 + 0.04;
+      const kind = (k + Math.round(z)) % 3;
+      while (x < w / 2 - 0.12) {
+        if (kind === 2) {
+          // mugs
+          const mug = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.045, 0.045, 0.1, 16)), merchMats[Math.floor(rnd() * 4)]);
+          mug.position.set(x + 0.05, y + 0.065, 0.02);
+          g.add(mug);
+          x += 0.16;
+        } else {
+          // books, spine out
+          const bw = 0.03 + rnd() * 0.05;
+          const bh = 0.24 + rnd() * 0.16;
+          const book = new THREE.Mesh(keep(new THREE.BoxGeometry(bw, bh, 0.24)), merchMats[Math.floor(rnd() * merchMats.length)]);
+          book.position.set(x + bw / 2, y + 0.015 + bh / 2, 0);
+          g.add(book);
+          x += bw + 0.006;
+          if (rnd() < 0.08) x += 0.12;
+        }
+      }
+    }
+    const sh = new THREE.Mesh(keep(new THREE.PlaneGeometry(w * 1.25, 0.7)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.45, depthWrite: false })));
+    sh.rotation.x = -Math.PI / 2;
+    sh.position.set(0, 0.006, 0.1);
+    g.add(sh);
+    scene.add(g);
+  };
+  bookcase(-1, L.wallShop - 0.95, 1.2);
+  bookcase(1, L.wallShop - 0.95, 1.2);
+  bookcase(-1, Z_BACK + 1.6, 2.2);
+
+  // central display table with piles of books, folded totes and mugs
+  const tblZ = L.wallShop - 3.3;
+  const tbl = new THREE.Mesh(keep(new THREE.BoxGeometry(2.4, 0.72, 1.1)), mat(0xf2efe9, 0.85));
+  tbl.position.set(0, 0.36, tblZ);
+  scene.add(tbl);
+  const tblTop = new THREE.Mesh(keep(new THREE.BoxGeometry(2.5, 0.04, 1.2)), mat(0xc8b192, 0.5));
+  tblTop.position.set(0, 0.74, tblZ);
+  scene.add(tblTop);
+  const tblSh = new THREE.Mesh(keep(new THREE.PlaneGeometry(3.2, 1.8)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.5, depthWrite: false })));
+  tblSh.rotation.x = -Math.PI / 2;
+  tblSh.position.set(0, 0.008, tblZ);
+  scene.add(tblSh);
+  for (const [px, pz, nb] of [
+    [-0.8, -0.25, 5],
+    [-0.25, 0.2, 3],
+    [0.35, -0.2, 6],
+    [0.85, 0.22, 4],
+  ] as const) {
+    let y = 0.76;
+    for (let k = 0; k < nb; k++) {
+      const t = 0.03 + rnd() * 0.03;
+      const book = new THREE.Mesh(keep(new THREE.BoxGeometry(0.28 + rnd() * 0.06, t, 0.36 + rnd() * 0.05)), merchMats[Math.floor(rnd() * merchMats.length)]);
+      book.position.set(px + (rnd() - 0.5) * 0.02, y + t / 2, tblZ + pz);
+      book.rotation.y = (rnd() - 0.5) * 0.12;
+      scene.add(book);
+      y += t;
+    }
+  }
+  for (const [px, pz, c] of [
+    [-0.45, -0.35, 0],
+    [-0.33, -0.38, 2],
+    [0.62, 0.35, 1],
+  ] as const) {
+    const mug = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.05, 0.05, 0.11, 16)), merchMats[c]);
+    mug.position.set(px, 0.815, tblZ + pz);
+    scene.add(mug);
+  }
+
+  // tote bags on a rail along the back wall
+  const toteTex = (col: string, ink: string) =>
+    paper0(300, 380, (c) => {
+      c.strokeStyle = col;
+      c.lineWidth = 12;
+      c.beginPath();
+      c.arc(150, 110, 70, Math.PI, 0);
+      c.stroke();
+      c.fillStyle = col;
+      c.fillRect(30, 105, 240, 270);
+      c.fillStyle = ink;
+      c.font = `italic 400 64px ${SERIF}`;
+      c.textAlign = "center";
+      c.fillText("CS", 150, 260);
+      c.font = `500 14px ${SANS}`;
+      c.fillText("LE MUSÉE", 150, 300);
+      c.textAlign = "left";
+    });
+  const rail = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.012, 0.012, 2.6, 8)), keep(new THREE.MeshStandardMaterial({ color: 0xb08d57, roughness: 0.35, metalness: 0.8 })));
+  rail.rotation.z = Math.PI / 2;
+  rail.position.set(-HALF_W + 4.4, 1.85, Z_BACK + 0.12);
+  scene.add(rail);
+  [["#e7dccb", "#7a2f35"], ["#1c1916", "#e7dccb"], ["#e7dccb", "#1c1916"], ["#7a2f35", "#f4efe6"]].forEach(([col, ink], k) => {
+    const t = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.5, 0.63)), keep(new THREE.MeshBasicMaterial({ map: toteTex(col, ink), transparent: true })));
+    t.position.set(-HALF_W + 3.4 + k * 0.62, 1.85 - 0.36, Z_BACK + 0.14 + k * 0.004);
+    scene.add(t);
+  });
+
+  // postcard spinner showing the works
+  const spinner = new THREE.Group();
+  spinner.position.set(-3.2, 0, L.wallShop - 2.2);
+  const pole = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.02, 0.02, 1.7, 8)), mat(0x2b2622, 0.5));
+  pole.position.y = 0.85;
+  spinner.add(pole);
+  const foot = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.28, 0.3, 0.03, 24)), mat(0x2b2622, 0.5));
+  foot.position.y = 0.015;
+  spinner.add(foot);
+  const cards = works.slice(0, 8);
+  for (let tier = 0; tier < 3; tier++) {
+    for (let k = 0; k < 4; k++) {
+      const w = cards[(tier * 4 + k) % cards.length];
+      const tx = keep(loader.load(w.art.src));
+      tx.colorSpace = THREE.SRGBColorSpace;
+      const ch = 0.2;
+      const cw = Math.min(ch * w.art.ratio, 0.3);
+      const card = new THREE.Mesh(keep(new THREE.PlaneGeometry(cw, cw / w.art.ratio)), keep(new THREE.MeshBasicMaterial({ map: tx, toneMapped: false, side: THREE.DoubleSide })));
+      const a = (k / 4) * Math.PI * 2 + tier * 0.4;
+      card.position.set(Math.sin(a) * 0.17, 0.75 + tier * 0.32, Math.cos(a) * 0.17);
+      card.rotation.y = a;
+      spinner.add(card);
+    }
+  }
+  const spSh = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.9, 0.9)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.5, depthWrite: false })));
+  spSh.rotation.x = -Math.PI / 2;
+  spSh.position.y = 0.006;
+  spinner.add(spSh);
+  scene.add(spinner);
+
   // the souvenirs
-  const paper = (w: number, h: number, draw: (c: CanvasRenderingContext2D) => void) => keep(canvasTex(w, h, draw));
+  const paper = paper0;
   const souvenirTex: Record<string, () => THREE.Texture> = {
     cv: () =>
       paper(600, 840, (c) => {
@@ -1005,6 +1195,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       stations.push({ pos: v3(-HALF_W + 4.4, EYE, z), look: v3(-HALF_W, 1.7, z), room: "journey", frieze: true });
     }
   }
+  stations.push({ pos: v3(HALF_W - (narrow ? 6.6 : 5.6), EYE, coulZ), look: v3(HALF_W, 1.9, coulZ), room: "journey" });
   walkThrough(0, L.wallShop + 1.2, "about");
   // the shop: the whole room, then each wall of souvenirs, then the closing line
   stations.push({ pos: v3(0, EYE, L.wallShop - 0.8), look: v3(0, 2.0, Z_BACK), room: "about" });
