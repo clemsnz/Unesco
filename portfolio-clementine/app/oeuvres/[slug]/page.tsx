@@ -135,6 +135,17 @@ export default async function Room({ params }: Params) {
         </section>
       )}
 
+      {w.video && (
+        <Wall>
+          <figure className="mx-auto max-w-4xl" data-fade>
+            <div className="border-[6px] border-[#141312] bg-black shadow-[10px_22px_48px_-16px_rgba(30,22,15,0.45)]">
+              <video src={w.video.src} poster={w.video.poster} controls playsInline preload="metadata" className="block w-full" style={{ aspectRatio: String(w.video.ratio) }} />
+            </div>
+            <figcaption className="mt-5 text-[12px] text-[#6b6259]">{w.video.cartel}</figcaption>
+          </figure>
+        </Wall>
+      )}
+
       {/* chapters: a sequence of walls, each introduced by a short wall text */}
       {w.chapters?.map((ch, ci) => {
         const roman = ["I", "II", "III", "IV", "V"][ci];

@@ -40,6 +40,8 @@ export type Work = {
   chapters?: { title: string; text?: string; imgs: Img[] }[];
   /** Reel Instagram (identifiant après /reel/) */
   reel?: { id: string; cartel: string };
+  /** Vidéo hébergée sur le site (avec le son) */
+  video?: { src: string; poster: string; ratio: number; cartel: string };
   press?: { outlet: string; note: string; url: string }[];
 };
 
@@ -77,6 +79,7 @@ export const works: Work[] = [
         text: "Packaging, puis un dîner pensé de A à Z : P-ingo, carte cadeau « A Gift for You », menus et décoration de la salle.",
         imgs: [
           { src: "/images/mini-mat/packaging.webp", alt: "Packaging du Mini Mat, à plat", ratio: 2000 / 777, cartel: "Packaging du Mini Mat · Fichier de conception" },
+          { src: "/images/mini-mat/diner-tablee.webp", alt: "Les invitées à table pendant le dîner de lancement", ratio: 1153 / 1536, cartel: "Les invitées à table, dîner de lancement" },
           { src: "/images/mini-mat/diner-charlotte.webp", alt: "La salle du dîner de lancement, bougies et table dressée", ratio: 678 / 904, cartel: "La salle du dîner de lancement" },
           { src: "/images/mini-mat/diner-cadeaux.webp", alt: "Cartes cadeaux « A Gift for You » et grilles P-ingo sur la table d’accueil", ratio: 841 / 656, cartel: "Carte cadeau « A Gift for You » et P-ingo" },
         ],
@@ -86,6 +89,7 @@ export const works: Work[] = [
         text: "Organisation, invitations et coordination avec le bureau de presse Pascale Venot.",
         imgs: [
           { src: "/images/mini-mat/george-v-spa.webp", alt: "Le spa du George V équipé des matelas Charlotte Muller", ratio: 1125 / 2000, cartel: "Le spa du Four Seasons George V" },
+          { src: "/images/mini-mat/george-v-photographe.webp", alt: "Clémentine photographie l’événement presse au bord du bassin du George V", ratio: 1152 / 1536, cartel: "Appareil en main, au bord du bassin" },
           { src: "/images/mini-mat/george-v-presse.webp", alt: "Démonstration du matelas pendant l’événement presse", ratio: 1500 / 2000, cartel: "Démonstration pendant l’événement presse" },
         ],
       },
@@ -95,6 +99,7 @@ export const works: Work[] = [
         imgs: [
           { src: "/images/influence/studio-groupe.webp", alt: "Invitées d’un événement influence au studio", ratio: 2000 / 1500, cartel: "Événement influence au studio" },
           { src: "/images/influence/shooting-miroir.webp", alt: "Clémentine avec son appareil photo au studio", ratio: 1400 / 1867, cartel: "Au studio, appareil en main" },
+          { src: "/images/influence/tournage-contenus.webp", alt: "Tournage de contenus avec un anneau lumineux au studio", ratio: 1159 / 1170, cartel: "Tournage de contenus pour les réseaux" },
           { src: "/images/influence/story-1.webp", alt: "Story d’une invitée sur le matelas Charlotte Muller", ratio: 700 / 1203, cartel: "Story d’une invitée" },
           { src: "/images/influence/story-2.webp", alt: "Story de deux invitées au studio", ratio: 700 / 961, cartel: "Story d’une invitée" },
           { src: "/images/influence/story-6.webp", alt: "Story d’une invitée après un soin au studio", ratio: 700 / 937, cartel: "Story d’une invitée" },
@@ -130,7 +135,11 @@ export const works: Work[] = [
     brief: "Deux semaines pour imaginer et défendre une stratégie de communication 360° pour le Parc Astérix.",
     did: "Toute la stratégie construite à six : analyse, insight, concept, activations, plan média, budget, puis soutenance devant le jury.",
     result: "1ʳᵉ sur 63 équipes à Paris. 3ᵉ à la finale nationale, au Parc Astérix.",
-    gallery: [{ src: "/images/big-battle/equipe-parc-asterix.webp", alt: "L’équipe Prisme Agency au Parc Astérix", ratio: 2000 / 1500, cartel: "L’équipe, le jour de la finale nationale" }],
+    gallery: [
+      { src: "/images/big-battle/soutenance.webp", alt: "La soutenance devant le jury", ratio: 748 / 213, cartel: "La soutenance devant le jury" },
+      { src: "/images/big-battle/finale-mascottes.webp", alt: "L’équipe avec Astérix et Obélix à la finale nationale", ratio: 1179 / 1358, cartel: "Avec Astérix et Obélix, à la finale nationale" },
+      { src: "/images/big-battle/equipe-parc-asterix.webp", alt: "L’équipe Prisme Agency au Parc Astérix", ratio: 2000 / 1500, cartel: "L’équipe, au Parc Astérix" },
+    ],
   },
   {
     slug: "festival-ravensare",
@@ -160,6 +169,7 @@ export const works: Work[] = [
   },
   {
     slug: "face-camera",
+    video: { src: "/video/chronique-marathon.mp4", poster: "/video/chronique-marathon-poster.jpg", ratio: 16 / 9, cartel: "Ma chronique sur le Marathon de Paris 2026, en plateau à l’EFAP" },
     room: "main",
     title: "Face caméra",
     line: "EFAP · Plateau TV · 2026",
