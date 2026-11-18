@@ -81,7 +81,7 @@ export default async function Room({ params }: Params) {
         const roman = ["I", "II", "III", "IV", "V"][ci];
         const wideImgs = ch.imgs.filter(wide);
         const rest = ch.imgs.filter((x) => !wide(x));
-        const cols = rest.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2";
+        const cols = rest.length === 3 || rest.length >= 5 ? "md:grid-cols-3" : "md:grid-cols-2";
         return (
           <section key={ch.title} className="pt-16 md:pt-24">
             <div className="mx-auto max-w-5xl px-6" data-fade>
