@@ -46,15 +46,15 @@ export type Work = {
 export const entrance = {
   room: "Galerie 01 — Entrée",
   name: "CLÉMENTINE SANCHEZ",
-  line: "Marketing & communication · Beauté, bien-être, luxe",
+  line: "Marketing & communication",
 };
 
 export const rooms = {
   main: "Galerie 02 — Œuvres choisies",
   cabinet: "Cabinet d’études",
   journey: "Galerie 03 — Parcours",
-  about: "Galerie 04 — À propos",
-  exit: "Sortie",
+  about: "Galerie 03 — Portrait",
+  exit: "Galerie 03 — Contact",
 };
 
 export const works: Work[] = [

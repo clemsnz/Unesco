@@ -15,7 +15,7 @@ const H = 4.6;
 const Z_FRONT = 10;
 const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
 
-export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; j?: number; contact?: boolean };
+export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; frieze?: boolean; contact?: boolean };
 type RoomNames = { main: string; cabinet: string; journey: string; about: string; exit: string };
 
 export type MuseumInput = {
@@ -38,6 +38,8 @@ export type MuseumApi = {
   focus: (i: number, onDone: () => void) => void;
   /** screen rectangle (px) of the contact form area on the wall, or null if off-screen */
   contactRect: () => { x: number; y: number; w: number; h: number } | null;
+  /** index of the timeline entry under the pointer, or null */
+  hitFrieze: (x: number, y: number) => number | null;
   /** true once the camera has settled on its station */
   settled: () => boolean;
   resize: () => void;
@@ -230,6 +232,7 @@ function vinyl(w: number, h: number, draw: (c: CanvasRenderingContext2D) => void
 
 const MAIN_START = -15;
 const MAIN_STEP = 9;
+const ENTRY_W = 2.1; // width of one timeline entry on the wall (m)
 
 function layout(input: MuseumInput) {
   const main = input.works.map((w, i) => ({ w, i })).filter((x) => x.w.room === "main");
@@ -246,11 +249,12 @@ function layout(input: MuseumInput) {
     side[i] = k % 2 === 0 ? -1 : 1;
   });
   const wallJourney = wallCab - 6 - (cab.length - 1) * 6 - 6;
-  const journeyZ = input.journey.map((_, k) => wallJourney - 6 - k * 5.5);
-  const wallAbout = journeyZ[journeyZ.length - 1] - 5.5;
-  const aboutZ = wallAbout - 7;
-  const back = aboutZ - 16;
-  return { z, side, wallCab, wallJourney, journeyZ, wallAbout, aboutZ, back };
+  // Galerie 03: timeline on the left wall, portrait & skills on the right, contact on the end wall
+  const fz0 = wallJourney - 2;
+  const fz1 = fz0 - input.journey.length * ENTRY_W;
+  const portraitZ = fz0 - 9.2;
+  const back = fz1 - 3.5;
+  return { z, side, wallCab, wallJourney, fz0, fz1, portraitZ, back };
 }
 
 /* ───────── scene ───────── */
@@ -470,10 +474,8 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   scene.add(g2m);
 
   partition(L.wallCab, input.rooms.cabinet, "Études & projets personnels");
-  const [jName, jSub] = input.rooms.journey.split(" — ");
-  partition(L.wallJourney, jName, jSub);
-  const [aName, aSub] = input.rooms.about.split(" — ");
-  partition(L.wallAbout, aName, aSub);
+  const [jName] = input.rooms.journey.split(" — ");
+  partition(L.wallJourney, jName, "Parcours, portrait & contact");
 
   /* works */
   const loader = new THREE.TextureLoader();
@@ -545,79 +547,79 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     groups[i] = g;
   });
 
-  /* Galerie 03 — journey panels */
-  input.journey.forEach((j, k) => {
-    const s = k % 2 === 0 ? -1 : 1;
-    const tex = keep(
-      canvasTex(1000, 1400, (c) => {
-        c.fillStyle = "#faf9f5";
-        c.fillRect(0, 0, 1000, 1400);
+  /* Galerie 03 — left wall: the timeline */
+  const n = input.journey.length;
+  const PX = 400; // px per metre
+  const colW = ENTRY_W * PX;
+  const friezeH = 2.5;
+  const friezeTex = keep(
+    vinyl(Math.round(n * colW), Math.round(friezeH * PX), (c) => {
+      c.fillStyle = "rgba(28,25,22,0.35)";
+      c.fillRect(0, 248, n * colW, 2);
+      input.journey.forEach((j, k) => {
+        const x = k * colW + 36;
+        const w = colW - 90;
         c.fillStyle = "#8a8178";
-        c.font = `500 32px ${SANS}`;
-        spaced(c, String(k + 1).padStart(2, "0"), 80, 120, 6);
-        c.fillStyle = "#1c1916";
-        c.font = `400 92px ${SANS}`;
-        c.fillText(j.years, 80, 300);
-        c.fillRect(80, 360, 80, 4);
-        c.font = `500 50px ${SANS}`;
-        let y = 470;
-        y += wrap(c, j.title, 80, y, 840, 62) * 62;
-        c.fillStyle = "#6b6259";
-        c.font = `400 36px ${SANS}`;
-        y += wrap(c, j.org, 80, y + 6, 840, 48) * 48 + 60;
-        c.fillStyle = "#3a332d";
-        c.font = `400 33px ${SANS}`;
-        j.details.forEach((d) => {
-          c.fillText("—", 80, y);
-          y += wrap(c, d, 130, y, 790, 44) * 44 + 16;
-        });
-      }),
-    );
-    const g = new THREE.Group();
-    g.position.set(s * (HALF_W - 0.06), EYE + 0.05, L.journeyZ[k]);
-    g.rotation.y = s === -1 ? Math.PI / 2 : -Math.PI / 2;
-    const panel = new THREE.Mesh(keep(new THREE.BoxGeometry(1.6, 2.24, 0.06)), [wallMat, wallMat, wallMat, wallMat, basic(tex, false), wallMat]);
-    g.add(panel);
-    const shadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.35, 3.25)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.35, depthWrite: false })));
-    shadow.position.set(0.04, -0.08, -0.025);
-    g.add(shadow);
-    scene.add(g);
-  });
-
-  /* Galerie 04 — about: portrait + wall text */
-  const portrait = hang({ src: input.about.portrait.src, ratio: input.about.portrait.ratio, height: 1.9, kind: "photo", side: -1, z: L.aboutZ });
-  const aboutTex = keep(
-    vinyl(2000, 1300, (c) => {
-      c.font = `400 104px ${SANS}`;
-      wrap(c, `« ${input.about.quote} »`, 0, 200, 1900, 130);
-      c.fillStyle = "#6b6259";
-      c.font = `400 56px ${SANS}`;
-      input.about.lines.forEach((l, i) => c.fillText(l, 0, 760 + i * 86));
-    }),
-  );
-  const aboutText = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.6, 1.69)), basic(aboutTex));
-  aboutText.rotation.y = Math.PI / 2;
-  aboutText.position.set(-HALF_W + 0.012, EYE + 0.1, L.aboutZ - portrait.W / 2 - 1.75);
-  scene.add(aboutText);
-
-  const skillsTex = keep(
-    vinyl(2000, 1300, (c) => {
-      let y = 120;
-      input.about.skills.forEach((k) => {
-        c.fillStyle = "#8a8178";
-        c.font = `500 44px ${SANS}`;
-        spaced(c, k.title.toUpperCase(), 0, y, 10);
+        c.font = `500 24px ${SANS}`;
+        spaced(c, String(k + 1).padStart(2, "0"), x, 110, 5);
         c.fillStyle = "#1c1916";
         c.font = `400 58px ${SANS}`;
-        y += 90;
-        y += wrap(c, k.text, 0, y, 1950, 76) * 76 + 90;
+        c.fillText(j.years, x, 200);
+        c.beginPath();
+        c.arc(x + 7, 249, 8, 0, Math.PI * 2);
+        c.fill();
+        c.font = `500 36px ${SANS}`;
+        let y = 330;
+        y += wrap(c, j.title, x, y, w, 44) * 44;
+        c.fillStyle = "#6b6259";
+        c.font = `400 26px ${SANS}`;
+        y += wrap(c, j.org, x, y + 4, w, 34) * 34 + 28;
+        c.fillStyle = "#3a332d";
+        c.font = `400 23px ${SANS}`;
+        j.details.forEach((d) => {
+          c.fillText("—", x, y);
+          y += wrap(c, d, x + 34, y, w - 34, 31) * 31 + 8;
+        });
       });
     }),
   );
-  const skillsMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(3.0, 1.95)), basic(skillsTex));
-  skillsMesh.rotation.y = -Math.PI / 2;
-  skillsMesh.position.set(HALF_W - 0.012, EYE + 0.1, L.aboutZ - 1.2);
-  scene.add(skillsMesh);
+  const frieze = new THREE.Mesh(keep(new THREE.PlaneGeometry(n * ENTRY_W, friezeH)), basic(friezeTex));
+  frieze.rotation.y = Math.PI / 2;
+  frieze.position.set(-HALF_W + 0.012, 1.72, (L.fz0 + L.fz1) / 2);
+  scene.add(frieze);
+  for (let k = 0; k < n; k += 2) spot(-1, L.fz0 - (k + 0.5) * ENTRY_W);
+
+  /* Galerie 03 — right wall: portrait, phrase and skills */
+  const portrait = hang({ src: input.about.portrait.src, ratio: input.about.portrait.ratio, height: 1.9, kind: "photo", side: 1, z: L.portraitZ });
+  const aboutTex = keep(
+    vinyl(2200, 1500, (c) => {
+      c.font = `400 92px ${SANS}`;
+      let y = 110;
+      y += wrap(c, `« ${input.about.quote} »`, 0, y, 2150, 112) * 112 + 10;
+      c.fillStyle = "#6b6259";
+      c.font = `400 50px ${SANS}`;
+      input.about.lines.forEach((l) => {
+        c.fillText(l, 0, y);
+        y += 66;
+      });
+      y += 70;
+      input.about.skills.forEach((k) => {
+        c.fillStyle = "#8a8178";
+        c.font = `500 36px ${SANS}`;
+        spaced(c, k.title.toUpperCase(), 0, y, 8);
+        c.fillStyle = "#1c1916";
+        c.font = `400 46px ${SANS}`;
+        y += 66;
+        y += wrap(c, k.text, 0, y, 2150, 60) * 60 + 50;
+      });
+    }),
+  );
+  const ABW = 3.4;
+  const aboutZText = L.portraitZ + portrait.W / 2 + 0.6 + ABW / 2;
+  const aboutText = new THREE.Mesh(keep(new THREE.PlaneGeometry(ABW, ABW * (1500 / 2200))), basic(aboutTex));
+  aboutText.rotation.y = -Math.PI / 2;
+  aboutText.position.set(HALF_W - 0.012, EYE + 0.05, aboutZText);
+  scene.add(aboutText);
 
   /* benches in the main gallery */
   const oak = keep(new THREE.MeshStandardMaterial({ color: 0xc2a985, roughness: 0.6 }));
@@ -642,54 +644,39 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     scene.add(b);
   });
 
-  /* Galerie 04 — contact wall (the HTML form is laid over it) */
-  const contactZ = L.aboutZ - 6.8;
-  const contactTex = keep(
-    vinyl(2400, 1650, (c) => {
-      c.font = `400 120px ${SANS}`;
-      c.fillText("Écrivez-moi", 0, 130);
-      c.fillStyle = "#6b6259";
-      c.font = `400 54px ${SANS}`;
-      c.fillText("Votre message arrive directement dans ma boîte mail.", 0, 230);
+  /* Galerie 03 — end wall: closing line and the contact form (HTML laid over the light panel) */
+  const exitTex = keep(
+    vinyl(3600, 500, (c) => {
+      c.font = `400 200px ${SANS}`;
+      c.textAlign = "center";
+      c.fillText(input.exit.line, 1800, 300);
+      c.textAlign = "left";
+    }),
+  );
+  const exitMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(8.4, 8.4 * (500 / 3600))), basic(exitTex));
+  exitMesh.position.set(0, 3.55, Z_BACK + 0.01);
+  scene.add(exitMesh);
+  const FW = 3.9;
+  const FH = 2.35;
+  const formTex = keep(
+    canvasTex(1560, 940, (c) => {
+      c.fillStyle = "rgba(250,249,245,0.9)";
+      c.fillRect(0, 0, 1560, 940);
       c.strokeStyle = "rgba(28,25,22,0.18)";
       c.lineWidth = 3;
-      c.strokeRect(2, 330, 2396, 1316);
-      c.fillStyle = "rgba(250,249,245,0.85)";
-      c.fillRect(4, 332, 2392, 1312);
+      c.strokeRect(1.5, 1.5, 1557, 937);
     }),
   );
-  const CW = 3.2;
-  const CH = CW * (1650 / 2400);
-  const contactMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(CW, CH)), basic(contactTex));
-  contactMesh.rotation.y = -Math.PI / 2;
-  contactMesh.position.set(HALF_W - 0.012, EYE + 0.05, contactZ);
-  scene.add(contactMesh);
-  // form area corners in world space (the light rectangle on the texture)
-  const formTop = EYE + 0.05 + CH / 2 - CH * (332 / 1650);
-  const formBottom = EYE + 0.05 - CH / 2;
+  const formMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(FW, FH)), keep(new THREE.MeshBasicMaterial({ map: formTex, transparent: true, toneMapped: false })));
+  const formY = 1.62;
+  formMesh.position.set(0, formY, Z_BACK + 0.012);
+  scene.add(formMesh);
   const formCorners = [
-    new THREE.Vector3(HALF_W - 0.012, formTop, contactZ + CW / 2),
-    new THREE.Vector3(HALF_W - 0.012, formTop, contactZ - CW / 2),
-    new THREE.Vector3(HALF_W - 0.012, formBottom, contactZ + CW / 2),
-    new THREE.Vector3(HALF_W - 0.012, formBottom, contactZ - CW / 2),
+    new THREE.Vector3(-FW / 2, formY + FH / 2, Z_BACK + 0.012),
+    new THREE.Vector3(FW / 2, formY + FH / 2, Z_BACK + 0.012),
+    new THREE.Vector3(-FW / 2, formY - FH / 2, Z_BACK + 0.012),
+    new THREE.Vector3(FW / 2, formY - FH / 2, Z_BACK + 0.012),
   ];
-  spot(1, contactZ);
-
-  /* Sortie — end wall */
-  const exitTex = keep(
-    vinyl(3600, 900, (c) => {
-      c.font = `400 210px ${SANS}`;
-      c.textAlign = "center";
-      c.fillText(input.exit.line, 1800, 420);
-      c.textAlign = "left";
-      c.fillStyle = "#6b6259";
-      c.font = `500 64px ${SANS}`;
-      spaced(c, input.rooms.exit.toUpperCase(), 1800, 640, 20, "center");
-    }),
-  );
-  const exitMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(8.4, 2.1)), basic(exitTex));
-  exitMesh.position.set(0, 2.25, Z_BACK + 0.01);
-  scene.add(exitMesh);
 
   /* ───────── the walk ───────── */
   const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
@@ -711,17 +698,23 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     stations.push({ ...facing(L.side[i], L.z[i], d, narrow ? 0.25 : 0.45), room: w.room, art: i });
   });
   stations.push({ pos: v3(0, EYE, L.wallJourney + 6.5), look: v3(-2.5, 2.1, L.wallJourney), room: "cabinet" });
-  L.journeyZ.forEach((z, k) => stations.push({ ...facing(k % 2 === 0 ? -1 : 1, z, narrow ? 3.2 : 3.9, 0), room: "journey", j: k }));
-  stations.push({ pos: v3(0, EYE, L.wallAbout + 6.5), look: v3(-2.5, 2.1, L.wallAbout), room: "journey" });
   if (narrow) {
-    stations.push({ pos: v3(-HALF_W + 4.4, EYE, L.aboutZ), look: v3(-HALF_W, EYE + 0.05, L.aboutZ), room: "about" });
-    stations.push({ pos: v3(-HALF_W + 4.7, EYE, L.aboutZ - portrait.W / 2 - 1.75), look: v3(-HALF_W, EYE + 0.05, L.aboutZ - portrait.W / 2 - 1.75), room: "about" });
+    input.journey.forEach((_, k) => {
+      const z = L.fz0 - (k + 0.5) * ENTRY_W;
+      stations.push({ pos: v3(-HALF_W + 3.3, EYE, z), look: v3(-HALF_W, 1.62, z), room: "journey", frieze: true });
+    });
+    stations.push({ pos: v3(HALF_W - 3.7, EYE, L.portraitZ), look: v3(HALF_W, EYE + 0.05, L.portraitZ), room: "about" });
+    stations.push({ pos: v3(HALF_W - 4.2, EYE, aboutZText), look: v3(HALF_W, EYE + 0.05, aboutZText), room: "about" });
   } else {
-    stations.push({ pos: v3(-HALF_W + 5.2, EYE, L.aboutZ - 1.4), look: v3(-HALF_W, EYE + 0.05, L.aboutZ - 1.5), room: "about" });
+    const m = Math.ceil(n / 3);
+    for (let i = 0; i < m; i++) {
+      const z = L.fz0 - ((i + 0.5) / m) * n * ENTRY_W;
+      stations.push({ pos: v3(-HALF_W + 4.4, EYE, z), look: v3(-HALF_W, 1.7, z), room: "journey", frieze: true });
+    }
+    const zc = (L.portraitZ - portrait.W / 2 + aboutZText + ABW / 2) / 2;
+    stations.push({ pos: v3(HALF_W - 4.6, EYE, zc), look: v3(HALF_W, EYE + 0.05, zc), room: "about" });
   }
-  stations.push({ pos: v3(narrow ? HALF_W - 4.8 : HALF_W - 5.0, EYE, L.aboutZ - 1.2), look: v3(HALF_W, EYE + 0.05, L.aboutZ - 1.2), room: "about" });
-  stations.push({ pos: v3(HALF_W - (narrow ? 4.8 : 4.4), EYE, contactZ), look: v3(HALF_W, EYE + 0.05, contactZ), room: "about", contact: true });
-  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 12.5 : 7.2)), look: v3(0, 2.0, Z_BACK), room: "exit" });
+  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 7.5 : 6.0)), look: v3(0, 2.05, Z_BACK), room: "exit", contact: true });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let target = 0;
@@ -817,6 +810,12 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const proj = new THREE.Vector3();
   return {
     stations,
+    hitFrieze: (x, y) => {
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+      const h = raycaster.intersectObject(frieze, false)[0];
+      if (!h || !h.uv || h.distance > 9) return null;
+      return Math.min(n - 1, Math.max(0, Math.floor(h.uv.x * n)));
+    },
     contactRect: () => {
       let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
       for (const c of formCorners) {
