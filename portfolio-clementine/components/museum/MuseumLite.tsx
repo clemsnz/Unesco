@@ -76,6 +76,11 @@ export default function MuseumLite() {
               <p className="mt-4 text-3xl">{j.years}</p>
               <p className="mt-4 text-lg leading-snug">{j.title}</p>
               <p className="mt-1 text-sm text-[#6b6259]">{j.org}</p>
+              <ul className="mt-4 space-y-1 text-sm text-[#3a332d]">
+                {j.details.map((d) => (
+                  <li key={d}>— {d}</li>
+                ))}
+              </ul>
             </li>
           ))}
         </ol>
@@ -94,6 +99,14 @@ export default function MuseumLite() {
           ))}
           <p className="pt-3 text-[#1c1916]">{about.seeking}</p>
         </div>
+        <dl className="mx-auto mt-14 max-w-sm space-y-6">
+          {about.skills.map((k) => (
+            <div key={k.title}>
+              <dt className="text-[11px] uppercase tracking-[0.2em] text-[#8a8178]">{k.title}</dt>
+              <dd className="mt-2 text-[15px] leading-relaxed">{k.text}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <section id="sortie" className="flex min-h-[90svh] flex-col items-center justify-center px-6 text-center">

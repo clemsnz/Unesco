@@ -13,15 +13,15 @@ const H = 4.6;
 const Z_FRONT = 10;
 const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
 
-export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number };
+export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; j?: number };
 type RoomNames = { main: string; cabinet: string; journey: string; about: string; exit: string };
 
 export type MuseumInput = {
   works: Work[];
   entrance: { room: string; name: string; line: string };
   rooms: RoomNames;
-  journey: { years: string; title: string; org: string }[];
-  about: { portrait: { src: string; ratio: number }; quote: string; lines: string[] };
+  journey: { years: string; title: string; org: string; details: string[] }[];
+  about: { portrait: { src: string; ratio: number }; quote: string; lines: string[]; skills: { title: string; text: string }[] };
   exit: { line: string };
 };
 
@@ -196,13 +196,15 @@ function layout(input: MuseumInput) {
 
 export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): MuseumApi {
   const { works } = input;
+  /** phones in portrait: the camera stands further back so each work fits the screen */
+  const narrow = canvas.clientWidth / canvas.clientHeight < 0.8;
   const L = layout(input);
   const Z_BACK = L.back;
   const len = Z_FRONT - Z_BACK;
   const midZ = (Z_FRONT + Z_BACK) / 2;
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: "high-performance" });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, narrow ? 1.5 : 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.12;
@@ -417,29 +419,36 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   input.journey.forEach((j, k) => {
     const s = k % 2 === 0 ? -1 : 1;
     const tex = keep(
-      canvasTex(900, 1200, (c) => {
+      canvasTex(1000, 1400, (c) => {
         c.fillStyle = "#faf9f5";
-        c.fillRect(0, 0, 900, 1200);
+        c.fillRect(0, 0, 1000, 1400);
         c.fillStyle = "#8a8178";
-        c.font = `500 34px ${SANS}`;
-        spaced(c, String(k + 1).padStart(2, "0"), 80, 140, 6);
+        c.font = `500 32px ${SANS}`;
+        spaced(c, String(k + 1).padStart(2, "0"), 80, 120, 6);
         c.fillStyle = "#1c1916";
-        c.font = `400 96px ${SANS}`;
-        c.fillText(j.years, 80, 480);
-        c.fillRect(80, 560, 80, 4);
-        c.font = `500 52px ${SANS}`;
-        const l = wrap(c, j.title, 80, 700, 740, 64);
+        c.font = `400 92px ${SANS}`;
+        c.fillText(j.years, 80, 300);
+        c.fillRect(80, 360, 80, 4);
+        c.font = `500 50px ${SANS}`;
+        let y = 470;
+        y += wrap(c, j.title, 80, y, 840, 62) * 62;
         c.fillStyle = "#6b6259";
-        c.font = `400 38px ${SANS}`;
-        wrap(c, j.org, 80, 700 + l * 64 + 40, 740, 52);
+        c.font = `400 36px ${SANS}`;
+        y += wrap(c, j.org, 80, y + 6, 840, 48) * 48 + 60;
+        c.fillStyle = "#3a332d";
+        c.font = `400 33px ${SANS}`;
+        j.details.forEach((d) => {
+          c.fillText("—", 80, y);
+          y += wrap(c, d, 130, y, 790, 44) * 44 + 16;
+        });
       }),
     );
     const g = new THREE.Group();
     g.position.set(s * (HALF_W - 0.06), EYE + 0.05, L.journeyZ[k]);
     g.rotation.y = s === -1 ? Math.PI / 2 : -Math.PI / 2;
-    const panel = new THREE.Mesh(keep(new THREE.BoxGeometry(1.5, 2.0, 0.06)), [wallMat, wallMat, wallMat, wallMat, basic(tex, false), wallMat]);
+    const panel = new THREE.Mesh(keep(new THREE.BoxGeometry(1.6, 2.24, 0.06)), [wallMat, wallMat, wallMat, wallMat, basic(tex, false), wallMat]);
     g.add(panel);
-    const shadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.2, 2.9)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.35, depthWrite: false })));
+    const shadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.35, 3.25)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.35, depthWrite: false })));
     shadow.position.set(0.04, -0.08, -0.025);
     g.add(shadow);
     scene.add(g);
@@ -461,6 +470,25 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   aboutText.position.set(-HALF_W + 0.012, EYE + 0.1, L.aboutZ - portrait.W / 2 - 1.75);
   scene.add(aboutText);
 
+  const skillsTex = keep(
+    vinyl(2000, 1300, (c) => {
+      let y = 120;
+      input.about.skills.forEach((k) => {
+        c.fillStyle = "#8a8178";
+        c.font = `500 44px ${SANS}`;
+        spaced(c, k.title.toUpperCase(), 0, y, 10);
+        c.fillStyle = "#1c1916";
+        c.font = `400 58px ${SANS}`;
+        y += 90;
+        y += wrap(c, k.text, 0, y, 1950, 76) * 76 + 90;
+      });
+    }),
+  );
+  const skillsMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(3.0, 1.95)), basic(skillsTex));
+  skillsMesh.rotation.y = -Math.PI / 2;
+  skillsMesh.position.set(HALF_W - 0.012, EYE + 0.1, L.aboutZ - 1.2);
+  scene.add(skillsMesh);
+
   /* Sortie — end wall */
   const exitTex = keep(
     vinyl(3600, 900, (c) => {
@@ -480,7 +508,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
   const stations: Station[] = [
     { pos: v3(0.6, EYE, 8.5), look: v3(-1.4, 1.95, -6), room: "entrance" },
-    { pos: v3(-1.2, EYE, 1.6), look: v3(-1.5, 2.05, -6), room: "entrance" },
+    { pos: v3(-1.4, EYE, narrow ? 6.5 : 1.6), look: v3(-1.5, 2.05, -6), room: "entrance" },
     { pos: v3(4.0, EYE, -5.2), look: v3(3.0, EYE, -16), room: "main" },
   ];
   const facing = (s: -1 | 1, z: number, d = 4.9, dz = 0.45) => ({
@@ -491,13 +519,21 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     if (w.room === "cabinet" && !stations.some((s) => s.room === "cabinet")) {
       stations.push({ pos: v3(0, EYE, L.wallCab + 6.5), look: v3(-2.5, 2.1, L.wallCab), room: "main" });
     }
-    stations.push({ ...facing(L.side[i], L.z[i], w.room === "cabinet" ? 4.2 : 4.9), room: w.room, art: i });
+    const wide = w.height * w.art.ratio > 1.9;
+    const d = narrow ? (wide ? 5.4 : 4.3) : w.room === "cabinet" ? 4.2 : 4.9;
+    stations.push({ ...facing(L.side[i], L.z[i], d, narrow ? 0.25 : 0.45), room: w.room, art: i });
   });
   stations.push({ pos: v3(0, EYE, L.wallJourney + 6.5), look: v3(-2.5, 2.1, L.wallJourney), room: "cabinet" });
-  L.journeyZ.forEach((z, k) => stations.push({ ...facing(k % 2 === 0 ? -1 : 1, z, 3.9, 0), room: "journey" }));
+  L.journeyZ.forEach((z, k) => stations.push({ ...facing(k % 2 === 0 ? -1 : 1, z, narrow ? 3.2 : 3.9, 0), room: "journey", j: k }));
   stations.push({ pos: v3(0, EYE, L.wallAbout + 6.5), look: v3(-2.5, 2.1, L.wallAbout), room: "journey" });
-  stations.push({ pos: v3(-HALF_W + 5.2, EYE, L.aboutZ - 1.4), look: v3(-HALF_W, EYE + 0.05, L.aboutZ - 1.5), room: "about" });
-  stations.push({ pos: v3(0, EYE, Z_BACK + 8.2), look: v3(0, 2.0, Z_BACK), room: "exit" });
+  if (narrow) {
+    stations.push({ pos: v3(-HALF_W + 4.4, EYE, L.aboutZ), look: v3(-HALF_W, EYE + 0.05, L.aboutZ), room: "about" });
+    stations.push({ pos: v3(-HALF_W + 4.7, EYE, L.aboutZ - portrait.W / 2 - 1.75), look: v3(-HALF_W, EYE + 0.05, L.aboutZ - portrait.W / 2 - 1.75), room: "about" });
+  } else {
+    stations.push({ pos: v3(-HALF_W + 5.2, EYE, L.aboutZ - 1.4), look: v3(-HALF_W, EYE + 0.05, L.aboutZ - 1.5), room: "about" });
+  }
+  stations.push({ pos: v3(narrow ? HALF_W - 4.8 : HALF_W - 5.0, EYE, L.aboutZ - 1.2), look: v3(HALF_W, EYE + 0.05, L.aboutZ - 1.2), room: "about" });
+  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 12.5 : 8.2)), look: v3(0, 2.0, Z_BACK), room: "exit" });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let target = 0;
@@ -569,7 +605,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     const h = canvas.clientHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
-    camera.fov = w / h < 1.2 ? 62 : 50;
+    camera.fov = w / h < 0.8 ? 72 : w / h < 1.2 ? 62 : 50;
     camera.updateProjectionMatrix();
   };
   resize();

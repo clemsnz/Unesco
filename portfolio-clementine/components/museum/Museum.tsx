@@ -11,7 +11,6 @@ const STEP_VH = 100; // scroll length between two stations
 
 function canRun3D() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
-  if (window.innerWidth < 820 || window.matchMedia("(pointer: coarse)").matches) return false;
   try {
     const c = document.createElement("canvas");
     return !!(c.getContext("webgl2") || c.getContext("webgl"));
@@ -129,6 +128,7 @@ function Museum3D() {
   const here = stations[Math.min(station, stations.length - 1)];
   const art = here?.art !== undefined ? here.art : null;
   const atExit = here?.room === "exit";
+  const jr = here?.j !== undefined ? journey[here.j] : null;
 
   return (
     <>
@@ -137,30 +137,42 @@ function Museum3D() {
         ref={canvas}
         className="fixed inset-0 h-screen w-screen"
         style={{ cursor: hover !== null ? "none" : "default" }}
-        onClick={() => hover !== null && enter(hover)}
+        onClick={(e) => {
+          const x = (e.clientX / window.innerWidth) * 2 - 1;
+          const y = -(e.clientY / window.innerHeight) * 2 + 1;
+          const h = api.current?.hit(x, y) ?? null;
+          if (h !== null) enter(h);
+        }}
         aria-hidden
       />
       <div className={`pointer-events-none fixed inset-0 bg-[#f1eee9] transition-opacity duration-1000 ${ready ? "opacity-0" : "opacity-100"}`} />
 
-      <header className="fixed inset-x-0 top-0 z-20 flex items-center justify-between px-8 py-6 text-[13px] tracking-[0.04em] text-[#1c1916]">
-        <button onClick={() => go(0)} className="uppercase tracking-[0.2em]">{site.name}</button>
-        <nav className="flex items-center gap-8" aria-label="Navigation">
-          <button onClick={() => setPlan(true)} className="hover:opacity-60">Plan du musée</button>
+      <header className="fixed inset-x-0 top-0 z-20 flex items-center justify-between px-4 py-4 text-[12px] tracking-[0.04em] text-[#1c1916] md:px-8 md:py-6 md:text-[13px]">
+        <button onClick={() => go(0)} className="uppercase tracking-[0.2em]">
+          <span className="hidden sm:inline">{site.name}</span>
+          <span className="sm:hidden">C. Sanchez</span>
+        </button>
+        <nav className="flex items-center gap-5 md:gap-8" aria-label="Navigation">
+          <button onClick={() => setPlan(true)} className="hover:opacity-60">
+            <span className="hidden sm:inline">Plan du musée</span>
+            <span className="sm:hidden">Plan</span>
+          </button>
           <a href={site.cv} download className="hover:opacity-60">CV</a>
           <button onClick={() => goRoom("exit")} className="hover:opacity-60">Contact</button>
         </nav>
       </header>
 
       {/* cartel of the work in front of the visitor */}
-      <div className="pointer-events-none fixed bottom-8 left-8 z-20 max-w-md text-[#1c1916]">
+      <div className="pointer-events-none fixed bottom-5 left-4 right-4 z-20 max-w-md text-[#1c1916] md:bottom-8 md:left-8">
         <p className="text-[11px] uppercase tracking-[0.22em] text-[#6b6259]">{roomLabel(here)}</p>
         <div className={`mt-3 transition-all duration-700 ${art !== null ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}>
           {art !== null && (
             <>
-              <p className="text-[22px] leading-tight">
+              <p className="text-[19px] leading-tight md:text-[22px]">
                 {workNumber(art)} — {works[art].title}
               </p>
               <p className="mt-1 text-[13px] text-[#6b6259]">{works[art].line}</p>
+              <p className="text-[13px] text-[#6b6259]">{works[art].role}</p>
               <button onClick={() => enter(art)} className="pointer-events-auto mt-3 border-b border-current text-[13px]">
                 Explorer l’œuvre →
               </button>
@@ -168,12 +180,27 @@ function Museum3D() {
           )}
         </div>
       </div>
-      <p className={`pointer-events-none fixed bottom-8 right-8 z-20 text-[11px] uppercase tracking-[0.22em] text-[#6b6259] transition-opacity duration-700 ${station === 0 ? "opacity-100" : "opacity-0"}`}>
+      {/* journey panel, readable on any screen */}
+      <div className={`pointer-events-none fixed bottom-14 left-4 right-4 z-20 max-w-sm text-[#1c1916] transition-all duration-700 md:bottom-16 md:left-8 ${jr ? "translate-y-0 opacity-100" : "translate-y-2 opacity-0"}`}>
+        {jr && (
+          <div className="bg-[#faf9f5]/92 p-4 shadow-[0_10px_30px_-18px_rgba(30,22,15,0.5)] backdrop-blur">
+            <p className="text-[19px] leading-tight">{jr.years}</p>
+            <p className="mt-1 text-[14px]">{jr.title}</p>
+            <p className="text-[12px] text-[#6b6259]">{jr.org}</p>
+            <ul className="mt-2 space-y-0.5 text-[12px] leading-snug text-[#3a332d]">
+              {jr.details.map((d) => (
+                <li key={d}>— {d}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+      <p className={`pointer-events-none fixed bottom-14 right-4 z-20 text-[11px] md:bottom-8 md:right-8 uppercase tracking-[0.22em] text-[#6b6259] transition-opacity duration-700 ${station === 0 ? "opacity-100" : "opacity-0"}`}>
         Faites défiler pour entrer ↓
       </p>
 
       {/* exit: contact */}
-      <div className={`fixed inset-x-0 bottom-[12vh] z-20 flex justify-center gap-10 text-[15px] text-[#1c1916] transition-all duration-700 ${atExit ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"}`}>
+      <div className={`fixed inset-x-0 bottom-[10vh] z-20 flex flex-col items-center gap-4 text-[15px] md:flex-row md:justify-center md:gap-10 text-[#1c1916] transition-all duration-700 ${atExit ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"}`}>
         <a href={`mailto:${site.email}`} className="border-b border-current pb-0.5 hover:opacity-60">{site.email}</a>
         <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="border-b border-current pb-0.5 hover:opacity-60">LinkedIn ↗</a>
         <a href={site.cv} download className="border-b border-current pb-0.5 hover:opacity-60">Télécharger le CV ↓</a>

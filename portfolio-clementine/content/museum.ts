@@ -89,7 +89,7 @@ export const works: Work[] = [
     art: { src: "/images/influence/studio-groupe.webp", alt: "Invitées d’un événement influence au studio Charlotte Muller", ratio: 2000 / 1500 },
     height: 1.75,
     brief: "Faire découvrir la marque et ses matelas aux créatrices de contenu et aux journalistes, chaque mois.",
-    did: "Sélection des influenceuses, invitations et relances. Organisation d’une quinzaine d’événements, au studio et au Four Seasons George V. Photos et vidéos sur place.",
+    did: "Sélection et qualification des influenceuses, invitations, relances, coordination avec le bureau de presse Pascale Venot. Organisation d’une quinzaine d’événements, au studio et au Four Seasons George V. Photos, vidéos et lives Instagram.",
     result: "Les invitées ont partagé leur venue en story.",
     gallery: [
       { src: "/images/influence/shooting-miroir.webp", alt: "Clémentine avec son appareil photo au studio", ratio: 1400 / 1867, cartel: "Au studio, appareil en main : c’est moi qui faisais les photos" },
@@ -139,7 +139,7 @@ export const works: Work[] = [
     art: { src: "/images/ravensare/affiche-a3.webp", alt: "Affiche du festival Ravensare 2024", ratio: 1400 / 1980 },
     height: 2.0,
     brief: "Faire connaître la 22ᵉ édition de Ravensare, festival de danse en plein air à Toulouse.",
-    did: "Affiche et bannière. Campagne dans les transports en commun, relations presse, réseaux sociaux, logistique du festival.",
+    did: "Affiche et bannière. Campagne dans les transports en commun, relations presse, réseaux sociaux, mailing, planning et logistique du festival.",
     gallery: [{ src: "/images/ravensare/banniere.webp", alt: "Bannière du festival Ravensare", ratio: 2000 / 862, cartel: "Bannière web" }],
   },
   {
@@ -154,6 +154,23 @@ export const works: Work[] = [
     brief: "Repenser la communication du Secours Populaire de Colomiers pour lui donner plus de visibilité.",
     did: "En équipe : nouvelle identité visuelle, logo, affiches et contenus pour les réseaux sociaux.",
     gallery: [],
+  },
+  {
+    slug: "face-camera",
+    room: "main",
+    title: "Face caméra",
+    line: "EFAP · Plateau TV · 2026",
+    role: "Chroniqueuse",
+    kind: "photo",
+    art: { src: "/images/medias/plateau-equipe.webp", alt: "En plateau à l’EFAP avec Sébastien Erson et l’équipe", ratio: 1800 / 1350 },
+    height: 1.75,
+    brief: "1 minute 30, une caméra, une chronique : apprendre à incarner un sujet en direct.",
+    did: "Écriture et présentation d’une chronique sur le Marathon de Paris 2026, accompagnée par Sébastien Erson. Dans les coulisses d’un live shopping Orange animé par Sébastien Erson.",
+    result: "« On ne récite pas, on incarne. »",
+    gallery: [
+      { src: "/images/medias/plateau-2.webp", alt: "Clémentine pendant sa chronique en plateau", ratio: 1400 / 1867, cartel: "Chronique sur le Marathon de Paris 2026" },
+      { src: "/images/medias/live-shopping-1.webp", alt: "Clémentine sur le plateau d’un live shopping", ratio: 1400 / 1867, cartel: "Live shopping Orange, en coulisses" },
+    ],
   },
   {
     slug: "hopla",
@@ -182,7 +199,7 @@ export const works: Work[] = [
     art: { src: "/images/glow-in-motion/moodboard.webp", alt: "Moodboard Glow in Motion", ratio: 16 / 9 },
     height: 1.2,
     brief: "Imaginer une collaboration entre Erborian et le studio Charlotte Muller autour de la Glass Glow Cream.",
-    did: "Concept d’événement influence, déroulé, moodboard et sélection de 12 créatrices.",
+    did: "Concept d’événement influence : cours PowerMat, face-gym, bar à glow Erborian, brunch. Moodboard, sélection de 12 créatrices et contenus prévus pour chacune.",
     gallery: [{ src: "/images/glow-in-motion/event-concept.webp", alt: "Présentation de l’événement Glow in Motion", ratio: 16 / 9, cartel: "Le concept de l’événement" }],
   },
   {
@@ -195,18 +212,30 @@ export const works: Work[] = [
     art: { src: "/images/spice-your-drink/cover.webp", alt: "Couverture de la recommandation Sauces Martin", ratio: 2000 / 962 },
     height: 1.1,
     brief: "Faire goûter la sauce Naga Mango à ceux qui ont peur du piment.",
-    did: "Analyse, concept « la sauce dans un mocktail », dégustations en magasin, offre de remboursement, spot social.",
+    did: "Analyse de marché et 4P, insight, concept « la sauce dans un mocktail », dégustations en magasin, offre de remboursement, spot social et KPI.",
     gallery: [{ src: "/images/spice-your-drink/activation.webp", alt: "L’activation en magasin", ratio: 16 / 9, cartel: "L’activation en magasin" }],
   },
 ];
 
+/** Galerie 03 — chaque panneau : années, poste, structure, missions. */
 export const journey = [
-  { years: "2026 — 2027", title: "Master 1 Communication", org: "EFAP Paris · Full English" },
-  { years: "2025 — 2026", title: "Communication & marketing", org: "Charlotte Muller · Stage, puis freelance" },
-  { years: "2025", title: "Communication & social media", org: "Hopla · Toulouse" },
-  { years: "2024 — 2025", title: "Communication & événements", org: "Parlement des Étudiants · Toulouse" },
-  { years: "2024", title: "Communication, RP & événementiel", org: "Le Trait Bleu · Festival Ravensare" },
-  { years: "2022 — 2024", title: "Économie-gestion, puis EFAP", org: "Toulouse Capitole · EFAP Toulouse" },
+  { years: "2026 — 2027", title: "Master 1 Communication", org: "EFAP Paris · Full English", details: ["Après trois années à l’EFAP, entre Toulouse et Paris", "Recherche un stage de 6 mois, janvier → juin 2027"] },
+  {
+    years: "2025 — 2026",
+    title: "Communication & marketing",
+    org: "Charlotte Muller · Stage (5 mois), puis freelance",
+    details: ["Influence & RP, avec le bureau de presse Pascale Venot", "Une quinzaine d’événements presse & influence", "Contenus Instagram & TikTok, lives Instagram", "Newsletters Klaviyo, automatisations Wix", "1 200+ vidéos mises en ligne sur Uscreen", "Suivi hebdomadaire des KPI · Wellness Journal"],
+  },
+  { years: "2025", title: "Communication & social media", org: "Hopla Street Food · Toulouse · Stage", details: ["Réseaux sociaux, photos & vidéos", "Nouveau menu", "Relation client, marketing digital"] },
+  { years: "2024 — 2025", title: "Communication & événements", org: "Parlement des Étudiants · Toulouse", details: ["Simulations parlementaires, visites institutionnelles", "Stratégie de communication, réseaux sociaux", "Organisation des événements, relations partenaires"] },
+  { years: "2024", title: "Communication, RP & événementiel", org: "Le Trait Bleu · Festival Ravensare · Stage", details: ["Affiche et bannière du festival", "Relations presse, réseaux sociaux, mailing", "Campagne dans les transports en commun", "Planning, standard, logistique du festival"] },
+  { years: "2022 — 2024", title: "Économie-gestion, puis EFAP", org: "Université Toulouse Capitole · EFAP Toulouse", details: ["Année préparatoire en économie & gestion", "Entrée à l’EFAP, école des nouveaux métiers de la communication"] },
+  {
+    years: "Engagements",
+    title: "Bénévolat & jobs étudiants",
+    org: "En parallèle des études",
+    details: ["Scouts et Guides de France", "Festival de Confolens : 10 jours de bénévolat", "Refuges Solidaires, Briançon : accueil des personnes migrantes", "Chef d’équipe chez Pokawa", "Service et accueil en restaurants et clubs, Toulouse & Biarritz"],
+  },
 ];
 
 export const about = {
@@ -215,9 +244,16 @@ export const about = {
   lines: [
     "Étudiante en Master 1 à l’EFAP Paris.",
     "Beauté, bien-être, luxe : là où chaque détail compte.",
-    "Danse, Pilates, mode et voyages.",
+    "Danseuse depuis l’enfance, en compétition.",
+    "Musique, Pilates, mode, voyages.",
   ],
   seeking: "Stage de 6 mois · janvier → juin 2027",
+  /** Panneau « Compétences » face au portrait */
+  skills: [
+    { title: "Compétences", text: "Communication de marque · Influence & RP · Événementiel · Social media · CRM & e-mailing · Rédaction · Plan média" },
+    { title: "Outils", text: "Klaviyo · Wix · Uscreen · Canva · Adobe Suite · Office 365 · Instagram · TikTok" },
+    { title: "Langues", text: "Français (langue maternelle) · Anglais C1 · Espagnol B1" },
+  ],
 };
 
 export const exit = {
