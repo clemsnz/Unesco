@@ -6,6 +6,7 @@ import { about, entrance, exit, journey, rooms, works } from "@/content/museum";
 import { site } from "@/content/site";
 import type { MuseumApi, Station } from "./scene";
 import MuseumLite from "./MuseumLite";
+import ContactForm from "./ContactForm";
 
 const STEP_VH = 100; // scroll length between two stations
 
@@ -44,6 +45,9 @@ function Museum3D() {
   const [ready, setReady] = useState(false);
   const [plan, setPlan] = useState(false);
   const cursor = useRef<HTMLDivElement>(null);
+  const formBox = useRef<HTMLDivElement>(null);
+  const [formOn, setFormOn] = useState(false);
+  const [narrowScreen, setNarrowScreen] = useState(false);
   const step = () => window.innerHeight * (STEP_VH / 100);
 
   useEffect(() => {
@@ -74,6 +78,30 @@ function Museum3D() {
       disposed = true;
       api.current?.dispose();
     };
+  }, []);
+
+  useEffect(() => {
+    setNarrowScreen(window.innerWidth / window.innerHeight < 0.8);
+    let raf = 0;
+    const tick = () => {
+      raf = requestAnimationFrame(tick);
+      const m = api.current;
+      const el = formBox.current;
+      if (!m || !el) return;
+      const st = m.stations[Math.round(window.scrollY / step())];
+      const on = !!st?.contact && m.settled();
+      setFormOn((v) => (v === on ? v : on));
+      if (window.innerWidth / window.innerHeight < 0.8) return;
+      const r = on ? m.contactRect() : null;
+      if (r) {
+        el.style.left = `${r.x}px`;
+        el.style.top = `${r.y}px`;
+        el.style.width = `${r.w}px`;
+        el.style.height = `${r.h}px`;
+      }
+    };
+    tick();
+    return () => cancelAnimationFrame(raf);
   }, []);
 
   useEffect(() => {
@@ -128,6 +156,7 @@ function Museum3D() {
   const here = stations[Math.min(station, stations.length - 1)];
   const art = here?.art !== undefined ? here.art : null;
   const atExit = here?.room === "exit";
+  const atContact = !!here?.contact;
   const jr = here?.j !== undefined ? journey[here.j] : null;
 
   return (
@@ -158,7 +187,7 @@ function Museum3D() {
             <span className="sm:hidden">Plan</span>
           </button>
           <a href={site.cv} download className="hover:opacity-60">CV</a>
-          <button onClick={() => goRoom("exit")} className="hover:opacity-60">Contact</button>
+          <button onClick={() => go(stations.findIndex((s) => s.contact))} className="hover:opacity-60">Contact</button>
         </nav>
       </header>
 
@@ -212,7 +241,21 @@ function Museum3D() {
         </div>
       </div>
 
-      {plan && <Plan onClose={() => setPlan(false)} onRoom={goRoom} onWork={(i) => go(stations.findIndex((s) => s.art === i))} />}
+      {/* Galerie 04: the contact form, laid onto the wall */}
+      <div
+        ref={formBox}
+        className={`z-20 transition-opacity duration-500 ${formOn ? "opacity-100" : "pointer-events-none opacity-0"} ${
+          narrowScreen ? "fixed inset-x-4 top-[22%] bottom-[22%] bg-[#faf9f5]/95 p-5 shadow-[0_20px_50px_-25px_rgba(30,22,15,0.5)]" : "fixed px-[1.6%] py-[1.4%]"
+        }`}
+      >
+        {narrowScreen && <p className="mb-3 text-xl">Écrivez-moi</p>}
+        <ContactForm compact={narrowScreen} />
+      </div>
+
+      {/* soft photographic vignette */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 z-10" style={{ background: "radial-gradient(ellipse 85% 75% at 50% 48%, rgba(0,0,0,0) 60%, rgba(40,30,20,0.16) 100%)" }} />
+
+      {plan && <Plan onClose={() => setPlan(false)} onRoom={goRoom} onWork={(i) => go(stations.findIndex((s) => s.art === i))} onContact={() => go(stations.findIndex((s) => s.contact))} />}
 
       <div className={`pointer-events-none fixed inset-0 z-50 bg-[#f7f6f2] transition-opacity duration-700 ${leaving ? "opacity-100 delay-1000" : "opacity-0"}`} />
 
@@ -232,7 +275,7 @@ function Museum3D() {
   );
 }
 
-function Plan({ onClose, onRoom, onWork }: { onClose: () => void; onRoom: (r: Station["room"]) => void; onWork: (i: number) => void }) {
+function Plan({ onClose, onRoom, onWork, onContact }: { onClose: () => void; onRoom: (r: Station["room"]) => void; onWork: (i: number) => void; onContact: () => void }) {
   const item = "text-left text-2xl leading-snug hover:opacity-60";
   const head = "text-[11px] uppercase tracking-[0.22em] text-[#8a8178]";
   return (
@@ -265,6 +308,7 @@ function Plan({ onClose, onRoom, onWork }: { onClose: () => void; onRoom: (r: St
           <p className={`${head} pt-6`}>04</p>
           <button className={`${item} block`} onClick={() => onRoom("about")}>À propos</button>
           <p className={`${head} pt-6`}>05</p>
+          <button className={`${item} block`} onClick={onContact}>Écrivez-moi</button>
           <button className={`${item} block`} onClick={() => onRoom("exit")}>Sortie · Contact</button>
           <button onClick={onClose} className="block pt-10 text-[13px] text-[#6b6259]">Fermer ✕</button>
         </div>

@@ -11,4 +11,9 @@ export const site = {
   linkedin: "https://www.linkedin.com/in/clementine-sanchez08122004",
   /** Remplace le fichier dans /public/cv/ en gardant le même nom. */
   cv: "/cv/Clementine-Sanchez-CV-EN.pdf",
+  /**
+   * Clé Web3Forms pour recevoir les messages du formulaire directement par e-mail.
+   * Tant qu'elle est vide, le bouton « Envoyer » ouvre la messagerie du visiteur avec le message pré-rempli.
+   */
+  formKey: "",
 };
