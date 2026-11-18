@@ -1,0 +1,44 @@
+[
+ {
+  "debut": 0.0,
+  "fin": 3.6,
+  "plan": "PLAN 1 · La scène de groupe",
+  "texte": "Toi, dans chaque groupe :"
+ },
+ {
+  "debut": 3.6,
+  "fin": 6.2,
+  "plan": "PLAN 2 · Le décalage",
+  "texte": "3 semaines plus tard…"
+ },
+ {
+  "debut": 6.2,
+  "fin": 7.8,
+  "plan": "PLAN 3 · Démo 1",
+  "texte": "1. Overlap croise vos dispos"
+ },
+ {
+  "debut": 7.8,
+  "fin": 9.4,
+  "plan": "PLAN 4 · Démo 2",
+  "texte": "2. Le groupe valide un créneau"
+ },
+ {
+  "debut": 9.4,
+  "fin": 10.9,
+  "plan": "PLAN 5 · Démo 3",
+  "texte": "3. Puis un lieu pratique"
+ },
+ {
+  "debut": 10.9,
+  "fin": 12.8,
+  "plan": "PLAN 6 · La chute",
+  "texte": "Less chatting, more meeting."
+ },
+ {
+  "debut": 12.8,
+  "fin": 15.0,
+  "plan": "PLAN 7 · CTA",
+  "texte": "Inscris ton groupe · lien en bio"
+ }
+]

@@ -1,0 +1,83 @@
+/* Overlap — campagne de lancement. Charte relevée dans le Canva du groupe.
+   Couleurs échantillonnées sur les exports PDF (fond crème, bleu, rouge-orangé, orange, jaune, lavande).
+   Polices : Monument Extended (titres) + Syne (textes), comme dans le Canva.
+   Monument Extended n'est pas disponible en fichier ici : si elle est installée sur la machine, elle est utilisée ;
+   sinon le rendu bascule sur Unbounded (substitut libre, même famille de grotesques étendues). */
+
+@font-face { font-family: "OvDisplay"; font-weight: 900;
+  src: local("Monument Extended Ultrabold"), local("MonumentExtended-Ultrabold"), local("MonumentExtended-UltraBold"),
+       url("../fonts/unbounded-latin-900-normal.ttf") format("truetype"); }
+@font-face { font-family: "OvDisplay"; font-weight: 700;
+  src: local("Monument Extended Bold"), local("MonumentExtended-Bold"), local("MonumentExtended-Regular"),
+       url("../fonts/unbounded-latin-700-normal.ttf") format("truetype"); }
+@font-face { font-family: "OvDisplay"; font-weight: 500;
+  src: local("MonumentExtended-Regular"), url("../fonts/unbounded-latin-500-normal.ttf") format("truetype"); }
+@font-face { font-family: "OvSyne"; font-weight: 400; src: local("Syne Regular"), url("../fonts/syne-latin-400-normal.ttf") format("truetype"); }
+@font-face { font-family: "OvSyne"; font-weight: 500; src: local("Syne Medium"), url("../fonts/syne-latin-500-normal.ttf") format("truetype"); }
+@font-face { font-family: "OvSyne"; font-weight: 700; src: local("Syne Bold"), url("../fonts/syne-latin-700-normal.ttf") format("truetype"); }
+@font-face { font-family: "OvSyne"; font-weight: 800; src: local("Syne ExtraBold"), url("../fonts/syne-latin-800-normal.ttf") format("truetype"); }
+
+:root {
+  --cream: #FEF7EC;   /* fond des slides Canva */
+  --paper: #F7F5F0;   /* fond des pages du dossier */
+  --ink: #000000;
+  --blue: #1143F7;    /* pastille Simplicity, chiffres clés */
+  --red: #FE512D;     /* arcs de l'intercalaire Insight */
+  --orange: #FF751F;  /* pastille Trust & Privacy */
+  --yellow: #FBB736;  /* pastille Connection, pastille persona */
+  --lav: #C1BFEF;     /* boucles décoratives */
+  --violet: #6168F4;  /* boucle de la slide "Overlap / The idea" */
+  --grey: #ECE5D9;    /* bulles de discussion */
+  --mute: #6E6A64;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { background: var(--cream); }
+body { font-family: "OvSyne", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+.canvas { position: relative; overflow: hidden; background: var(--cream); }
+.display { font-family: "OvDisplay", sans-serif; font-weight: 900; letter-spacing: -0.01em; line-height: 1.02; }
+.display7 { font-family: "OvDisplay", sans-serif; font-weight: 700; line-height: 1.08; }
+.syne { font-family: "OvSyne", sans-serif; }
+.abs { position: absolute; }
+.loop { position: absolute; pointer-events: none; }
+
+/* pastilles (mêmes formes que les valeurs Connection / Simplicity / Trust) */
+.pill { display: inline-block; border-radius: 999px; padding: .18em .62em .24em; font-family: "OvDisplay"; font-weight: 900; }
+.pill.blue { background: var(--blue); color: var(--cream); }
+.pill.red { background: var(--red); color: var(--cream); }
+.pill.yellow { background: var(--yellow); color: var(--ink); }
+.pill.orange { background: var(--orange); color: var(--cream); }
+.pill.black { background: var(--ink); color: var(--cream); }
+.chip { display: inline-block; border-radius: 999px; padding: .35em .9em; font-weight: 700; font-family: "OvSyne"; }
+
+/* bulles de conversation de groupe (style neutre, sans marque de messagerie) */
+.chat { display: flex; flex-direction: column; gap: 14px; }
+.msg { max-width: 82%; align-self: flex-start; background: #fff; border-radius: 30px 30px 30px 8px; padding: 18px 26px 20px;
+       box-shadow: 0 2px 0 rgba(0,0,0,.06); font-size: 36px; line-height: 1.2; font-weight: 500; }
+.msg .who { display: block; font-size: 22px; font-weight: 800; margin-bottom: 4px; }
+.msg.me { align-self: flex-end; background: var(--blue); color: #fff; border-radius: 30px 30px 8px 30px; }
+.msg.fade { opacity: .45; }
+.msg .meta { display: block; font-size: 19px; opacity: .6; margin-top: 6px; text-align: right; }
+.typing { display: inline-flex; gap: 10px; align-items: center; background: #fff; border-radius: 30px; padding: 22px 28px; }
+.typing i { width: 14px; height: 14px; border-radius: 50%; background: #B9B2A6; display: block; }
+
+/* ticket rendez-vous : jour / heure / lieu */
+.ticket { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--ink); color: var(--cream); border-radius: 34px; overflow: hidden; }
+.ticket > div { padding: 22px 26px 26px; border-left: 3px dashed rgba(254,247,236,.35); }
+.ticket > div:first-child { border-left: 0; }
+.ticket .lab { font-family: "OvSyne"; font-weight: 700; font-size: 22px; letter-spacing: .12em; text-transform: uppercase; color: var(--yellow); }
+.ticket .val { font-family: "OvDisplay"; font-weight: 900; font-size: 40px; margin-top: 6px; line-height: 1.05; }
+
+/* écrans réels de l'application (maquettes du groupe) */
+.screen { position: absolute; border-radius: 34px; box-shadow: 0 24px 60px rgba(17,67,247,.18), 0 4px 14px rgba(0,0,0,.10); }
+.tag-real { font-family: "OvSyne"; font-weight: 700; font-size: 18px; color: var(--mute); letter-spacing: .04em; }
+
+/* QR : réservé tant que l'URL n'est pas fournie */
+.qr { background: #fff; border: 4px dashed var(--ink); border-radius: 18px; display: flex; align-items: center; justify-content: center; text-align: center;
+      font-family: "OvSyne"; font-weight: 800; color: var(--ink); }
+.qr img { width: 100%; height: 100%; image-rendering: pixelated; }
+.qr.ready { border: 0; padding: 0; }
+
+.sig { font-family: "OvDisplay"; font-weight: 700; }
+.small { font-size: 22px; }
+.sponsored { display: inline-block; font-family: "OvSyne"; font-weight: 800; font-size: 12px; letter-spacing: .08em; text-transform: uppercase;
+             background: #fff; border: 1.5px solid var(--ink); border-radius: 999px; padding: 3px 9px; }

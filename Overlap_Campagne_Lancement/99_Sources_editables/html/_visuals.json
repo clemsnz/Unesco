@@ -1,0 +1,178 @@
+[
+ {
+  "html": "01_KV_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "01_KV_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "01b_KV_paysage_1920x1080.html",
+  "w": 1920,
+  "h": 1080,
+  "unit": "px",
+  "out": "01b_KV_paysage_1920x1080",
+  "mode": "png"
+ },
+ {
+  "html": "02_Affiche_A3.html",
+  "w": 1145,
+  "h": 1610,
+  "unit": "px",
+  "out": "02_Affiche_A3",
+  "mode": "a3"
+ },
+ {
+  "html": "03_Carrousel_1_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "03_Carrousel_1_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "03_Carrousel_2_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "03_Carrousel_2_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "03_Carrousel_3_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "03_Carrousel_3_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "03_Carrousel_4_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "03_Carrousel_4_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "04_Story_1_Teasing_1080x1920.html",
+  "w": 1080,
+  "h": 1920,
+  "unit": "px",
+  "out": "04_Story_1_Teasing_1080x1920",
+  "mode": "png"
+ },
+ {
+  "html": "04_Story_2_Invitation_a_transferer_1080x1920.html",
+  "w": 1080,
+  "h": 1920,
+  "unit": "px",
+  "out": "04_Story_2_Invitation_a_transferer_1080x1920",
+  "mode": "png"
+ },
+ {
+  "html": "04_Story_3_Relance_1080x1920.html",
+  "w": 1080,
+  "h": 1920,
+  "unit": "px",
+  "out": "04_Story_3_Relance_1080x1920",
+  "mode": "png"
+ },
+ {
+  "html": "05_Invitation_digitale_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "05_Invitation_digitale_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "06_Chevalet_table_A4_plie.html",
+  "w": 794,
+  "h": 1123,
+  "unit": "px",
+  "out": "06_Chevalet_table_A4_plie",
+  "mode": "a4"
+ },
+ {
+  "html": "06_Chevalet_face_A5_apercu.html",
+  "w": 794,
+  "h": 561,
+  "unit": "px",
+  "out": "06_Chevalet_face_A5_apercu",
+  "mode": "png"
+ },
+ {
+  "html": "07_Suivi_J+1_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "07_Suivi_J+1_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "08_Carte_Cest_cale_A6.html",
+  "w": 397,
+  "h": 559,
+  "unit": "px",
+  "out": "08_Carte_Cest_cale_A6",
+  "mode": "a6"
+ },
+ {
+  "html": "10_Comparatif_Free_Premium_1920x1080.html",
+  "w": 1920,
+  "h": 1080,
+  "unit": "px",
+  "out": "10_Comparatif_Free_Premium_1920x1080",
+  "mode": "png"
+ },
+ {
+  "html": "11_Annonce_sponsorisee_ecran_1080x1350.html",
+  "w": 1080,
+  "h": 1350,
+  "unit": "px",
+  "out": "11_Annonce_sponsorisee_ecran_1080x1350",
+  "mode": "png"
+ },
+ {
+  "html": "12_Fiche_commerciale_A4.html",
+  "w": 794,
+  "h": 1123,
+  "unit": "px",
+  "out": "12_Fiche_commerciale_A4",
+  "mode": "a4"
+ },
+ {
+  "html": "20_Situation_reseaux_1920x1080.html",
+  "w": 1920,
+  "h": 1080,
+  "unit": "px",
+  "out": "20_Situation_reseaux_1920x1080",
+  "mode": "png"
+ },
+ {
+  "html": "20_Situation_affiche_1920x1080.html",
+  "w": 1920,
+  "h": 1080,
+  "unit": "px",
+  "out": "20_Situation_affiche_1920x1080",
+  "mode": "png"
+ },
+ {
+  "html": "20_Situation_evenement_1920x1080.html",
+  "w": 1920,
+  "h": 1080,
+  "unit": "px",
+  "out": "20_Situation_evenement_1920x1080",
+  "mode": "png"
+ },
+ {
+  "html": "09_Storyboard_Reel.html",
+  "w": 1123,
+  "h": 794,
+  "unit": "px",
+  "out": "09_Storyboard_Reel",
+  "mode": "a4l"
+ }
+]
