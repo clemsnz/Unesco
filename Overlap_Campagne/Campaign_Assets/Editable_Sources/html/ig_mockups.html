@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Overlap — posts as seen on Instagram (mock-ups)</title>
+<link rel="stylesheet" href="../css/brand.css">
+<style>
+ html,body{background:transparent}
+ body{width:840px;height:1750px;overflow:hidden}
+ .s{position:relative;width:840px;height:1750px}
+ .ig{font-family:var(--ui);background:#fff;height:100%;color:#000}
+ .ig .top{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;font:800 22px var(--ui)}
+ .ig .hd{display:flex;align-items:center;gap:10px;padding:8px 12px}
+ .ig .hd img{width:34px;height:34px;border-radius:50%;border:2px solid #FE512D}
+ .ig .hd b{font:700 14px var(--ui)} .ig .hd span{font:400 12px var(--ui);color:#666;display:block}
+ .ig .pic{width:390px;height:488px;object-fit:cover;display:block}
+ .ig .bar{display:flex;gap:16px;padding:10px 12px 4px;align-items:center}
+ .ig .bar svg{width:26px;height:26px}
+ .ig .dots{margin-left:auto;margin-right:auto;display:flex;gap:4px;transform:translateX(-30px)}
+ .ig .dots i{width:6px;height:6px;border-radius:50%;background:#ccc}.ig .dots i.on{background:#1143F7}
+ .ig .likes{font:700 14px var(--ui);padding:2px 12px}
+ .ig .cap{font:400 14px/1.35 var(--ui);padding:4px 12px}
+ .ig .cap b{font-weight:700}
+ .ig .more{color:#888}
+ .ig .nav{position:absolute;bottom:0;left:0;right:0;height:52px;border-top:1px solid #eee;display:flex;justify-content:space-around;align-items:center;background:#fff}
+ .ig .nav i{width:24px;height:24px;border:2.5px solid #000;border-radius:6px}
+ .story{width:390px;height:693px;display:block}
+</style></head>
+<body>
+<section class="s" id="s1"><div id="p1"></div></section>
+<section class="s" id="s2"><div id="p2"></div></section>
+<section class="s" id="s3"><div id="p3"></div></section>
+<section class="s" id="s4"><div id="p4"></div></section>
+<section class="s" id="s5"><div id="p5"></div></section>
+<script src="components.js"></script>
+<script>
+ const heart='<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9C1 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4C19 4.5 21 8.4 20.3 12 19 16.4 12 21 12 21z" fill="none" stroke="#000" stroke-width="2"/></svg>';
+ const bubble2='<svg viewBox="0 0 24 24"><path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z" fill="none" stroke="#000" stroke-width="2"/></svg>';
+ const send='<svg viewBox="0 0 24 24"><path d="M22 3 2 10l8 3 3 8z M22 3 10 13" fill="none" stroke="#000" stroke-width="2"/></svg>';
+ const save='<svg viewBox="0 0 24 24" style="margin-left:auto"><path d="M6 3h12v18l-6-5-6 5z" fill="none" stroke="#000" stroke-width="2"/></svg>';
+ function feed(img,n,likes,cap){
+  return `<div class="ig">${status()}<div class="top" style="margin-top:12px"><span>Instagram</span><span style="font-size:18px">♡ ✉</span></div>
+   <div class="hd"><img src="../img/logo_icon.png"><div><b>overlap.pilot</b><span>EFAP · Paris</span></div><span style="margin-left:auto;font-size:20px">···</span></div>
+   <img class="pic" src="${img}">
+   <div class="bar">${heart}${bubble2}${send}<div class="dots">${Array.from({length:n},(_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>${save}</div>
+   <div class="cap"><b>overlap.pilot</b> ${cap} <span class="more">… plus</span></div>
+   <div class="nav"><i></i><i style="border-radius:50%"></i><i></i><i></i><i style="border-radius:50%"></i></div></div>`;
+ }
+ const S=(f)=>`<div style="background:#000;height:844px;padding-top:75px"><img class="story" src="${f}"></div>`;
+ document.getElementById('p1').innerHTML=phone(feed('../../03_Social/C1_Share_Carousel_1.png',6,'Aimé par sarah.lmr et 231 autres personnes','Le dico officiel des promesses de groupe. Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée.'),2);
+ document.getElementById('p2').innerHTML=phone(feed('../../03_Social/C2_How_It_Works_1.png',5,'Aimé par yanis_b et 148 autres personnes','De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos…'),2);
+ [3,4,5].forEach((k,i)=>document.getElementById('p'+k).innerHTML=phone(S(`../../03_Social/C3_Pilot_Story_${i+1}.png`),2));
+ show();
+</script>
+</body></html>

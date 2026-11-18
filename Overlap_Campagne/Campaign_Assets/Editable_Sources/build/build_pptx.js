@@ -24,17 +24,21 @@ const footer = (dark) => [
   { text: { text: 'Overlap · 12 · Marketing & Communication', options: { x: 1.42, y: 10.42, w: 8, h: 0.42, fontFace: BODY, fontSize: 13, color: dark ? 'FFFFFF' : '6E6A64', margin: 0, valign: 'middle' } } },
 ];
 pres.defineSlideMaster({ title: 'OV_CONTENT', background: { color: C.cream },
-  objects: [...footer(false),
+  objects: [
     { placeholder: { options: { name: 'kicker', type: 'body', x: 0.9, y: 0.42, w: 14, h: 0.45, fontFace: BODY, fontSize: 15, bold: true, color: C.orange, charSpacing: 3, margin: 0, valign: 'middle' }, text: '' } },
     { placeholder: { options: { name: 'title', type: 'title', x: 0.9, y: 0.9, w: 18.2, h: 1.05, fontFace: HEAD, fontSize: 44, bold: true, color: C.ink, margin: 0, valign: 'top', align: 'left' }, text: '' } }],
-  slideNumber: { x: 18.4, y: 10.42, w: 0.7, h: 0.42, fontFace: BODY, fontSize: 13, color: C.grey, align: 'right' } });
+});
 pres.defineSlideMaster({ title: 'OV_DARK', background: { color: C.blue },
-  objects: [...footer(true),
+  objects: [
     { placeholder: { options: { name: 'kicker', type: 'body', x: 0.9, y: 0.6, w: 14, h: 0.45, fontFace: BODY, fontSize: 15, bold: true, color: C.yellow, charSpacing: 3, margin: 0 }, text: '' } },
     { placeholder: { options: { name: 'title', type: 'title', x: 0.9, y: 1.4, w: 17, h: 3.8, fontFace: HEAD, fontSize: 50, bold: true, color: C.white, margin: 0, valign: 'top', align: 'left' }, text: '' } }],
-  slideNumber: { x: 18.4, y: 10.42, w: 0.7, h: 0.42, fontFace: BODY, fontSize: 13, color: C.white, align: 'right' } });
+});
 
 pres.addSection({ title: '12 · Marketing & Communication' });
+pres.defineSlideMaster({ title: 'OV_RIGHT', background: { color: C.cream },
+  objects: [
+    { placeholder: { options: { name: 'kicker', type: 'body', x: 9.0, y: 0.42, w: 10, h: 0.45, fontFace: BODY, fontSize: 15, bold: true, color: C.orange, charSpacing: 3, margin: 0, valign: 'middle' }, text: '' } },
+    { placeholder: { options: { name: 'title', type: 'title', x: 9.0, y: 0.9, w: 10, h: 1.05, fontFace: HEAD, fontSize: 44, bold: true, color: C.ink, margin: 0, valign: 'top', align: 'left' }, text: '' } }] });
 let N = 0;
 function slide(kicker, title, master = 'OV_CONTENT') {
   const s = pres.addSlide({ masterName: master, sectionTitle: '12 · Marketing & Communication' });
@@ -68,7 +72,7 @@ function strikeDevice(s, x, y, scale = 1, onDark = false) {
 }
 // ---------- 2. Strategy ----------
 {
-  const s = slide('12.1 · STRATEGY', 'One audience, one situation, one channel');
+  const s = slide('12.1 · STRATEGY', 'Who, when, where');
   const cols = [
     ['WHO', 'The organiser', 'Students aged 18–25 who usually launch the plans, like our persona Camille (24, Master\'s student + part-time job). We start with EFAP students and their group of 3–6 friends.', C.blue],
     ['WHEN', 'The chat that stalls', 'Someone writes « on se capte la semaine pro ? » ("shall we catch up next week?"). Replies pile up, nobody decides. In December the deadline is real: « before the holidays ».', C.orange],
@@ -89,7 +93,7 @@ function strikeDevice(s, x, y, scale = 1, onDark = false) {
 }
 // ---------- 3. Evidence ----------
 {
-  const s = slide('12.2 · EVIDENCE', 'What we already know, and what we don\'t');
+  const s = slide('12.2 · EVIDENCE', 'What we know, and what we don\'t');
   const quotes = [
     ['« After a while, there are like 50 messages and nobody really knows what we decided. »', 'Capucine, 23, law student'],
     ['A group chat trying to find a date for 3 months, with last-minute postponements.', 'Julia, 24, acting student'],
@@ -160,7 +164,7 @@ function strikeDevice(s, x, y, scale = 1, onDark = false) {
 }
 // ---------- 6. Campaign idea ----------
 {
-  const s = slide('12.4 · CAMPAIGN IDEA', '« La semaine pro »');
+  const s = slide('12.4 · CAMPAIGN IDEA', 'Our idea: « La semaine pro »');
   strikeDevice(s, 0.9, 2.5, 1.2);
   T(s, 'The phrase every group chat sends, and never keeps. We strike it out and replace it with a real slot.', { x: 0.9, y: 6.3, w: 8.6, h: 1.4, fontSize: 22, bold: true });
   const rows = [['Name', '« La semaine pro » ("Next week").'], ['Hook', '« On se capte la semaine pro jeudi 19h30 ✓ »: let\'s catch up next week Thursday 7:30 pm.'], ['Visual principle', 'The strike-out: a vague promise crossed out in orange, replaced by a confirmed slot in a blue pill, with the group count (5/5).'], ['What it shows', 'What changes for the friends: no debate, one tap, a date that holds.'], ['Language', 'French for the ads (it is how our audience talks), English for the jury. Signature kept: Less chatting – More meeting.']];
@@ -173,14 +177,14 @@ function strikeDevice(s, x, y, scale = 1, onDark = false) {
 }
 // ---------- 7. Poster ----------
 {
-  const s = slide('12.5 · A · LAUNCH POSTER', 'The poster');
-  s.addImage({ path: I('Overlap_Poster_A2.jpg'), x: 0.9, y: 2.15, h: 8.05, w: 8.05 * 1587 / 2245, altText: 'Overlap launch poster' });
-  const x = 7.3;
+  const s = slide('12.5 · A · LAUNCH POSTER', 'The poster', 'OV_RIGHT');
+  s.addImage({ path: I('Overlap_Poster_A2.jpg'), x: 0.9, y: 0.4, h: 10.45, w: 10.45 * 1587 / 2245, altText: 'Overlap launch poster' });
+  const x = 9.0;
   const rows = [['FORMAT', 'A2 for the stand and lounge, A3 across campus (print PDF + PNG in Campaign_Assets/01_Poster).'], ['WHERE', 'EFAP student lounge, by the lifts and the coffee machine: classmates wait there together, phone in hand.'], ['HOOK (FR)', '« On se capte la semaine pro jeudi 19h30 ✓ » — EN: "Let\'s catch up next week Thursday 7:30 pm".'], ['BODY', 'Overlap compares your availability and suggests 2–3 slots when the whole group is free. Everyone confirms in one tap.'], ['CALL TO ACTION', 'Free pilot · 15 groups · nothing to download. Sign up your group at the Overlap stand, EFAP hall, Tue 1 & Thu 3 Dec, 12–2 pm.'], ['NO QR CODE', 'We print a QR code only once the pilot form is live and tested. Today the action is the stand or a DM.']];
   rows.forEach(([k, v], i) => {
     const y = 2.2 + i * 1.38;
     T(s, k, { x, y, w: 3.2, h: 0.45, fontSize: 13, bold: true, color: i === 5 ? C.orange : C.blue, charSpacing: 2 });
-    T(s, v, { x: x + 3.3, y, w: 8.5, h: 1.3, fontSize: 17.5 });
+    T(s, v, { x: x + 3.3, y, w: 6.8, h: 1.3, fontSize: 16.5 });
   });
   s.addNotes('This is the launch poster. The hook is the strike-out: "on se capte la semaine pro" is crossed out and replaced with "jeudi 19h30". The card below shows what the friends get: a date locked at 5 out of 5. The call to action matches the real stage of the project: Overlap is a prototype, so we invite people to a free pilot at our stand. We did not print a QR code, because we only print a link we have tested.');
 }
@@ -202,13 +206,13 @@ const SHORT = {
   8: ['End card', 'Logo · Less chatting – More meeting · stand EFAP, 1 & 3 Dec.', 'Music ends'],
 };
 [0, 1].forEach(p => {
-  const s = slide('12.5 · B · VERTICAL FILM (28 s)', p === 0 ? 'Film « 47 messages » · shots 1–4' : 'Film « 47 messages » · shots 5–8');
+  const s = slide('12.5 · B · VERTICAL FILM (28 s)', p === 0 ? 'Film · the problem (shots 1–4)' : 'Film · the date is locked (5–8)');
   SHOTS.slice(p * 4, p * 4 + 4).forEach((sh, i) => {
-    const x = 0.9 + i * 4.6, w = 2.6, h = w * 16 / 9;
-    if (sh.n === 6) box(s, x - 0.15, 2.0, 4.45, 8.25, C.white, { line: { color: C.orange, width: 3 } });
+    const x = 0.9 + i * 4.6, w = 3.0, h = w * 16 / 9;
+    if (sh.n === 6) box(s, x - 0.15, 2.0, 4.45, 8.45, C.white, { line: { color: C.orange, width: 3 } });
     s.addImage({ path: I(`Shot_${sh.n}.jpg`), x, y: 2.15, w, h, altText: `Shot ${sh.n}` });
-    T(s, String(sh.n), { x: x + 2.75, y: 2.15, w: 1.4, h: 0.9, fontFace: HEAD, fontSize: 40, bold: true, color: sh.n === 6 ? C.orange : C.blue });
-    T(s, [{ text: sh.tc, options: { bold: true, breakLine: true } }, { text: sh.dur }], { x: x + 2.75, y: 3.1, w: 1.6, h: 0.9, fontSize: 15 });
+    T(s, String(sh.n), { x: x + 3.1, y: 2.15, w: 1.2, h: 0.9, fontFace: HEAD, fontSize: 40, bold: true, color: sh.n === 6 ? C.orange : C.blue });
+    T(s, [{ text: sh.tc, options: { bold: true, breakLine: true } }, { text: sh.dur }], { x: x + 3.1, y: 3.1, w: 1.4, h: 1.2, fontSize: 13 });
     const [fr, act, snd] = SHORT[sh.n];
     T(s, [{ text: fr, options: { bold: true, breakLine: true, color: C.grey } }, { text: act, options: { breakLine: true } }, { text: 'Sound: ' + snd, options: { color: C.grey } }],
       { x, y: 2.15 + h + 0.15, w: 4.15, h: 10.15 - (2.15 + h + 0.15), fontSize: 15, paraSpaceAfter: 3 });
@@ -219,34 +223,36 @@ const SHORT = {
     : 'Shots five to eight show the friends\' side, which is the heart of our answer. Each friend gets the invite and answers in thirty seconds. Shot six is the key moment: the votes go from 1 out of 5 to 5 out of 5 and the date is locked. Then we see them really meeting on Thursday. The screens are illustrative prototype screens; during the pilot, the same steps happen by message.');
 });
 // ---------- 11-13. Social ----------
-{
-  const s = slide('12.5 · C · SOCIAL 1/3 · MADE TO BE SHARED', 'Carousel « Le dico des promesses de groupe »');
-  for (let i = 1; i <= 6; i++) s.addImage({ path: I(`C1_Share_Carousel_${i}.jpg`), x: 0.9 + (i - 1) * 3.07, y: 2.15, w: 2.9, h: 2.9 * 1350 / 1080, altText: `Carousel screen ${i}` });
-  T(s, [{ text: 'Goal: ', options: { bold: true } }, { text: 'be forwarded to "the group that says next week". Each screen translates a group-chat promise and corrects it with a real slot.', options: { breakLine: true } },
-    { text: 'Caption (FR): ', options: { bold: true } }, { text: '« Envoie ce carrousel au groupe qui dit "la semaine pro" depuis la rentrée. On sait qu\'il existe. » ', options: { italic: true } }, { text: '— Send this to the group that has been saying "next week" since September. We know it exists.', options: { color: C.grey } }],
-    { x: 0.9, y: 6.0, w: 18.2, h: 2.2, fontSize: 19, paraSpaceAfter: 8 });
-  T(s, [{ text: 'Format ', options: { bold: true } }, { text: '6 screens, 1080 × 1350 · ' }, { text: 'Posted ', options: { bold: true } }, { text: 'Mon 30 Nov, 6 pm · ' }, { text: 'Measured by ', options: { bold: true } }, { text: 'shares and DMs « GROUPE »' }], { x: 0.9, y: 8.4, w: 18.2, h: 0.6, fontSize: 18, color: C.blue });
-  s.addNotes('First social post: the shareable one. It is a dictionary of group-chat promises with their "real translation", for example "avant les vacances, promis" means "after the holidays, maybe". Each screen ends with the Overlap correction: a real slot. People send it to their group as a joke, and that is exactly the moment we want: the group talks about its own problem.');
+function igSlide(kicker, title, phoneImg, screens, cols, txt, notes) {
+  const s = slide(kicker, title);
+  const ph = 8.55, pw = ph * 840 / 1750;
+  s.addImage({ path: I(phoneImg), x: 0.9, y: 1.95, w: pw, h: ph, altText: 'Post as seen on Instagram' });
+  const x0 = 0.9 + pw + 0.6, gw = 19.1 - x0, gap = 0.25;
+  const rowsN0 = Math.ceil(screens.length / cols);
+  const w = Math.min((gw - gap * (cols - 1)) / cols, ((6.7 - gap * (rowsN0 - 1)) / rowsN0) * 1080 / 1350), h = w * 1350 / 1080;
+  screens.forEach((f, i) => s.addImage({ path: I(f), x: x0 + (i % cols) * (w + gap), y: 2.0 + Math.floor(i / cols) * (h + gap), w, h, altText: f }));
+  const rowsN = Math.ceil(screens.length / cols), ty = 2.0 + rowsN * (h + gap) + 0.1;
+  T(s, txt, { x: x0, y: ty, w: gw, h: 10.6 - ty, fontSize: 15, paraSpaceAfter: 6 });
+  s.addNotes(notes);
 }
+igSlide('12.5 · C · SOCIAL · POST 1 OF 3', 'Post 1 · Made to be shared', 'ig_C1_feed.png', [1, 2, 3, 4, 5, 6].map(i => `C1_Share_Carousel_${i}.jpg`), 3,
+  [{ text: 'Carousel « Le dico des promesses de groupe »: ', options: { bold: true } }, { text: 'each screen translates a group-chat promise and corrects it with a real slot. Caption: « Envoie ce carrousel au groupe qui dit "la semaine pro" depuis la rentrée. » (Send this to the group that has been saying "next week" since September.) Mon 30 Nov · measured by shares and DMs « GROUPE ».' }],
+  'First social post, shown as people will see it in their feed. It is a dictionary of group-chat promises with their "real translation": for example "avant les vacances, promis" means "after the holidays, maybe". Each screen ends with the Overlap correction: a real slot. People send it to their group as a joke, and that is exactly the moment we want: the group talks about its own problem.');
+igSlide('12.5 · C · SOCIAL · POST 2 OF 3', 'Post 2 · How it works', 'ig_C2_feed.png', [1, 2, 3, 4, 5].map(i => `C2_How_It_Works_${i}.jpg`), 3,
+  [{ text: 'Carousel « De 47 messages à 1 date »: ', options: { bold: true } }, { text: 'choose the group · friends share free times · 2–3 common slots, one tap each · convenient place + reminder. Privacy on screen: Overlap reads only free / busy. Wed 2 Dec · measured by saves and DMs « GROUPE ».' }],
+  'Second post: how Overlap works, in four steps that match our How it works slide: choose the group, friends share free times, Overlap proposes two or three common slots and everyone taps, then a convenient place and a reminder. We show privacy on screen because our legal section promises that we only read free or busy.');
 {
-  const s = slide('12.5 · C · SOCIAL 2/3 · HOW IT WORKS', 'Carousel « De 47 messages à 1 date »');
-  for (let i = 1; i <= 5; i++) s.addImage({ path: I(`C2_How_It_Works_${i}.jpg`), x: 0.9 + (i - 1) * 3.68, y: 2.15, w: 3.45, h: 3.45 * 1350 / 1080, altText: `How it works screen ${i}` });
-  T(s, [{ text: '4 steps, true to the documented features: ', options: { bold: true } }, { text: 'choose the group · friends share free times (calendar sync in the app, a message during the pilot) · 2–3 common slots, one tap each · convenient place + reminder. Privacy is on screen: Overlap reads only free / busy.' }],
-    { x: 0.9, y: 6.7, w: 18.2, h: 1.6, fontSize: 19 });
-  T(s, 'Posted Wed 2 Dec, 6 pm · measured by saves and DMs « GROUPE »', { x: 0.9, y: 8.5, w: 18.2, h: 0.6, fontSize: 18, color: C.blue });
-  s.addNotes('Second post: how Overlap works, in four steps that match our "How it works" slide: choose the group, friends share free times, Overlap proposes two or three common slots and everyone taps, then a convenient place and a reminder. We show privacy on the screen because our legal section promises that we only read free or busy.');
-}
-{
-  const s = slide('12.5 · C · SOCIAL 3/3 · JOIN THE PILOT', 'Interactive story « On cherche 15 groupes »');
-  for (let i = 1; i <= 3; i++) s.addImage({ path: I(`C3_Pilot_Story_${i}.jpg`), x: 0.9 + (i - 1) * 3.75, y: 2.1, w: 3.5, h: 3.5 * 16 / 9, altText: `Story frame ${i}` });
-  const xs = 12.4;
-  const st = [['1 · POLL', '« Ton groupe dit "la semaine pro" depuis… » 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter'], ['2 · QUESTION', '« Raconte ton dernier "on se capte" resté dans le groupe »'], ['3 · REPLY « GROUPE »', '15 groups · 14 days · free · nothing to download · a date before the holidays. Or come to the stand.']];
+  const s = slide('12.5 · C · SOCIAL · POST 3 OF 3', 'Post 3 · Join the pilot');
+  const ph = 8.55, pw = ph * 840 / 1750;
+  ['C3_story_1', 'C3_story_2', 'C3_story_3'].forEach((n, i) => s.addImage({ path: I(`ig_${n}.png`), x: 0.9 + i * (pw + 0.35), y: 1.95, w: pw, h: ph, altText: `Story frame ${i + 1}` }));
+  const xs = 0.9 + 3 * (pw + 0.35) + 0.25;
+  const st = [['1 · POLL', '« Ton groupe dit "la semaine pro" depuis… » 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter'], ['2 · QUESTION', '« Raconte ton dernier "on se capte" resté dans le groupe »'], ['3 · REPLY « GROUPE »', '15 groups · 14 days · free · nothing to download. Or come to the stand.']];
   st.forEach(([k, v], i) => {
-    T(s, k, { x: xs, y: 2.15 + i * 2.15, w: 6.7, h: 0.45, fontSize: 15, bold: true, color: C.orange, charSpacing: 2 });
-    T(s, v, { x: xs, y: 2.6 + i * 2.15, w: 6.7, h: 1.6, fontSize: 18.5 });
+    T(s, k, { x: xs, y: 2.0 + i * 2.55, w: 19.1 - xs, h: 0.45, fontSize: 13, bold: true, color: C.orange, charSpacing: 2 });
+    T(s, v, { x: xs, y: 2.45 + i * 2.55, w: 19.1 - xs, h: 2.0, fontSize: 15.5 });
   });
-  T(s, 'Posted Thu 3 Dec (last call Fri 4 Dec) · measured by poll votes and replies « GROUPE »', { x: 0.9, y: 8.6, w: 18.2, h: 0.6, fontSize: 18, color: C.blue });
-  s.addNotes('Third post: the story that recruits for the pilot. The poll makes people admit how long their group has been saying "next week". The question sticker collects real stories, which we reuse with permission. The last frame asks for one action: reply "GROUPE". No link is needed, so nothing can break. Translation of the poll: "Your group has been saying next week for: one week, one month, since September, we stopped counting".');
+  T(s, 'Thu 3 Dec (last call Fri 4 Dec)', { x: xs, y: 9.75, w: 19.1 - xs, h: 0.5, fontSize: 14, color: C.blue });
+  s.addNotes('Third post: the story that recruits for the pilot, shown frame by frame as people see it. The poll makes people admit how long their group has been saying "next week". The question sticker collects real stories, which we reuse with permission. The last frame asks for one action: reply "GROUPE". No link is needed, so nothing can break. Translation of the poll: "Your group has been saying next week for: one week, one month, since September, we stopped counting".');
 }
 // ---------- 14-15. Activation ----------
 {
@@ -255,7 +261,7 @@ const SHORT = {
   s.addNotes('Our field activation is "The Next-Week Wall", two lunch breaks in the EFAP hall. A visitor confesses her dead plan on a post-it. If her friends are with her, each one crosses out busy evenings on a transparent grid; when we stack the sheets, the cell that stays clear is their slot. It is the Overlap idea, made physical. They leave with a "C\'est calé" card and send its photo to the group. If friends are not there, the organiser signs the group up for the pilot.');
 }
 {
-  const s = slide('12.5 · D · FIELD ACTIVATION', 'How we run it with student means');
+  const s = slide('12.5 · D · FIELD ACTIVATION', 'Running it on a student budget');
   box(s, 0.9, 2.2, 5.6, 7.7, C.white);
   T(s, [{ text: 'WHERE & WHEN', options: { bold: true, color: C.orange, breakLine: true, fontSize: 15 } }, { text: 'EFAP hall, near the cafeteria. Tue 1 & Thu 3 Dec, 12:00–14:00.', options: { breakLine: true } }, { text: ' ', options: { breakLine: true, fontSize: 8 } },
     { text: 'PARTNERS (ENVISAGED, NOT SECURED)', options: { bold: true, color: C.orange, breakLine: true, fontSize: 15 } }, { text: 'EFAP administration: space (required). Student union (BDE): story relay (optional). No bar partner, so free drinks don\'t bias the result.', options: { breakLine: true } }, { text: ' ', options: { breakLine: true, fontSize: 8 } },
@@ -273,9 +279,37 @@ const SHORT = {
     { x: 14.6, y: 2.45, w: 4.3, h: 7.3, fontSize: 18, color: C.white });
   s.addNotes('Everything here is doable with student means. We need two lunch slots in the hall, which Agathe asks the school for; the student union can relay our story, but nothing is signed yet. The material costs about 161 euros. Each of us has one clear role. And the result is observable on the day: conversations, post-its, groups that leave with a card, and pilot sign-ups.');
 }
+// ---------- 20. Calendar ----------
+{
+  const s = slide('12.6 · ROLL-OUT', 'Roll-out calendar');
+  const cal = D.calendar;
+  cal.forEach((c, i) => {
+    const col = i < 5 ? 0 : 1, row = i % 5;
+    const x = 0.9 + col * 9.25, y = 2.2 + row * 1.6;
+    box(s, x, y, 2.75, 1.35, [3, 4, 6, 8].includes(i) ? C.blue : C.ink, { rectRadius: 0.2 });
+    T(s, c.when, { x: x + 0.15, y, w: 2.45, h: 1.35, fontSize: 16, bold: true, color: C.white, align: 'center', valign: 'middle' });
+    T(s, [{ text: c.what, options: { breakLine: true } }, { text: c.who, options: { color: C.grey, fontSize: 14 } }], { x: x + 2.95, y: y + 0.02, w: 6.0, h: 1.35, fontSize: 15.5, valign: 'middle' });
+  });
+  s.addNotes('Here is the calendar. This week we ask for permissions. Next week we print and test the pilot on one of our own groups. We shoot the film on Saturday 28 November. Posters and the first carousel go out on 30 November, the stand runs on 1 and 3 December, sign-ups close on the 4th, and the groups have until 18 December to meet. We decide on 21 December.');
+}
+// ---------- 21. Budget ----------
+{
+  const s = slide('12.7 · BUDGET', 'Budget: €378.40 (estimate)');
+  const sub = D.budget.reduce((a, b) => a + b.qty * b.unit, 0), cont = Math.round(sub * D.contingency_rate * 100) / 100, tot = sub + cont;
+  const eur = v => '€' + v.toFixed(2);
+  const H = (t) => ({ text: t, options: { bold: true, color: 'FFFFFF', fill: { color: C.blue } } });
+  const rows = [[H('Item'), H('Qty'), H('Unit'), H('Total'), H('Owner'), H('Indicator')],
+    ...D.budget.map(b => [b.item, String(b.qty), eur(b.unit), eur(b.qty * b.unit), b.owner, b.kpi]),
+    [{ text: 'Subtotal', options: { bold: true } }, '', '', { text: eur(sub), options: { bold: true } }, '', ''],
+    ['Contingency (10 %)', '', '', eur(cont), '', ''],
+    [{ text: 'TOTAL', options: { bold: true, color: C.orange } }, '', '', { text: eur(tot), options: { bold: true, color: C.orange } }, '', 'All amounts are estimates (VAT incl.)']];
+  s.addTable(rows, { x: 0.9, y: 2.05, w: 18.2, colW: [7.2, 0.9, 1.3, 1.5, 1.9, 5.4], fontFace: BODY, fontSize: 17, color: C.ink, border: { type: 'solid', color: 'E7E1D8', pt: 1 }, fill: { color: 'FFFFFF' }, rowH: 0.48, valign: 'middle', margin: [0.03, 0.08, 0.03, 0.08] });
+  T(s, `No budget was validated in our documents yet, so this is our proposal. Free: campus space (to request), team phones, CapCut, Canva, Google Forms. ≈ €${(tot / 15).toFixed(2)} per group started, €${(tot / 9).toFixed(2)} per group that meets (target).`, { x: 0.9, y: 9.78, w: 18.2, h: 0.55, fontSize: 12.5, color: C.grey });
+  s.addNotes(`Our documents do not contain a validated budget yet, so we propose a student envelope of ${eur(tot)}, with 10 percent contingency. Every line has an owner and an indicator. The biggest costs are printing and the activation. That is about ${(tot / 15).toFixed(0)} euros per group in the pilot. The detailed file with formulas is in the Pilot_Budget folder.`);
+}
 // ---------- 16. Evidence / Riskiest / Next test ----------
 {
-  const s = slide('12.6 · TESTING THE CAMPAIGN', 'Evidence · Riskiest assumption · Next test');
+  const s = slide('12.8 · MEASURING CONFIRMED DATES', 'Evidence · Riskiest assumption · Next test');
   const cols = [['EVIDENCE', 'What justifies the campaign', 'In 4 of 4 interviews, plans failed on timing, not place: "50 messages", 3 months without a date, a missed drink, party promises. Last-minute plans work better. 1/3 of 18–24s find organising outings hard (Harris Interactive).', C.white, C.ink],
     ['RISKIEST ASSUMPTION', 'What is still fragile', 'When an organiser invites them, at least 3 out of 4 friends send their free times within 48 h, without installing anything, and the group locks a date it really keeps.', C.orange, C.white],
     ['NEXT TEST', 'What could change our mind', 'A 14-day concierge pilot with 15 real friend groups (1–18 Dec). We count groups that actually meet. Below 60 %, we change the friend-side flow, or our first target.', C.blue, C.white]];
@@ -291,10 +325,10 @@ const SHORT = {
 }
 // ---------- 17. Pilot design ----------
 {
-  const s = slide('12.6 · THE PILOT', 'A 14-day concierge pilot with 15 real groups');
+  const s = slide('12.8 · MEASURING CONFIRMED DATES', 'The pilot: 15 real groups, 14 days');
   const q = [['WHO', 'Organisers aged 18–25 at EFAP who tried to plan something with 3–6 friends in the last month. Friends can be anywhere.'], ['HOW LONG', 'Sign-ups 1–4 Dec. Each group has 14 days; meet-ups by Fri 18 Dec, before the holidays.'], ['WHAT THEY DO', 'Join a temporary planning group (1 tap), send free evenings (30 s), vote in a poll with 2–3 common slots, get a reminder, meet.'], ['HOW WE COLLECT', 'The team plays the app on one WhatsApp number. One row per group in a Google Sheet, check-in poll the next morning, end survey + 5 calls.']];
   q.forEach(([k, v], i) => {
-    const y = 2.25 + i * 1.75;
+    const y = 2.25 + i * 2.05;
     T(s, k, { x: 0.9, y, w: 3.2, h: 0.5, fontSize: 14, bold: true, color: C.blue, charSpacing: 2 });
     T(s, v, { x: 4.3, y, w: 7.2, h: 1.6, fontSize: 18.5 });
   });
@@ -307,7 +341,7 @@ const SHORT = {
 }
 // ---------- 18. KPI ----------
 {
-  const s = slide('12.6 · HOW WE WILL KNOW', 'One main indicator, at group level');
+  const s = slide('12.8 · MEASURING CONFIRMED DATES', 'Our main indicator');
   box(s, 0.9, 2.2, 7.4, 7.7, C.blue);
   T(s, [{ text: 'MAIN INDICATOR', options: { bold: true, color: C.yellow, breakLine: true, fontSize: 15 } }, { text: 'Group meet-up rate', options: { fontFace: HEAD, bold: true, fontSize: 28, breakLine: true } }, { text: ' ', options: { breakLine: true, fontSize: 10 } },
     { text: 'groups that actually met within 14 days', options: { breakLine: true } }, { text: '÷', options: { fontSize: 28, bold: true, breakLine: true } }, { text: 'groups that started the trial', options: { breakLine: true } }, { text: ' ', options: { breakLine: true, fontSize: 10 } },
@@ -316,12 +350,12 @@ const SHORT = {
     { x: 1.3, y: 2.5, w: 6.6, h: 7.2, fontSize: 20, color: C.white });
   const rows = [[{ text: 'Step', options: { bold: true, color: 'FFFFFF', fill: { color: C.ink } } }, { text: 'Metric', options: { bold: true, color: 'FFFFFF', fill: { color: C.ink } } }, { text: 'Target (hypothesis)', options: { bold: true, color: 'FFFFFF', fill: { color: C.ink } } }],
     ...D.pilot.funnel.map(f => [{ text: f.step, options: { bold: true, color: f.step.includes('main') ? C.blue : C.ink } }, f.metric, f.target])];
-  s.addTable(rows, { x: 8.7, y: 2.2, w: 10.4, colW: [2.6, 4.9, 2.9], fontFace: BODY, fontSize: 17, color: C.ink, border: { type: 'solid', color: 'E7E1D8', pt: 1 }, fill: { color: 'FFFFFF' }, rowH: 0.95, valign: 'middle', margin: 0.08 });
+  s.addTable(rows, { x: 8.7, y: 2.2, w: 10.4, colW: [2.6, 4.9, 2.9], fontFace: BODY, fontSize: 17, color: C.ink, border: { type: 'solid', color: 'E7E1D8', pt: 1 }, fill: { color: 'FFFFFF' }, rowH: 1.05, valign: 'middle', margin: 0.08 });
   s.addNotes('This answers the second half of the jury question: how will we know the campaign helped groups fix a date? Our main indicator is measured at group level: the share of groups that really met within fourteen days. Success is 60 percent, the same bar we wrote in our working document. The funnel on the right shows where it breaks if it fails. All targets are hypotheses for steering, not results.');
 }
 // ---------- 19. Decisions ----------
 {
-  const s = slide('12.6 · DECISIONS', 'What we do if it breaks');
+  const s = slide('12.8 · MEASURING CONFIRMED DATES', 'What we do if it breaks');
   const D2 = [['A', 'Many discover, few invite', 'Invite rate < 40 %', 'The problem is the organiser\'s ask, not the friends. We call 5 non-inviters ("what stopped you?"), rewrite the invite message, and let organisers send it with us at the stand. Still < 40 % after one week: the pain is too weak in this situation, so we test segment 3 (friends far away) or the "free tonight" idea.', C.orange],
     ['B', 'Many start, few confirm', 'Date-lock rate < 50 %', 'The friend side breaks. If friends don\'t answer: reminder at 24 h, quorum rule (lock at 4/5). If they answer but no slot fits: wider window or last-minute slots. Product consequence: keep guest access without download.', C.blue],
     ['C', 'Dates confirmed, few meet', 'Show-up rate < 85 %', 'Commitment is weak. We add a reminder 2 h before, send the place earlier, and ask in the survey what made people cancel.', C.violet]];
@@ -335,40 +369,12 @@ const SHORT = {
   });
   s.addNotes('We decided in advance what we will do with each result. Case A: lots of people see the campaign but few invite their friends. Then the problem is the ask, so we fix the invitation before touching the product. Case B: groups start but do not confirm. Then the friend side is the problem, so we add reminders, a quorum rule or last-minute slots. Case C covers confirmed dates that do not happen.');
 }
-// ---------- 20. Calendar ----------
-{
-  const s = slide('12.7 · LAUNCH CALENDAR', 'Four weeks, from today to the decision');
-  const cal = D.calendar;
-  cal.forEach((c, i) => {
-    const col = i < 5 ? 0 : 1, row = i % 5;
-    const x = 0.9 + col * 9.25, y = 2.2 + row * 1.6;
-    box(s, x, y, 2.75, 1.35, [3, 4, 6, 8].includes(i) ? C.blue : C.ink, { rectRadius: 0.2 });
-    T(s, c.when, { x: x + 0.15, y, w: 2.45, h: 1.35, fontSize: 16, bold: true, color: C.white, align: 'center', valign: 'middle' });
-    T(s, [{ text: c.what, options: { breakLine: true } }, { text: c.who, options: { color: C.grey, fontSize: 14 } }], { x: x + 2.95, y: y + 0.02, w: 6.0, h: 1.35, fontSize: 15.5, valign: 'middle' });
-  });
-  s.addNotes('Here is the calendar. This week we ask for permissions. Next week we print and test the pilot on one of our own groups. We shoot the film on Saturday 28 November. Posters and the first carousel go out on 30 November, the stand runs on 1 and 3 December, sign-ups close on the 4th, and the groups have until 18 December to meet. We decide on 21 December.');
-}
-// ---------- 21. Budget ----------
-{
-  const s = slide('12.8 · BUDGET', 'A student envelope: €378.40 (estimated)');
-  const sub = D.budget.reduce((a, b) => a + b.qty * b.unit, 0), cont = Math.round(sub * D.contingency_rate * 100) / 100, tot = sub + cont;
-  const eur = v => '€' + v.toFixed(2);
-  const H = (t) => ({ text: t, options: { bold: true, color: 'FFFFFF', fill: { color: C.blue } } });
-  const rows = [[H('Item'), H('Qty'), H('Unit'), H('Total'), H('Owner'), H('Indicator')],
-    ...D.budget.map(b => [b.item, String(b.qty), eur(b.unit), eur(b.qty * b.unit), b.owner, b.kpi]),
-    [{ text: 'Subtotal', options: { bold: true } }, '', '', { text: eur(sub), options: { bold: true } }, '', ''],
-    ['Contingency (10 %)', '', '', eur(cont), '', ''],
-    [{ text: 'TOTAL', options: { bold: true, color: C.orange } }, '', '', { text: eur(tot), options: { bold: true, color: C.orange } }, '', 'All amounts are estimates (VAT incl.)']];
-  s.addTable(rows, { x: 0.9, y: 2.05, w: 18.2, colW: [7.2, 0.9, 1.3, 1.5, 1.9, 5.4], fontFace: BODY, fontSize: 17, color: C.ink, border: { type: 'solid', color: 'E7E1D8', pt: 1 }, fill: { color: 'FFFFFF' }, rowH: 0.48, valign: 'middle', margin: [0.03, 0.08, 0.03, 0.08] });
-  T(s, `No budget was validated in our documents yet, so this is our proposal. Free: campus space (to request), team phones, CapCut, Canva, Google Forms. ≈ €${(tot / 15).toFixed(2)} per group started, €${(tot / 9).toFixed(2)} per group that meets (target).`, { x: 0.9, y: 9.78, w: 18.2, h: 0.55, fontSize: 12.5, color: C.grey });
-  s.addNotes(`Our documents do not contain a validated budget yet, so we propose a student envelope of ${eur(tot)}, with 10 percent contingency. Every line has an owner and an indicator. The biggest costs are printing and the activation. That is about ${(tot / 15).toFixed(0)} euros per group in the pilot. The detailed file with formulas is in the Pilot_Budget folder.`);
-}
 // ---------- 22. Close ----------
 {
-  const s = slide('12.9 · WHAT WE WILL LEARN', 'In three weeks, we will know if friends follow the organiser', 'OV_DARK');
+  const s = slide('12.9 · WHAT WE WILL LEARN', 'What the pilot will tell us', 'OV_DARK');
   T(s, [{ text: 'Will friends answer an organiser in 48 h without installing anything?', options: { bullet: true, breakLine: true } },
     { text: 'Do confirmed dates turn into real meetings, more often than in their group chat today?', options: { bullet: true, breakLine: true } },
-    { text: 'Which step breaks first, so we know what to build next: the invite, the slots or the reminder.', options: { bullet: true } }], { x: 0.9, y: 5.3, w: 11.0, h: 3.6, fontSize: 24, color: C.white, paraSpaceAfter: 12 });
+    { text: 'Which step breaks first, so we know what to build next: the invite, the slots or the reminder.', options: { bullet: true } }], { x: 0.9, y: 3.4, w: 11.0, h: 4.6, fontSize: 24, color: C.white, paraSpaceAfter: 12 });
   s.addImage({ path: I('logo.png'), x: 13.6, y: 5.0, w: 2.6, h: 2.6 });
   T(s, 'Overlap', { x: 12.6, y: 7.75, w: 6.0, h: 0.9, fontFace: HEAD, fontSize: 40, bold: true, color: C.white, align: 'center' });
   T(s, 'LESS CHATTING – MORE MEETING', { x: 11.9, y: 8.6, w: 7.4, h: 0.5, fontSize: 14, color: C.white, align: 'center', charSpacing: 3 });

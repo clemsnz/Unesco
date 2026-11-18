@@ -18,12 +18,13 @@ const JOBS = [
   ['grid_a5.html', '04_Activation/Transparent_Week_Grid_A5.png', 794, 559, 2, '04_Activation/Transparent_Week_Grid_A5_print.pdf', ['210mm', '148mm']],
   ['rdv_card.html', '04_Activation/RDV_Card_A6.png', 559, 397, 3, '04_Activation/RDV_Card_A6_print.pdf', ['148mm', '105mm']],
   ['activation_scene.html', '04_Activation/Activation_Scene.png', 1920, 1080, 2, null],
+  ...['C1_feed', 'C2_feed', 'C3_story_1', 'C3_story_2', 'C3_story_3'].map((n, i) => [`ig_mockups.html#s${i + 1}`, `03_Social/Seen_on_Instagram_${n}.png`, 840, 1750, 2, null, null, true]),
 ];
 
 (async () => {
   const filter = process.argv[2];
   const browser = await chromium.launch();
-  for (const [file, png, w, h, dsf, pdf, size] of JOBS) {
+  for (const [file, png, w, h, dsf, pdf, size, transparent] of JOBS) {
     if (filter && !file.includes(filter)) continue;
     const ctx = await browser.newContext({ viewport: { width: w, height: h }, deviceScaleFactor: dsf });
     const page = await ctx.newPage();
@@ -31,7 +32,7 @@ const JOBS = [
     await page.goto('file://' + path.join(SRC, f) + (hash ? '#' + hash : ''));
     await page.evaluate(() => document.fonts.ready);
     await page.waitForTimeout(250);
-    if (png) await page.screenshot({ path: path.join(OUT, png), clip: { x: 0, y: 0, width: w, height: h } });
+    if (png) await page.screenshot({ path: path.join(OUT, png), clip: { x: 0, y: 0, width: w, height: h }, omitBackground: !!transparent });
     if (pdf) await page.pdf({ path: path.join(OUT, pdf), width: size[0], height: size[1], printBackground: true, preferCSSPageSize: true });
     console.log('ok', file, png || '', pdf || '');
     await ctx.close();

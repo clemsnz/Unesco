@@ -6,7 +6,7 @@ const D = require('./data.json');
 const { SHOTS } = require('../html/film_data.js');
 const IMG = process.argv[2], OUT = process.argv[3];
 const BLUE = '1143F7', ORANGE = 'FE512D', GREY = '6E6A64';
-const W = 9638; // A4 content width in DXA (2 cm margins)
+const W = 9026; // A4 content width in DXA (2 cm margins)
 
 // --- helpers: **bold** and _italic_ inline markup
 function runs(t, base = {}) {
@@ -20,18 +20,19 @@ function runs(t, base = {}) {
   return out;
 }
 const P = (t, o = {}) => new Paragraph({ children: runs(t, o.run || {}), spacing: { after: 120, line: 288 }, ...o.p });
-const H1 = t => new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun(t)] });
-const H2 = t => new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun(t)] });
-const H3 = t => new Paragraph({ heading: HeadingLevel.HEADING_3, children: [new TextRun(t)] });
+const ROM = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']; let c1 = 0, c2 = 0, c3 = 0, fig = 0;
+const H1 = t => { c1++; c2 = 0; return new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun(`${ROM[c1 - 1]}. ${t.replace(/^12\.\d\s+/, '')}`)] }); };
+const H2 = t => { c2++; c3 = 0; return new Paragraph({ heading: HeadingLevel.HEADING_3, children: [new TextRun(`${String.fromCharCode(64 + c2)}. ${t.replace(/^[A-D]\. /, '')}`)] }); };
+const H3 = t => { c3++; return new Paragraph({ heading: HeadingLevel.HEADING_4, children: [new TextRun(`${c3}. ${t.replace(/^C\d — /, '')}`)] }); };
 const B = (t, lvl = 0) => new Paragraph({ numbering: { reference: 'bul', level: lvl }, children: runs(t), spacing: { after: 60, line: 276 } });
 const NUM = (t) => new Paragraph({ numbering: { reference: 'num', level: 0 }, children: runs(t), spacing: { after: 60, line: 276 } });
 const NOTE = t => new Paragraph({ children: runs(t, { color: GREY, size: 18, italics: true }), spacing: { after: 160 } });
-const QUOTE = t => new Paragraph({ children: runs(t, { size: 26, bold: true, color: BLUE }), spacing: { before: 120, after: 160 }, indent: { left: 360 }, border: { left: { style: BorderStyle.SINGLE, size: 18, color: ORANGE, space: 8 } } });
+const QUOTE = t => new Paragraph({ children: runs(t, { italics: true }), spacing: { before: 120, after: 160 }, indent: { left: 567, right: 567 } });
 function IMGP(file, wPx, cap) {
   const buf = fs.readFileSync(path.join(IMG, file));
   const { w, h } = jpgSize(buf, file);
   const out = [new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 120, after: 60 }, children: [new ImageRun({ type: file.endsWith('.png') ? 'png' : 'jpg', data: buf, transformation: { width: wPx, height: Math.round(wPx * h / w) }, altText: { title: cap || file, description: cap || file, name: file } })] })];
-  if (cap) out.push(new Paragraph({ alignment: AlignmentType.CENTER, children: runs(cap, { size: 17, color: GREY, italics: true }), spacing: { after: 200 } }));
+  if (cap) { fig++; out.push(new Paragraph({ alignment: AlignmentType.CENTER, children: runs(`Figure ${fig} – ${cap}`, { size: 18, color: GREY, italics: true }), spacing: { after: 200 } })); }
   return out;
 }
 function jpgSize(buf, f) {
@@ -40,10 +41,11 @@ function jpgSize(buf, f) {
 }
 const border = { style: BorderStyle.SINGLE, size: 4, color: 'D9D2C7' };
 function TABLE(head, rows, widths) {
-  const total = widths.reduce((a, b) => a + b, 0);
+  const k = W / widths.reduce((a, b) => a + b, 0); widths = widths.map(x => Math.round(x * k)); widths[widths.length - 1] += W - widths.reduce((a, b) => a + b, 0);
+  const total = W;
   const cell = (t, i, isHead) => new TableCell({ width: { size: widths[i], type: WidthType.DXA }, borders: { top: border, bottom: border, left: border, right: border },
-    shading: isHead ? { type: ShadingType.CLEAR, fill: BLUE, color: 'auto' } : undefined, margins: { top: 60, bottom: 60, left: 90, right: 90 },
-    children: String(t).split('\n').map(line => new Paragraph({ children: runs(line, isHead ? { bold: true, color: 'FFFFFF', size: 18 } : { size: 18 }), spacing: { after: 20 } })) });
+    shading: isHead ? { type: ShadingType.CLEAR, fill: 'F2F2F2', color: 'auto' } : undefined, margins: { top: 60, bottom: 60, left: 90, right: 90 },
+    children: String(t).split('\n').map(line => new Paragraph({ children: runs(line, isHead ? { bold: true, size: 19 } : { size: 19 }), spacing: { after: 20 } })) });
   return new Table({ width: { size: total, type: WidthType.DXA }, columnWidths: widths,
     rows: [new TableRow({ tableHeader: true, children: head.map((h, i) => cell(h, i, true)) }), ...rows.map(r => new TableRow({ children: r.map((c, i) => cell(c, i, false)) }))] });
 }
@@ -55,9 +57,9 @@ const eur = v => '€' + v.toFixed(2);
 const body = [];
 const add = (...x) => x.flat().forEach(e => body.push(e));
 
-add(new Paragraph({ heading: HeadingLevel.TITLE, children: [new TextRun('12. Marketing & Communication')] }),
-  P('**Overlap — campaign « La semaine pro »** · Less chatting – More meeting', { run: { color: GREY } }),
-  P('This section follows « 11. Legal Status ». It contains our launch strategy, the campaign idea, the creations and their texts, the roll-out, the budget and the pilot that will test the campaign. All the files mentioned are in the folder Overlap_Campagne/Campaign_Assets.', { run: { italics: true } }));
+add(new Paragraph({ heading: HeadingLevel.HEADING_1, children: [new TextRun('MARKETING & COMMUNICATION')] }),
+  P('**Launch campaign « La semaine pro » — Less chatting – More meeting**'),
+  P('This section presents our launch strategy, the campaign idea, the creations and their texts, the roll-out calendar, the budget and the pilot that will test the campaign. The print files and editable sources are delivered with the presentation.'));
 
 // 12.1
 add(H1('12.1 The question we have to answer'),
@@ -70,14 +72,14 @@ add(H1('12.1 The question we have to answer'),
   H2('What the course asks, and how we apply it'),
   P('We separate the professor\'s method (left) from our own creative choices (right).'),
   TABLE(['Course requirement (page)', 'How we apply it in this section'], [
-    ['1.6 Introduction to Entrepreneurship, p.11: Assumption → Experiment → Evidence → Decision', 'The campaign is built as an experiment: we state the assumption, run a pilot, collect evidence and decide (12.6).'],
+    ['1.6 Introduction to Entrepreneurship, p.11: Assumption → Experiment → Evidence → Decision', 'The campaign is built as an experiment: we state the assumption, run a pilot, collect evidence and decide (part VIII).'],
     ['1.6, p.13: attention is scarcer, trust is harder', 'We reach friends through someone they trust (the organiser), not through ads.'],
     ['1.6, p.17: start with what you have', 'We launch on our own campus (EFAP), with our network and a student budget.'],
-    ['1.6, p.22: "Here is the evidence we have so far"', 'We show our four interviews and secondary data, with their limits (12.2).'],
+    ['1.6, p.22: "Here is the evidence we have so far"', 'We show our four interviews and secondary data, with their limits (part II).'],
     ['2.8 From Idea to Concept, p.16: primary research includes prototype tests and actual behaviour', 'The pilot is a prototype test that observes real behaviour: did the group meet?'],
     ['2.8, p.18: behaviour > opinion', 'Our main indicator is a behaviour (a meeting that happened), not a like or an intention.'],
     ['2.8, p.20: AI can generate hypotheses, reality validates them', 'All our targets are hypotheses for steering; only the pilot can validate them.'],
-    ['2.8, p.29 (Workshop 2): riskiest assumption, evidence, next test', 'We use these three headings explicitly in 12.6.'],
+    ['2.8, p.29 (Workshop 2): riskiest assumption, evidence, next test', 'We use these three headings explicitly in part VIII.'],
   ], [4300, 5338]));
 
 // 12.2
@@ -121,12 +123,12 @@ add(H1('12.4 The campaign idea: « La semaine pro »'),
   P('**Visual principle: the strike-out.** A vague promise is crossed out in orange and replaced by a real, confirmed slot in a blue pill, with the group count (5/5). The same device is used on every piece: poster, film, carousels, story, activation board.'),
   P('**What it shows.** The benefit is shown from the friends\' side: no debate, one tap, a date that holds.'),
   P('**Brand.** Cream background, Overlap blue and orange, Monument Extended for titles and Syne for text (from our Visual Identity slides), the mascot logo and our signature **Less chatting – More meeting**.'),
-  P('**Language.** The ads are in French because this is how our audience talks; « on se capte » does not translate naturally. All texts for the jury are in English, and every French line is translated in the notes and in Captions_ready_to_post.md.'));
+  P('**Language.** The ads are in French because this is how our audience talks; « on se capte » does not translate naturally. All texts for the jury are in English, and every French line is translated in this section and in the presentation notes.'));
 
 // 12.5
 add(H1('12.5 The creations'),
   H2('A. Launch poster'),
-  ...IMGP('Overlap_Poster_A2.jpg', 330, 'Launch poster (A2 / A3). Files: 01_Poster/Overlap_Poster_A2_print.pdf and Overlap_Poster_A2.png'),
+  ...IMGP('Overlap_Poster_A2.jpg', 330, 'Launch poster (A2, also printed in A3)'),
   TABLE(['Element', 'Final text (FR)', 'English'], [
     ['Hook', 'On se capte ~~la semaine pro~~ jeudi 19h30 ✓', 'Let\'s catch up ~~next week~~ Thursday 7:30 pm ✓'],
     ['Card', 'C\'est calé · Jeu. 10 déc · 19h30 · 5/5', 'Locked in · Thu 10 Dec · 7:30 pm · 5/5'],
@@ -139,7 +141,7 @@ add(H1('12.5 The creations'),
   ...IMGP('Overlap_Poster_in_situ.jpg', 560, 'Mock-up: the poster in the student lounge'),
 
   H2('B. Vertical film « 47 messages » (28 seconds)'),
-  P('Shot on one phone in about three hours, edited in CapCut, subtitled so it works without sound. The full storyboard (6 pages, with the bilingual script) is in 02_Film/Overlap_Film_Storyboard.pdf.'),
+  P('Shot on one phone in about three hours, edited in CapCut, subtitled so it works without sound. A full 6-page storyboard with the bilingual script is delivered with the presentation.'),
   ...IMGP('strip_film1.jpg', 600, 'Shots 1–4: the problem'),
   ...IMGP('strip_film2.jpg', 600, 'Shots 5–8: the friends\' side, the confirmed date (shot 6) and the real meeting'),
   TABLE(['#', 'Time', 'Framing', 'Action', 'On screen / sound'], SHOTS.map(s => [String(s.n), `${s.tc}\n${s.dur}`, s.frame, s.action, s.screen + '\nSound: ' + s.sound]), [400, 1050, 2000, 3000, 3188]),
@@ -149,16 +151,16 @@ add(H1('12.5 The creations'),
 
   H2('C. Three social media posts'),
   H3('C1 — Shareable carousel « Le dico des promesses de groupe » (6 screens, 1080 × 1350)'),
-  ...IMGP('strip_c1a.jpg', 520), ...IMGP('strip_c1b.jpg', 520, 'C1 screens 1–6'),
+  ...IMGP('strip_c1a.jpg', 520), ...IMGP('strip_c1b.jpg', 520, 'Post 1, carousel screens 1–6'),
   P('Each screen "translates" a group-chat promise and corrects it with a real slot: « On se capte la semaine pro » = "we\'ll see each other in 2027" → jeudi 19h30 ✓; « Faut qu\'on se fasse un verre un de ces quatre » = "never, but with love" → mardi 20h ✓; « Dites-moi vos dispos » = "47 messages later, still no date" → 3 créneaux · 1 tap ✓; « Avant les vacances, promis » = "after the holidays, maybe" → sam. 12 déc, 12h ✓.'),
   P('**Caption (FR):** _Le dico officiel des promesses de groupe. Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée. On sait qu\'il existe. Overlap trouve 2 à 3 créneaux où tout le groupe est libre. Chacun tape le sien, c\'est calé. Pilote gratuit : 15 groupes, 14 jours, rien à télécharger. Stand Overlap, hall EFAP · mar. 1er & jeu. 3 déc. · 12h–14h — ou réponds GROUPE en DM. Less chatting – More meeting._'),
   P('**EN:** The official dictionary of group-chat promises. Send this carousel to the group that has been saying "next week" since September. We know it exists. Overlap finds 2–3 slots when the whole group is free… Free pilot: 15 groups, 14 days, nothing to download.'),
   H3('C2 — Carousel « De 47 messages à 1 date » (how it works, 5 screens)'),
-  ...IMGP('strip_c2.jpg', 600, 'C2 screens 1–5'),
+  ...IMGP('strip_c2.jpg', 600, 'Post 2, carousel screens 1–5'),
   P('**Caption (FR):** _De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos (30 secondes, rien à installer pendant le pilote). 3. Overlap propose 2 à 3 créneaux où tout le monde est libre. Chacun tape. 4. Un lieu pratique pour tous + un rappel la veille. Overlap ne lit que « libre / occupé », jamais le contenu de ton agenda._'),
   P('**EN:** From 47 messages to 1 date in 4 steps… Overlap only reads "free / busy", never what is in your calendar. These steps match our "How it works" slide and our Legal section.'),
   H3('C3 — Interactive story « On cherche 15 groupes » (3 frames, 1080 × 1920)'),
-  ...IMGP('strip_c3.jpg', 420, 'C3 frames 1–3'),
+  ...IMGP('strip_c3.jpg', 420, 'Post 3, story frames 1–3'),
   TABLE(['Frame', 'Sticker and exact text (FR)', 'English'], [
     ['1', 'Poll: « Ton groupe dit "la semaine pro" depuis… » Options: 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter', 'Your group has been saying "next week" for… 1 week / 1 month / Since September / We stopped counting'],
     ['2', 'Question: « Raconte ton dernier "on se capte" resté dans le groupe »', 'Tell us about your last "let\'s catch up" that stayed in the group chat'],
@@ -169,45 +171,16 @@ add(H1('12.5 The creations'),
   H2('D. Field activation « Le Mur des Semaines Pro »'),
   ...IMGP('Activation_Scene.jpg', 600, 'Mock-up of the activation in the EFAP hall'),
   P('**The scene, from a participant\'s point of view.** Léa (21, first-year Master\'s) walks to the cafeteria with two classmates. A big board says « Le Mur des Semaines Pro ». Clémentine asks: « Depuis quand ton groupe dit "la semaine pro" ? » ("Since when has your group been saying next week?"). Léa laughs: « depuis septembre ». She writes « Les filles de L3, depuis septembre » on an orange post-it and sticks it in the "graveyard of plans". Opale gives the three of them a transparent week grid each: they cross out the evenings they are busy and stack the sheets. One cell stays clear: that is their slot. They fill in a « C\'est calé » card, take a photo and send it to their group chat. Léa\'s two other friends were not there, so she signs the whole group up for the pilot on Hénora\'s tablet (one minute). That evening, the planning group asks for their free evenings; two days later, a poll with three common slots arrives; the five friends vote; the date is locked.'),
-  ...IMGP('Wall_Board_A1.jpg', 520, 'Main on-site support: the A1 wall board (04_Activation/Wall_Board_A1_print.pdf)'),
+  ...IMGP('Wall_Board_A1.jpg', 520, 'Main on-site support: the A1 wall board'),
   ...IMGP('strip_cards.jpg', 480, '« C\'est calé » card (A6) and transparent week grid (A5)'),
   TABLE(['Item', 'Details'], [
     ['Place and time', 'EFAP Paris hall, near the cafeteria. Tue 1 and Thu 3 Dec 2026, 12:00–14:00 (set-up 11:15). Subject to approval by the school.'],
     ['Partnerships (envisaged, not secured)', 'EFAP administration: space (required, request by Agathe). Student union (BDE): relay of the C3 story (optional). No bar or brand partner, so free drinks do not bias the meeting rate.'],
     ['Team roles', D.roles.map(r => `${r.name}: ${r.activation}`).join('\n')],
     ['Material', 'A1 board on foam board, 2 × A2 posters, 50 transparent A5 grids, 12 dry-erase markers, 300 cards, sticky notes, borrowed table, tablet, coffee and sweets.'],
-    ['Cost', '€161.00 for the activation lines (estimate, see 12.8).'],
+    ['Cost', '€161.00 for the activation lines (estimate, see part VII).'],
     ['Observable result (targets, hypotheses)', '≈ 120 stand conversations · ≈ 60 post-its · ≈ 20 groups leave with a card · 25 organisers signed up → 15 groups started.'],
   ], [2600, 7038]));
-
-// 12.6
-add(H1('12.6 How we will test the campaign'),
-  H2('Evidence'),
-  P('In all four interviews, plans failed because of **timing**, not place: "50 messages", three months without a date, a missed drink, party promises never kept. Last-minute plans work better. Around one third of 18–24-year-olds say organising outings is a challenge (Harris Interactive).'),
-  H2('Riskiest assumption'),
-  QUOTE('When an organiser invites them, at least 3 out of 4 friends send their free times within 48 hours, without installing anything, and the group locks a date that it really keeps.'),
-  P('It is our riskiest assumption because a group app fails as soon as one person does not join, and because a confirmed date is still only an intention.'),
-  H2('Next test: a 14-day concierge pilot'),
-  TABLE(['Question', 'Our plan'], [
-    ['Who we recruit', D.pilot.recruit + ' Target: 25 organisers → 15 groups (≈ 60 people).'],
-    ['How long', D.pilot.window],
-    ['What participants do', 'Organiser: sign up (1 min) and forward the invitation. Friends: join a temporary planning group (1 tap), send free evenings (30 s), vote in a poll with 2–3 common slots, receive reminders, meet, answer the check-in.'],
-    ['How we collect results', 'The team plays the app by hand on one shared WhatsApp number (as planned in our working document, "Wizard of Oz" test). One row per group in a Google Sheet (template: 05_Pilot_Budget/Overlap_Budget_and_Pilot_Tracker.xlsx), check-in poll the morning after each meeting, end survey (5 questions) and 5 short calls with groups that did not lock a date.'],
-    ['Privacy', 'Consent form at sign-up; we never join the friends\' own group chat; only first names and free evenings are collected; data deleted by 31 Jan 2027 (in line with our Legal section).'],
-  ], [2400, 7238]),
-  H2('Confirmed date vs. meeting that happened'),
-  B(D.pilot.definitions.started),
-  B(D.pilot.definitions.confirmed),
-  B(D.pilot.definitions.met),
-  H2('Main indicator (group level)'),
-  P(`**${D.pilot.primary.name}** = ${D.pilot.primary.formula}.`),
-  P(`**Success threshold: ${D.pilot.primary.threshold}.** ${D.pilot.primary.why} To see whether the campaign changes behaviour, we compare it with each group\'s baseline, asked at sign-up: "Of the last 3 plans you tried to make in this group chat, how many actually happened?"`),
-  TABLE(['Step', 'Metric', 'Target (hypothesis)', 'Owner'], D.pilot.funnel.map(f => [f.step, f.metric, f.target, f.owner]), [2100, 3800, 2100, 1638]),
-  NOTE('All targets are steering hypotheses, not results. Study data is quoted with its source; our own figures are estimates.'),
-  H2('Decisions we take in advance'),
-  P('**Case A — many people discover the campaign, but few invite their friends** (invite rate below 40%). The problem is the organiser\'s ask, not the friends. We call 5 organisers who did not invite ("What stopped you?"), rewrite the invitation message and let organisers send it with us at the stand. If the rate is still below 40% after one week, the pain is too weak in this situation: we test segment 3 (friends who live far away) or the "free tonight" idea from our working document.'),
-  P('**Case B — many groups start the trial, but few confirm a date** (date-lock rate below 50%). The friend side breaks. If friends do not answer: a reminder at 24 hours and a quorum rule (lock at 4/5, the missing person is informed). If they answer but no slot fits: a wider window or last-minute slots. Product consequence: keep guest access without download.'),
-  P('**Case C — dates are confirmed, but few groups meet** (show-up rate below 85%). Commitment is weak: we add a reminder 2 hours before, send the place earlier and ask in the survey why people cancelled.'));
 
 // 12.7
 add(H1('12.7 Launch calendar'),
@@ -224,7 +197,36 @@ add(H1('12.8 Budget'),
   ], [400, 3300, 600, 900, 1000, 1200, 2238]),
   P(`By category: posters €54.00 · activation €161.00 · pilot €64.00 · social €40.00 · film €25.00 (= ${eur(sub)}). That is about ${eur(tot / 15)} per group started and ${eur(tot / 9)} per group that meets if we reach the target.`),
   P('**Free or borrowed (not counted):** ' + D.free_items),
-  P('The file 05_Pilot_Budget/Overlap_Budget_and_Pilot_Tracker.xlsx contains the same budget with formulas and the pilot tracking sheet.'));
+  P('Our budget spreadsheet contains the same lines with formulas, next to the pilot tracking sheet.'));
+
+// 12.6
+add(H1('12.6 How we will test the campaign'),
+  H2('Evidence'),
+  P('In all four interviews, plans failed because of **timing**, not place: "50 messages", three months without a date, a missed drink, party promises never kept. Last-minute plans work better. Around one third of 18–24-year-olds say organising outings is a challenge (Harris Interactive).'),
+  H2('Riskiest assumption'),
+  QUOTE('When an organiser invites them, at least 3 out of 4 friends send their free times within 48 hours, without installing anything, and the group locks a date that it really keeps.'),
+  P('It is our riskiest assumption because a group app fails as soon as one person does not join, and because a confirmed date is still only an intention.'),
+  H2('Next test: a 14-day concierge pilot'),
+  TABLE(['Question', 'Our plan'], [
+    ['Who we recruit', D.pilot.recruit + ' Target: 25 organisers → 15 groups (≈ 60 people).'],
+    ['How long', D.pilot.window],
+    ['What participants do', 'Organiser: sign up (1 min) and forward the invitation. Friends: join a temporary planning group (1 tap), send free evenings (30 s), vote in a poll with 2–3 common slots, receive reminders, meet, answer the check-in.'],
+    ['How we collect results', 'The team plays the app by hand on one shared WhatsApp number (as planned in our working document, "Wizard of Oz" test). One row per group in a Google Sheet (our tracking template computes every rate automatically), check-in poll the morning after each meeting, end survey (5 questions) and 5 short calls with groups that did not lock a date.'],
+    ['Privacy', 'Consent form at sign-up; we never join the friends\' own group chat; only first names and free evenings are collected; data deleted by 31 Jan 2027 (in line with our Legal section).'],
+  ], [2400, 7238]),
+  H2('Confirmed date vs. meeting that happened'),
+  B(D.pilot.definitions.started),
+  B(D.pilot.definitions.confirmed),
+  B(D.pilot.definitions.met),
+  H2('Main indicator (group level)'),
+  P(`**${D.pilot.primary.name}** = ${D.pilot.primary.formula}.`),
+  P(`**Success threshold: ${D.pilot.primary.threshold}.** ${D.pilot.primary.why} To see whether the campaign changes behaviour, we compare it with each group\'s baseline, asked at sign-up: "Of the last 3 plans you tried to make in this group chat, how many actually happened?"`),
+  TABLE(['Step', 'Metric', 'Target (hypothesis)', 'Owner'], D.pilot.funnel.map(f => [f.step, f.metric, f.target, f.owner]), [2100, 3800, 2100, 1638]),
+  NOTE('All targets are steering hypotheses, not results. Study data is quoted with its source; our own figures are estimates.'),
+  H2('Decisions we take in advance'),
+  P('**Case A — many people discover the campaign, but few invite their friends** (invite rate below 40%). The problem is the organiser\'s ask, not the friends. We call 5 organisers who did not invite ("What stopped you?"), rewrite the invitation message and let organisers send it with us at the stand. If the rate is still below 40% after one week, the pain is too weak in this situation: we test segment 3 (friends who live far away) or the "free tonight" idea from our working document.'),
+  P('**Case B — many groups start the trial, but few confirm a date** (date-lock rate below 50%). The friend side breaks. If friends do not answer: a reminder at 24 hours and a quorum rule (lock at 4/5, the missing person is informed). If they answer but no slot fits: a wider window or last-minute slots. Product consequence: keep guest access without download.'),
+  P('**Case C — dates are confirmed, but few groups meet** (show-up rate below 85%). Commitment is weak: we add a reminder 2 hours before, send the place earlier and ask in the survey why people cancelled.'));
 
 // 12.9
 add(H1('12.9 What the pilot will teach us'),
@@ -232,7 +234,7 @@ add(H1('12.9 What the pilot will teach us'),
   B('Whether confirmed dates turn into **real meetings** more often than in their group chat today.'),
   B('**Which step breaks first** (the invitation, the slots or the reminder), so we know what to build next.'),
   P('Whatever the result, the decision rules above tell us what we change. Less chatting, more meeting.'),
-  H2('Sources'),
+  H1('Sources'),
   B('Course material: « 1.6 Introduction to Entrepreneurship » (p.11, 13, 17, 22) and « 2.8 From Idea to Concept » (p.16, 18, 20, 29), Octave Friant, EFAP.'),
   B('Our working document « Entrepreneurship »: interviews (Pablo, Capucine, Mathieu, Julia), Workshop 2 (riskiest assumption, next test), persona Camille, competitor analysis (Howbout, To Gather).'),
   B('Harris Interactive (organising outings, 18–24-year-olds); Morning Consult, Gen Z 2025 (group chats) — as cited in our Canva and working document.'));
@@ -240,19 +242,19 @@ add(H1('12.9 What the pilot will teach us'),
 const doc = new Document({
   creator: 'Overlap team', title: '12. Marketing & Communication — Overlap',
   styles: {
-    default: { document: { run: { font: 'Arial', size: 21 } } },
+    default: { document: { run: { font: 'Arial', size: 22 } } },
     paragraphStyles: [
-      { id: 'Title', name: 'Title', basedOn: 'Normal', run: { font: 'Syne', size: 48, bold: true, color: '000000' }, paragraph: { spacing: { before: 0, after: 120 } } },
-      { id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Syne', size: 32, bold: true, color: BLUE }, paragraph: { spacing: { before: 360, after: 140 }, keepNext: true, outlineLevel: 0 } },
-      { id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Syne', size: 25, bold: true, color: '000000' }, paragraph: { spacing: { before: 240, after: 100 }, keepNext: true, outlineLevel: 1 } },
-      { id: 'Heading3', name: 'Heading 3', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Syne', size: 22, bold: true, color: ORANGE }, paragraph: { spacing: { before: 200, after: 80 }, keepNext: true, outlineLevel: 2 } },
+      { id: 'Heading1', name: 'Heading 1', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Arial', size: 22, bold: true, color: '000000' }, paragraph: { spacing: { before: 0, after: 240 }, keepNext: true, outlineLevel: 0 } },
+      { id: 'Heading2', name: 'Heading 2', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Arial', size: 22, bold: true, color: '000000' }, paragraph: { spacing: { before: 280, after: 120 }, keepNext: true, outlineLevel: 1 } },
+      { id: 'Heading3', name: 'Heading 3', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Arial', size: 22, bold: true, color: '000000' }, paragraph: { spacing: { before: 200, after: 100 }, keepNext: true, outlineLevel: 2 } },
+      { id: 'Heading4', name: 'Heading 4', basedOn: 'Normal', next: 'Normal', quickFormat: true, run: { font: 'Arial', size: 22, bold: true, italics: false, color: '000000' }, paragraph: { spacing: { before: 160, after: 80 }, keepNext: true, outlineLevel: 3 } },
     ] },
   numbering: { config: [
     { reference: 'bul', levels: [{ level: 0, format: LevelFormat.BULLET, text: '•', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 540, hanging: 270 } } } }] },
     { reference: 'num', levels: [{ level: 0, format: LevelFormat.DECIMAL, text: '%1.', alignment: AlignmentType.LEFT, style: { paragraph: { indent: { left: 540, hanging: 300 } } } }] },
   ] },
-  sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 1134, bottom: 1134, left: 1134, right: 1134 } } },
-    footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: 'Overlap · 12. Marketing & Communication · ', color: GREY, size: 16 }), new TextRun({ children: [PageNumber.CURRENT], color: GREY, size: 16 })] })] }) },
+  sections: [{ properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
+    footers: { default: new Footer({ children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ children: [PageNumber.CURRENT], color: GREY, size: 16 })] })] }) },
     children: body }],
 });
 Packer.toBuffer(doc).then(b => { fs.writeFileSync(OUT, b); console.log('ok', OUT); });
