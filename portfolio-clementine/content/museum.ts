@@ -241,12 +241,7 @@ export const journey = [
 export const about = {
   portrait: { src: "/images/about/portrait.webp", alt: "Clémentine Sanchez en plateau à l’EFAP", ratio: 1050 / 1400 },
   quote: "Organiser le détail pour que l’ensemble paraisse simple.",
-  lines: [
-    "Étudiante en Master 1 à l’EFAP Paris.",
-    "Beauté, bien-être, luxe : là où chaque détail compte.",
-    "Danseuse depuis l’enfance, en compétition.",
-    "Musique, Pilates, mode, voyages.",
-  ],
+  lines: ["Étudiante en Master 1 à l’EFAP Paris."],
   seeking: "Stage de 6 mois · janvier → juin 2027",
   /** Panneau « Compétences » face au portrait */
   skills: [
