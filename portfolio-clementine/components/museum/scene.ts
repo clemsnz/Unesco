@@ -18,7 +18,9 @@ const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
 export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; frieze?: boolean; contact?: boolean; /** a point the visitor walks through without stopping */ walk?: boolean };
 type RoomNames = { main: string; cabinet: string; journey: string; about: string; exit: string };
 
+export type ShopItem = { id: string; object: string; name: string; tag: string };
 export type MuseumInput = {
+  shop: { title: string; sub: string; items: ShopItem[] };
   works: Work[];
   entrance: { room: string; name: string; line: string };
   rooms: RoomNames;
@@ -36,8 +38,8 @@ export type MuseumApi = {
   hit: (x: number, y: number) => number | null;
   setHover: (i: number | null) => void;
   focus: (i: number, onDone: () => void) => void;
-  /** screen rectangle (px) of the contact form area on the wall, or null if off-screen */
-  contactRect: () => { x: number; y: number; w: number; h: number } | null;
+  /** id of the souvenir under the pointer in the museum shop, or null */
+  hitShop: (x: number, y: number) => string | null;
   /** index of the timeline entry under the pointer, or null */
   hitFrieze: (x: number, y: number) => number | null;
   /** true once the camera has settled on its station */
@@ -264,7 +266,7 @@ function vinyl(w: number, h: number, draw: (c: CanvasRenderingContext2D) => void
 /* ───────── layout ───────── */
 
 const MAIN_START = -15;
-const MAIN_STEP = 9;
+const MAIN_STEP = 6.5;
 const ENTRY_W = 2.1; // width of one timeline entry on the wall (m)
 
 function layout(input: MuseumInput) {
@@ -276,18 +278,20 @@ function layout(input: MuseumInput) {
     z[i] = MAIN_START - k * MAIN_STEP;
     side[i] = k % 2 === 0 ? -1 : 1;
   });
-  const wallCab = MAIN_START - (main.length - 1) * MAIN_STEP - 6;
+  const wallCab = MAIN_START - (main.length - 1) * MAIN_STEP - 4.5;
   cab.forEach(({ i }, k) => {
-    z[i] = wallCab - 6 - k * 6;
+    z[i] = wallCab - 4.5 - k * 5;
     side[i] = k % 2 === 0 ? -1 : 1;
   });
-  const wallJourney = wallCab - 6 - (cab.length - 1) * 6 - 6;
-  // Galerie 03: timeline on the left wall, portrait & skills on the right, contact on the end wall
-  const fz0 = wallJourney - 2;
+  const wallJourney = wallCab - 4.5 - (cab.length - 1) * 5 - 4.5;
+  // Galerie 03: the timeline on the left wall
+  const fz0 = wallJourney - 1.5;
   const fz1 = fz0 - input.journey.length * ENTRY_W;
-  const portraitZ = fz0 - 9.2;
-  const back = fz1 - 3.5;
-  return { z, side, wallCab, wallJourney, fz0, fz1, portraitZ, back };
+  // the museum shop
+  const wallShop = fz1 - 2;
+  const tableZ = wallShop - 6.2;
+  const back = wallShop - 9.5;
+  return { z, side, wallCab, wallJourney, fz0, fz1, wallShop, tableZ, back };
 }
 
 /* ───────── scene ───────── */
@@ -574,7 +578,9 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     scene.add(m);
   };
   floorPiece(L.wallCab - 0.15, L.wallJourney + 0.15);
-  floorPiece(L.wallJourney - 0.15, Z_BACK);
+  floorPiece(L.wallJourney - 0.15, L.wallShop + 0.15);
+  floorPiece(L.wallShop - 0.15, Z_BACK);
+  partition(L.wallShop, { label: input.shop.title, sub: input.shop.sub });
   skylights(partitionZs.concat([-6]));
 
   /* works */
@@ -689,94 +695,230 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   scene.add(frieze);
   for (let k = 0; k < n; k += 2) spot(-1, L.fz0 - (k + 0.5) * ENTRY_W);
 
-  /* Galerie 03 — right wall: portrait, phrase and skills */
-  const portrait = hang({ src: input.about.portrait.src, ratio: input.about.portrait.ratio, height: 1.9, kind: "photo", side: 1, z: L.portraitZ });
-  const aboutTex = keep(
-    vinyl(2200, 1500, (c) => {
-      c.font = `400 92px ${SANS}`;
-      let y = 110;
-      y += wrap(c, `« ${input.about.quote} »`, 0, y, 2150, 112) * 112 + 10;
-      c.fillStyle = "#6b6259";
-      c.font = `400 50px ${SANS}`;
-      input.about.lines.forEach((l) => {
-        c.fillText(l, 0, y);
-        y += 66;
-      });
-      y += 70;
-      input.about.skills.forEach((k) => {
-        c.fillStyle = "#8a8178";
-        c.font = `500 36px ${SANS}`;
-        spaced(c, k.title.toUpperCase(), 0, y, 8);
-        c.fillStyle = "#1c1916";
-        c.font = `400 46px ${SANS}`;
-        y += 66;
-        y += wrap(c, k.text, 0, y, 2150, 60) * 60 + 50;
-      });
-    }),
-  );
-  const ABW = 3.4;
-  const aboutZText = L.portraitZ + portrait.W / 2 + 0.6 + ABW / 2;
-  const aboutText = new THREE.Mesh(keep(new THREE.PlaneGeometry(ABW, ABW * (1500 / 2200))), basic(aboutTex));
-  aboutText.rotation.y = -Math.PI / 2;
-  aboutText.position.set(HALF_W - 0.012, EYE + 0.05, aboutZText);
-  scene.add(aboutText);
-
-  /* benches in the main gallery */
-  const oak = keep(new THREE.MeshStandardMaterial({ color: 0xc2a985, roughness: 0.6 }));
-  const legMat = keep(new THREE.MeshStandardMaterial({ color: 0x1b1916, roughness: 0.5 }));
-  const benchShadow = keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.6, depthWrite: false }));
-  const mainIdx = works.map((w, i) => (w.room === "main" ? i : -1)).filter((i) => i >= 0);
-  [mainIdx[1], mainIdx[4]].filter((i) => i !== undefined).forEach((i) => {
-    const b = new THREE.Group();
-    b.position.set(0, 0, L.z[i]);
-    const seat = new THREE.Mesh(keep(new THREE.BoxGeometry(0.5, 0.07, 1.9)), oak);
-    seat.position.y = 0.44;
-    b.add(seat);
-    for (const dz of [-0.8, 0.8]) {
-      const leg = new THREE.Mesh(keep(new THREE.BoxGeometry(0.42, 0.41, 0.05)), legMat);
-      leg.position.set(0, 0.205, dz);
-      b.add(leg);
-    }
-    const sh = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.0, 2.6)), benchShadow);
-    sh.rotation.x = -Math.PI / 2;
-    sh.position.y = 0.006;
-    b.add(sh);
-    scene.add(b);
-  });
-
-  /* Galerie 03 — end wall: closing line and the contact form (HTML laid over the light panel) */
+  /* ───────── the museum shop ───────── */
+  // coloured end wall with the closing line
+  const shopWall = keep(new THREE.MeshStandardMaterial({ color: 0x7a2f35, roughness: 0.9 }));
+  const endPaint = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2 - 0.01, H)), shopWall);
+  endPaint.position.set(0, H / 2, Z_BACK + 0.006);
+  scene.add(endPaint);
   const exitTex = keep(
-    vinyl(3600, 500, (c) => {
-      c.font = `400 200px ${SANS}`;
+    canvasTex(3600, 900, (c) => {
       c.textAlign = "center";
-      c.fillText(input.exit.line, 1800, 300);
+      c.fillStyle = "#e9d9cf";
+      c.font = `500 64px ${SANS}`;
+      spaced(c, input.shop.title.toUpperCase(), 1800, 170, 22, "center");
+      c.textAlign = "center";
+      c.fillStyle = "#f6ece4";
+      c.font = `400 200px ${SANS}`;
+      c.fillText(input.exit.line, 1800, 520);
       c.textAlign = "left";
     }),
   );
-  const exitMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(8.4, 8.4 * (500 / 3600))), basic(exitTex));
-  exitMesh.position.set(0, 3.55, Z_BACK + 0.01);
+  const exitMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(8.6, 8.6 * (900 / 3600))), basic(exitTex));
+  exitMesh.position.set(0, 2.35, Z_BACK + 0.012);
   scene.add(exitMesh);
-  const FW = 3.9;
-  const FH = 2.35;
-  const formTex = keep(
-    canvasTex(1560, 940, (c) => {
-      c.fillStyle = "rgba(250,249,245,0.9)";
-      c.fillRect(0, 0, 1560, 940);
-      c.strokeStyle = "rgba(28,25,22,0.18)";
-      c.lineWidth = 3;
-      c.strokeRect(1.5, 1.5, 1557, 937);
-    }),
-  );
-  const formMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(FW, FH)), keep(new THREE.MeshBasicMaterial({ map: formTex, transparent: true, toneMapped: false })));
-  const formY = 1.62;
-  formMesh.position.set(0, formY, Z_BACK + 0.012);
-  scene.add(formMesh);
-  const formCorners = [
-    new THREE.Vector3(-FW / 2, formY + FH / 2, Z_BACK + 0.012),
-    new THREE.Vector3(FW / 2, formY + FH / 2, Z_BACK + 0.012),
-    new THREE.Vector3(-FW / 2, formY - FH / 2, Z_BACK + 0.012),
-    new THREE.Vector3(FW / 2, formY - FH / 2, Z_BACK + 0.012),
-  ];
+  // side shelves with stock, for atmosphere
+  const shelfMat = keep(new THREE.MeshStandardMaterial({ color: 0xe8e2d8, roughness: 0.7 }));
+  const stockColors = [0xcfc4b4, 0x7a2f35, 0x2b2622, 0xb9a07e, 0xe3d6c6, 0x3a4a40];
+  for (const sd of [-1, 1] as const) {
+    for (const y of [1.0, 1.55, 2.1]) {
+      const shelf = new THREE.Mesh(keep(new THREE.BoxGeometry(0.34, 0.035, 4.2)), shelfMat);
+      shelf.position.set(sd * (HALF_W - 0.17), y, L.tableZ + 1.2);
+      scene.add(shelf);
+      let z = L.tableZ + 1.2 - 1.95;
+      let k = 0;
+      while (z < L.tableZ + 1.2 + 1.9) {
+        const w = 0.05 + ((k * 37) % 7) * 0.012;
+        const h = 0.22 + ((k * 13) % 5) * 0.03;
+        const book = new THREE.Mesh(keep(new THREE.BoxGeometry(0.24, h, w)), keep(new THREE.MeshStandardMaterial({ color: stockColors[(k + (y > 1.5 ? 2 : 0)) % stockColors.length], roughness: 0.8 })));
+        book.position.set(sd * (HALF_W - 0.17), y + 0.018 + h / 2, z + w / 2);
+        scene.add(book);
+        z += w + 0.012 + (k % 6 === 5 ? 0.25 : 0);
+        k++;
+      }
+    }
+  }
+  // display table
+  const tableTop = keep(new THREE.MeshStandardMaterial({ color: 0xc8b192, roughness: 0.5 }));
+  const tableBase = keep(new THREE.MeshStandardMaterial({ color: 0xf2efe9, roughness: 0.85 }));
+  const TW = 3.6;
+  const TD = 1.0;
+  const TH = 0.86;
+  const base = new THREE.Mesh(keep(new THREE.BoxGeometry(TW - 0.1, TH - 0.04, TD - 0.1)), tableBase);
+  base.position.set(0, (TH - 0.04) / 2, L.tableZ);
+  scene.add(base);
+  const top = new THREE.Mesh(keep(new THREE.BoxGeometry(TW, 0.04, TD)), tableTop);
+  top.position.set(0, TH - 0.02, L.tableZ);
+  scene.add(top);
+  const tableShadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(TW * 1.25, TD * 1.6)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.55, depthWrite: false })));
+  tableShadow.rotation.x = -Math.PI / 2;
+  tableShadow.position.set(0, 0.008, L.tableZ);
+  scene.add(tableShadow);
+  // pendant lamps above the table
+  const lampMat = keep(new THREE.MeshStandardMaterial({ color: 0x1b1916, roughness: 0.4 }));
+  for (const x of [-1.1, 0, 1.1]) {
+    const cord = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.004, 0.004, 1.1, 6)), lampMat);
+    cord.position.set(x, H - 0.55, L.tableZ);
+    scene.add(cord);
+    const shade = new THREE.Mesh(keep(new THREE.ConeGeometry(0.17, 0.18, 28, 1, true)), lampMat);
+    shade.position.set(x, H - 1.18, L.tableZ);
+    scene.add(shade);
+    const bulb = new THREE.Mesh(keep(new THREE.CircleGeometry(0.15, 24)), lensMat);
+    bulb.rotation.x = Math.PI / 2;
+    bulb.position.set(x, H - 1.27, L.tableZ);
+    scene.add(bulb);
+  }
+  const glow = new THREE.Mesh(keep(new THREE.PlaneGeometry(TW * 1.1, TD * 1.3)), keep(new THREE.MeshBasicMaterial({ map: keep(scallop()), transparent: true, opacity: 0.25, depthWrite: false, blending: THREE.AdditiveBlending })));
+  glow.rotation.x = -Math.PI / 2;
+  glow.position.set(0, TH + 0.002, L.tableZ);
+  scene.add(glow);
+
+  // the souvenirs
+  const paper = (w: number, h: number, draw: (c: CanvasRenderingContext2D) => void) => keep(canvasTex(w, h, draw));
+  const souvenirTex: Record<string, () => THREE.Texture> = {
+    cv: () =>
+      paper(600, 840, (c) => {
+        c.fillStyle = "#f4efe6";
+        c.fillRect(0, 0, 600, 840);
+        c.fillStyle = "#7a2f35";
+        c.fillRect(0, 0, 600, 16);
+        c.fillStyle = "#8a8178";
+        c.font = `500 26px ${SANS}`;
+        spaced(c, "CURRICULUM VITAE", 300, 150, 7, "center");
+        c.fillStyle = "#1c1916";
+        c.font = `400 64px ${SANS}`;
+        c.textAlign = "center";
+        c.fillText("Clémentine", 300, 360);
+        c.fillText("Sanchez", 300, 440);
+        c.font = `400 26px ${SANS}`;
+        c.fillStyle = "#6b6259";
+        c.fillText("Marketing & communication", 300, 520);
+        c.fillText("EFAP Paris · 2026 — 2027", 300, 560);
+        c.textAlign = "left";
+        c.fillStyle = "#1c1916";
+        c.fillRect(270, 680, 60, 2);
+      }),
+    skills: () =>
+      paper(640, 820, (c) => {
+        c.strokeStyle = "#b8a98f";
+        c.lineWidth = 22;
+        c.beginPath();
+        c.arc(320, 230, 150, Math.PI, 0);
+        c.stroke();
+        c.fillStyle = "#e7dccb";
+        c.fillRect(60, 220, 520, 580);
+        c.fillStyle = "rgba(120,100,70,0.12)";
+        for (let y = 230; y < 800; y += 6) c.fillRect(60, y, 520, 1);
+        c.fillStyle = "#7a2f35";
+        c.font = `500 30px ${SANS}`;
+        spaced(c, "COMPÉTENCES", 320, 330, 8, "center");
+        c.fillStyle = "#2b2622";
+        c.font = `400 26px ${SANS}`;
+        c.textAlign = "center";
+        ["Communication de marque", "Influence & RP", "Événementiel", "Social media", "CRM & e-mailing", "Rédaction", "Plan média"].forEach((t, k) => c.fillText(t, 320, 410 + k * 46));
+        c.textAlign = "left";
+      }),
+    linkedin: () =>
+      paper(700, 420, (c) => {
+        c.fillStyle = "#fbfaf7";
+        c.fillRect(0, 0, 700, 420);
+        c.fillStyle = "#1c1916";
+        c.font = `500 40px ${SANS}`;
+        c.fillText("Clémentine Sanchez", 56, 130);
+        c.fillStyle = "#6b6259";
+        c.font = `400 26px ${SANS}`;
+        c.fillText("Marketing & communication", 56, 180);
+        c.fillStyle = "#0a66c2";
+        c.fillRect(56, 270, 46, 46);
+        c.fillStyle = "#fff";
+        c.font = `700 30px ${SANS}`;
+        c.fillText("in", 64, 304);
+        c.fillStyle = "#1c1916";
+        c.font = `400 26px ${SANS}`;
+        c.fillText("in/clementine-sanchez", 120, 302);
+      }),
+    contact: () =>
+      paper(720, 500, (c) => {
+        c.fillStyle = "#efe6d6";
+        c.fillRect(0, 0, 720, 500);
+        c.strokeStyle = "rgba(90,70,50,0.35)";
+        c.lineWidth = 3;
+        c.beginPath();
+        c.moveTo(0, 0);
+        c.lineTo(360, 250);
+        c.lineTo(720, 0);
+        c.stroke();
+        c.beginPath();
+        c.arc(360, 250, 34, 0, Math.PI * 2);
+        c.fillStyle = "#7a2f35";
+        c.fill();
+        c.fillStyle = "#f6ece4";
+        c.font = `500 26px ${SANS}`;
+        c.textAlign = "center";
+        c.fillText("CS", 360, 259);
+        c.fillStyle = "#2b2622";
+        c.font = `400 40px ${SANS}`;
+        c.fillText("Écrivez-moi", 360, 400);
+        c.textAlign = "left";
+      }),
+  };
+  const shopHits: THREE.Object3D[] = [];
+  const shopGroups: THREE.Group[] = [];
+  const tagTex = (it: ShopItem) =>
+    paper(360, 150, (c) => {
+      c.fillStyle = "#fbfaf7";
+      c.fillRect(0, 0, 360, 150);
+      c.fillStyle = "#1c1916";
+      c.font = `500 30px ${SANS}`;
+      c.fillText(it.name, 20, 52);
+      c.fillStyle = "#6b6259";
+      c.font = `400 22px ${SANS}`;
+      c.fillText(it.object, 20, 88);
+      c.fillStyle = "#7a2f35";
+      c.font = `500 20px ${SANS}`;
+      spaced(c, "OFFERT", 20, 126, 4);
+    });
+  const sizes: Record<string, [number, number]> = { cv: [0.42, 0.59], portrait: [0.36, 0.48], skills: [0.46, 0.59], linkedin: [0.42, 0.25], contact: [0.5, 0.35] };
+  const nItems = input.shop.items.length;
+  input.shop.items.forEach((it, k) => {
+    const [w, h] = sizes[it.id] ?? [0.4, 0.4];
+    const x = -TW / 2 + 0.38 + (k * (TW - 0.76)) / Math.max(nItems - 1, 1);
+    const g = new THREE.Group();
+    g.position.set(x, TH, L.tableZ + 0.05);
+    const tilt = new THREE.Group();
+    tilt.rotation.x = -0.18;
+    let map: THREE.Texture;
+    if (it.id === "portrait") {
+      map = keep(loader.load(input.about.portrait.src));
+      map.colorSpace = THREE.SRGBColorSpace;
+    } else map = souvenirTex[it.id]();
+    const card = new THREE.Mesh(keep(new THREE.BoxGeometry(w + (it.id === "portrait" ? 0.04 : 0), h + (it.id === "portrait" ? 0.04 : 0), 0.012)), keep(new THREE.MeshStandardMaterial({ color: 0xfbfaf7, roughness: 0.8 })));
+    card.position.set(0, h / 2 + 0.01, 0);
+    tilt.add(card);
+    const face = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, h)), keep(new THREE.MeshBasicMaterial({ map, transparent: it.id === "skills", toneMapped: false })));
+    face.position.set(0, h / 2 + 0.01, 0.0065);
+    tilt.add(face);
+    g.add(tilt);
+    // small easel foot
+    const foot = new THREE.Mesh(keep(new THREE.BoxGeometry(w * 0.6, 0.012, 0.12)), lampMat);
+    foot.position.set(0, 0.006, -0.02);
+    g.add(foot);
+    const sh = new THREE.Mesh(keep(new THREE.PlaneGeometry(w * 1.5, 0.35)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.5, depthWrite: false })));
+    sh.rotation.x = -Math.PI / 2;
+    sh.position.set(0.02, 0.003, -0.06);
+    g.add(sh);
+    // price tag lying in front
+    const tag = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.3, 0.125)), basic(tagTex(it), false));
+    tag.rotation.x = -Math.PI / 2 + 0.35;
+    tag.position.set(0, 0.012, 0.27);
+    g.add(tag);
+    [card, face, tag].forEach((m) => {
+      m.userData.shop = it.id;
+      shopHits.push(m);
+    });
+    scene.add(g);
+    shopGroups.push(g);
+  });
 
   /* ───────── the walk ───────── */
   const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
@@ -815,20 +957,17 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       const z = L.fz0 - (k + 0.5) * ENTRY_W;
       stations.push({ pos: v3(-HALF_W + 3.3, EYE, z), look: v3(-HALF_W, 1.62, z), room: "journey", frieze: true });
     });
-    walkThrough(0, L.portraitZ + 2, "about");
-    stations.push({ pos: v3(HALF_W - 3.7, EYE, L.portraitZ), look: v3(HALF_W, EYE + 0.05, L.portraitZ), room: "about" });
-    stations.push({ pos: v3(HALF_W - 4.2, EYE, aboutZText), look: v3(HALF_W, EYE + 0.05, aboutZText), room: "about" });
   } else {
     const m = Math.ceil(n / 3);
     for (let i = 0; i < m; i++) {
       const z = L.fz0 - ((i + 0.5) / m) * n * ENTRY_W;
       stations.push({ pos: v3(-HALF_W + 4.4, EYE, z), look: v3(-HALF_W, 1.7, z), room: "journey", frieze: true });
     }
-    const zc = (L.portraitZ - portrait.W / 2 + aboutZText + ABW / 2) / 2;
-    walkThrough(0, zc + 1.5, "about");
-    stations.push({ pos: v3(HALF_W - 4.6, EYE, zc), look: v3(HALF_W, EYE + 0.05, zc), room: "about" });
   }
-  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 7.5 : 6.0)), look: v3(0, 2.05, Z_BACK), room: "exit", contact: true });
+  walkThrough(0, L.wallShop + 1.2, "about");
+  // the shop: first the whole room, then the table up close
+  stations.push({ pos: v3(0, EYE, L.wallShop - 0.6), look: v3(0, 2.0, Z_BACK), room: "about" });
+  stations.push({ pos: v3(0, narrow ? 1.75 : 1.5, L.tableZ + (narrow ? 3.3 : 2.2)), look: v3(0, narrow ? 0.95 : 0.82, L.tableZ - 0.05), room: "exit", contact: true });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let target = 0;
@@ -938,7 +1077,6 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     return { to: center.clone().addScaledVector(new THREE.Vector3(-L.side[i], 0, 0), dist), toLook: center };
   };
 
-  const proj = new THREE.Vector3();
   return {
     stations,
     hitFrieze: (x, y) => {
@@ -947,16 +1085,10 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       if (!h || !h.uv || h.distance > 9) return null;
       return Math.min(n - 1, Math.max(0, Math.floor(h.uv.x * n)));
     },
-    contactRect: () => {
-      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
-      for (const c of formCorners) {
-        proj.copy(c).project(camera);
-        if (proj.z > 1) return null;
-        const x = ((proj.x + 1) / 2) * canvas.clientWidth;
-        const y = ((1 - proj.y) / 2) * canvas.clientHeight;
-        x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
-      }
-      return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+    hitShop: (x, y) => {
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+      const h = raycaster.intersectObjects(shopHits, false)[0];
+      return h && h.distance < 8 ? (h.object.userData.shop as string) : null;
     },
     settled: () => !focusAnim && Math.abs(target - current) < 0.02,
     setProgress: (s) => (target = s),
