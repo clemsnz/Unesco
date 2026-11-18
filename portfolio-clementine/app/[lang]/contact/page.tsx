@@ -2,60 +2,39 @@ import type { Metadata } from "next";
 import { t, type Locale } from "@/lib/i18n";
 import { pageMetadata } from "@/lib/seo";
 import { site } from "@/content/site";
-import { ui } from "@/content/ui";
-import { FadeUp, RevealText } from "@/components/Reveal";
-import ContactForm from "@/components/ContactForm";
+import { ui } from "@/content/about";
 
 export async function generateMetadata({ params }: { params: Promise<{ lang: Locale }> }): Promise<Metadata> {
   const { lang } = await params;
-  return pageMetadata({ lang, path: "/contact", title: t(ui.contact.title, lang), description: t(ui.contact.lead, lang) });
+  return pageMetadata({ lang, path: "/contact", title: t(ui.contact, lang) });
 }
 
 export default async function Contact({ params }: { params: Promise<{ lang: Locale }> }) {
   const { lang } = await params;
-  const cv = (lang === "fr" && site.cv.fr) || site.cv.en;
-  const cvIsEn = cv === site.cv.en;
-
+  const rows = [
+    { k: "E-mail", v: site.email, href: `mailto:${site.email}` },
+    { k: "LinkedIn", v: "clementine-sanchez ↗", href: site.linkedin, ext: true },
+    { k: "CV", v: `${t(ui.cv, lang)} ↓`, href: site.cv, dl: true },
+  ];
   return (
-    <section className="grain relative min-h-screen bg-night px-4 pb-32 pt-36 text-ivory md:px-8 md:pt-44">
-      <p className="cartel text-champagne">{t(ui.contact.title, lang)} — {t(site.availability, lang)}</p>
-      <RevealText as="h1" onLoad text={lang === "fr" ? "Parlons *marques*." : "Let’s talk *brands*."} className="display mt-8 text-[17vw] leading-[0.88] md:text-[10vw]" />
-
-      <div className="mt-20 grid gap-16 md:mt-28 md:grid-cols-12">
-        <FadeUp className="md:col-span-5">
-          <p className="max-w-md text-xl leading-relaxed text-ivory/75">{t(ui.contact.lead, lang)}</p>
-          <dl className="mt-14 space-y-8">
-            <div>
-              <dt className="cartel text-warm">{t(ui.contact.email, lang)}</dt>
-              <dd className="mt-2">
-                <a href={`mailto:${site.email}`} className="display link-underline text-2xl italic md:text-3xl">{site.email}</a>
-              </dd>
-            </div>
-            <div>
-              <dt className="cartel text-warm">{t(ui.contact.linkedin, lang)}</dt>
-              <dd className="mt-2">
-                <a href={site.linkedin} target="_blank" rel="noopener noreferrer" className="display link-underline text-2xl md:text-3xl">{site.linkedinLabel} ↗</a>
-              </dd>
-            </div>
-            <div>
-              <dt className="cartel text-warm">CV</dt>
-              <dd className="mt-2">
-                <a href={cv} download className="display link-underline text-2xl md:text-3xl">
-                  {t(ui.contact.cv, lang)} ↓
-                </a>
-                {cvIsEn && lang === "fr" && <span className="cartel ml-3 text-warm">({t(ui.contact.cvEnOnly, lang)})</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="cartel text-warm">{t(ui.contact.based, lang)}</dt>
-              <dd className="display mt-2 text-2xl md:text-3xl">{site.city}</dd>
-            </div>
-          </dl>
-        </FadeUp>
-        <FadeUp delay={0.15} className="md:col-span-6 md:col-start-7">
-          <ContactForm lang={lang} />
-        </FadeUp>
-      </div>
+    <section className="wrap">
+      <h1 className="border-b border-ink py-10 font-serif text-6xl font-light md:py-14 md:text-8xl">{t(ui.contact, lang)}</h1>
+      <p className="max-w-2xl py-10 font-serif text-2xl leading-snug md:text-3xl">{t(ui.contactText, lang)}</p>
+      <ul className="border-t border-ink">
+        {rows.map((r) => (
+          <li key={r.k} className="border-b border-line">
+            <a
+              href={r.href}
+              {...(r.ext ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              {...(r.dl ? { download: true } : {})}
+              className="group grid gap-1 py-6 sm:grid-cols-[10rem_1fr]"
+            >
+              <span className="kicker">{r.k}</span>
+              <span className="font-serif text-2xl break-all transition-colors group-hover:text-bordeaux md:text-4xl">{r.v}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

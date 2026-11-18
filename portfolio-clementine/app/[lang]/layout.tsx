@@ -2,13 +2,9 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 import { isLocale, locales } from "@/lib/i18n";
 import { site } from "@/content/site";
-import Intro from "@/components/Intro";
-import SmoothScroll from "@/components/SmoothScroll";
-import Cursor from "@/components/Cursor";
-import ScrollProgress from "@/components/ScrollProgress";
-import Nav from "@/components/Nav";
+import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import HtmlLang from "@/components/HtmlLang";
+import FadeIn from "@/components/FadeIn";
 
 export const dynamicParams = false;
 
@@ -26,26 +22,17 @@ export default async function LangLayout({ children, params }: { children: React
     name: site.name,
     url: site.url,
     email: `mailto:${site.email}`,
-    jobTitle: lang === "fr" ? "Étudiante en communication & marketing" : "Communications & marketing student",
     alumniOf: { "@type": "CollegeOrUniversity", name: "EFAP" },
-    address: { "@type": "PostalAddress", addressLocality: "Paris", addressCountry: "FR" },
     sameAs: [site.linkedin],
-    knowsLanguage: ["fr", "en", "es"],
   };
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <HtmlLang lang={lang} />
-      <Intro first={site.firstName} last={site.lastName} />
-      <SmoothScroll />
-      <ScrollProgress />
-      <Cursor />
-      <Nav lang={lang} />
-      <main id="main" tabIndex={-1} className="outline-none">
-        {children}
-      </main>
+      <Header lang={lang} />
+      <main id="main">{children}</main>
       <Footer lang={lang} />
+      <FadeIn />
     </>
   );
 }
