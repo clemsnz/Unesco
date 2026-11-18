@@ -15,7 +15,7 @@ const H = 4.6;
 const Z_FRONT = 10;
 const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
 
-export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; frieze?: boolean; contact?: boolean };
+export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; frieze?: boolean; contact?: boolean; /** a point the visitor walks through without stopping */ walk?: boolean };
 type RoomNames = { main: string; cabinet: string; journey: string; about: string; exit: string };
 
 export type MuseumInput = {
@@ -193,6 +193,39 @@ const scallop = () =>
     c.putImageData(img, 0, 0);
   });
 
+/** Light oak planks. */
+function parquetTexture() {
+  const t = canvasTex(1024, 1024, (c) => {
+    const rows = 8;
+    const h = 1024 / rows;
+    for (let r = 0; r < rows; r++) {
+      let x = -Math.random() * 400;
+      while (x < 1024) {
+        const w = 300 + Math.random() * 420;
+        const tone = 168 + Math.random() * 22;
+        c.fillStyle = `rgb(${tone + 22},${tone + 6},${tone - 22})`;
+        c.fillRect(x, r * h, w, h);
+        c.strokeStyle = "rgba(90,60,30,0.08)";
+        c.lineWidth = 1;
+        for (let g = 0; g < 9; g++) {
+          const gy = r * h + 6 + Math.random() * (h - 12);
+          c.beginPath();
+          c.moveTo(x, gy);
+          c.bezierCurveTo(x + w * 0.3, gy + (Math.random() - 0.5) * 6, x + w * 0.7, gy + (Math.random() - 0.5) * 6, x + w, gy);
+          c.stroke();
+        }
+        c.fillStyle = "rgba(60,40,20,0.35)";
+        c.fillRect(x, r * h, 2, h);
+        x += w;
+      }
+      c.fillStyle = "rgba(60,40,20,0.3)";
+      c.fillRect(0, r * h, 1024, 2);
+    }
+  });
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
 const shadowTex = () =>
   canvasTex(256, 256, (c) => {
     c.shadowColor = "rgba(30,22,15,0.55)";
@@ -364,12 +397,25 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     g.add(head);
     scene.add(g);
   };
-  for (const x of [-0.6, 0.6]) {
-    const slot = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.14, len - 4)), slotMat);
-    slot.rotation.x = Math.PI / 2;
-    slot.position.set(x, H - 0.01, midZ);
-    scene.add(slot);
-  }
+  const skyGeo = keep(new THREE.PlaneGeometry(1.1, 2.6));
+  const skyFrameGeo = keep(new THREE.PlaneGeometry(1.34, 2.84));
+  const skyFrameMat = keep(new THREE.MeshBasicMaterial({ color: 0xbdb8b0 }));
+  /** recessed ceiling light panels, every few metres, kept clear of partition walls */
+  const skylights = (avoid: number[]) => {
+    for (let z = Z_FRONT - 3; z > Z_BACK + 2; z -= 4.5) {
+      if (avoid.some((a) => Math.abs(a - z) < 2)) continue;
+      for (const x of [-1.5, 1.5]) {
+        const f = new THREE.Mesh(skyFrameGeo, skyFrameMat);
+        f.rotation.x = Math.PI / 2;
+        f.position.set(x, H - 0.008, z);
+        scene.add(f);
+        const p = new THREE.Mesh(skyGeo, slotMat);
+        p.rotation.x = Math.PI / 2;
+        p.position.set(x, H - 0.012, z);
+        scene.add(p);
+      }
+    }
+  };
 
   const wallGeo = keep(new THREE.PlaneGeometry(len, H));
   for (const s of [-1, 1] as const) {
@@ -403,35 +449,54 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       scene.add(m);
     }
 
-  /** Partition wall with a central doorway, the room name painted beside the opening. */
+  /** Partition wall with a doorway (possibly off-centre); optional room name painted beside it. */
   const OPEN = 2.1;
-  function partition(z: number, label: string, sub: string) {
-    const wsz = HALF_W - OPEN;
-    const g = keep(new THREE.BoxGeometry(wsz, H, 0.3));
-    for (const s of [-1, 1]) {
-      const p = new THREE.Mesh(g, wallMat);
-      p.position.set(s * (OPEN + wsz / 2), H / 2, z);
+  const partitionZs: number[] = [];
+  function partition(
+    z: number,
+    opts: { label?: string; sub?: string; doorX?: number; half?: number; front?: THREE.Material; back?: THREE.Material; signLight?: boolean } = {},
+  ) {
+    partitionZs.push(z);
+    const dx = opts.doorX ?? 0;
+    const half = opts.half ?? OPEN;
+    const mats = [wallMat, wallMat, wallMat, wallMat, opts.front ?? wallMat, opts.back ?? wallMat];
+    const segs: [number, number][] = [
+      [-HALF_W, dx - half],
+      [dx + half, HALF_W],
+    ];
+    for (const [x0, x1] of segs) {
+      const w = x1 - x0;
+      if (w <= 0.05) continue;
+      const p = new THREE.Mesh(keep(new THREE.BoxGeometry(w, H, 0.3)), mats);
+      p.position.set((x0 + x1) / 2, H / 2, z);
       scene.add(p);
-      shadowGap(wsz, s * (OPEN + wsz / 2), z + 0.152, 0);
-      const ao = new THREE.Mesh(keep(new THREE.PlaneGeometry(wsz, 0.6)), aoFloor);
-      ao.position.set(s * (OPEN + wsz / 2), 0.3, z + 0.155);
-      scene.add(ao);
+      for (const sz of [1, -1]) {
+        shadowGap(w, (x0 + x1) / 2, z + sz * 0.152, sz === 1 ? 0 : Math.PI);
+        const ao = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, 0.6)), aoFloor);
+        ao.rotation.y = sz === 1 ? 0 : Math.PI;
+        ao.position.set((x0 + x1) / 2, 0.3, z + sz * 0.155);
+        scene.add(ao);
+      }
     }
-    const lintel = new THREE.Mesh(keep(new THREE.BoxGeometry(OPEN * 2, H - 3.3, 0.3)), wallMat);
-    lintel.position.set(0, 3.3 + (H - 3.3) / 2, z);
+    const lintel = new THREE.Mesh(keep(new THREE.BoxGeometry(half * 2, H - 3.3, 0.3)), mats);
+    lintel.position.set(dx, 3.3 + (H - 3.3) / 2, z);
     scene.add(lintel);
-    const tex = keep(
-      vinyl(1600, 520, (c) => {
-        c.font = `500 74px ${SANS}`;
-        spaced(c, label.toUpperCase(), 40, 200, 20);
-        c.fillStyle = "#6b6259";
-        c.font = `400 56px ${SANS}`;
-        c.fillText(sub, 40, 320);
-      }),
-    );
-    const sign = new THREE.Mesh(keep(new THREE.PlaneGeometry(3.1, 1.0)), basic(tex));
-    sign.position.set(-(OPEN + wsz / 2) + 0.15, 2.3, z + 0.16);
-    scene.add(sign);
+    if (opts.label) {
+      const tex = keep(
+        canvasTex(1600, 520, (c) => {
+          c.fillStyle = opts.signLight ? "#efe9df" : "#1c1916";
+          c.font = `500 74px ${SANS}`;
+          spaced(c, opts.label!.toUpperCase(), 40, 200, 20);
+          c.fillStyle = opts.signLight ? "#c9c1b4" : "#6b6259";
+          c.font = `400 56px ${SANS}`;
+          c.fillText(opts.sub ?? "", 40, 320);
+        }),
+      );
+      const sign = new THREE.Mesh(keep(new THREE.PlaneGeometry(3.1, 1.0)), basic(tex));
+      const left = (-HALF_W + dx - half) / 2;
+      sign.position.set(left + 0.15, 2.3, z + 0.16);
+      scene.add(sign);
+    }
   }
 
   /* Galerie 01 — entrance */
@@ -473,9 +538,44 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   g2m.position.set(HALF_W - 0.01, 2.6, -9.5);
   scene.add(g2m);
 
-  partition(L.wallCab, input.rooms.cabinet, "Études & projets personnels");
+  /* the cabinet: deep green walls, oak parquet — like a historic museum cabinet */
+  const green = keep(new THREE.MeshStandardMaterial({ color: 0x3a4a40, roughness: 0.9 }));
+  partition(L.wallCab, { label: input.rooms.cabinet, sub: "Études & projets personnels", back: green });
   const [jName] = input.rooms.journey.split(" — ");
-  partition(L.wallJourney, jName, "Parcours, portrait & contact");
+  partition(L.wallJourney, { label: jName, sub: "Parcours, portrait & contact", front: green });
+  const cabLen = L.wallCab - L.wallJourney - 0.3;
+  const cabMid = (L.wallCab + L.wallJourney) / 2;
+  for (const sd of [-1, 1] as const) {
+    const gw = new THREE.Mesh(keep(new THREE.PlaneGeometry(cabLen, H)), green);
+    gw.rotation.y = sd === -1 ? Math.PI / 2 : -Math.PI / 2;
+    gw.position.set(sd * (HALF_W - 0.004), H / 2, cabMid);
+    scene.add(gw);
+  }
+  // main gallery cut into three rooms by walls with off-centre doorways
+  const mainIdxs = works.map((w, i) => (w.room === "main" ? i : -1)).filter((i) => i >= 0);
+  const roomWalls: { z: number; doorX: number }[] = [];
+  [1, 3].forEach((k, r) => {
+    if (mainIdxs[k + 1] === undefined) return;
+    const z = (L.z[mainIdxs[k]] + L.z[mainIdxs[k + 1]]) / 2;
+    const doorX = r % 2 === 0 ? 2.6 : -2.6;
+    roomWalls.push({ z, doorX });
+    partition(z, { doorX, half: 1.35 });
+  });
+  // oak parquet in the cabinet and in Galerie 03
+  const parquet = keep(parquetTexture());
+  const floorPiece = (z0: number, z1: number) => {
+    const l = z0 - z1;
+    const tex = keep(parquet.clone());
+    tex.needsUpdate = true;
+    tex.repeat.set(HALF_W / 1.6, l / 1.6);
+    const m = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, l)), keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.48 })));
+    m.rotation.x = -Math.PI / 2;
+    m.position.set(0, 0.004, (z0 + z1) / 2);
+    scene.add(m);
+  };
+  floorPiece(L.wallCab - 0.15, L.wallJourney + 0.15);
+  floorPiece(L.wallJourney - 0.15, Z_BACK);
+  skylights(partitionZs.concat([-6]));
 
   /* works */
   const loader = new THREE.TextureLoader();
@@ -689,20 +789,33 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     pos: v3(s * (HALF_W - d), EYE, z + 0.2),
     look: v3(s * HALF_W, EYE - 0.02, z + (s === -1 ? -dz : dz)),
   });
+  /** walking down the middle of the room, looking ahead */
+  const walkThrough = (x: number, z: number, room: Station["room"]) => stations.push({ pos: v3(x, EYE, z), look: v3(x * 0.4, EYE - 0.08, z - 9), room, walk: true });
+  let prevZ: number | null = null;
   works.forEach((w, i) => {
     if (w.room === "cabinet" && !stations.some((s) => s.room === "cabinet")) {
       stations.push({ pos: v3(0, EYE, L.wallCab + 6.5), look: v3(-2.5, 2.1, L.wallCab), room: "main" });
+      walkThrough(0, L.wallCab, "cabinet");
+      prevZ = null;
     }
+    if (prevZ !== null) {
+      const door = roomWalls.find((r) => r.z < prevZ! && r.z > L.z[i]);
+      if (door) walkThrough(door.doorX, door.z, w.room);
+      else walkThrough(0, (prevZ + L.z[i]) / 2, w.room);
+    }
+    prevZ = L.z[i];
     const wide = w.height * w.art.ratio > 1.9;
     const d = narrow ? (wide ? 5.4 : 4.3) : w.room === "cabinet" ? 4.2 : 4.9;
     stations.push({ ...facing(L.side[i], L.z[i], d, narrow ? 0.25 : 0.45), room: w.room, art: i });
   });
   stations.push({ pos: v3(0, EYE, L.wallJourney + 6.5), look: v3(-2.5, 2.1, L.wallJourney), room: "cabinet" });
+  walkThrough(0, L.wallJourney - 0.5, "journey");
   if (narrow) {
     input.journey.forEach((_, k) => {
       const z = L.fz0 - (k + 0.5) * ENTRY_W;
       stations.push({ pos: v3(-HALF_W + 3.3, EYE, z), look: v3(-HALF_W, 1.62, z), room: "journey", frieze: true });
     });
+    walkThrough(0, L.portraitZ + 2, "about");
     stations.push({ pos: v3(HALF_W - 3.7, EYE, L.portraitZ), look: v3(HALF_W, EYE + 0.05, L.portraitZ), room: "about" });
     stations.push({ pos: v3(HALF_W - 4.2, EYE, aboutZText), look: v3(HALF_W, EYE + 0.05, aboutZText), room: "about" });
   } else {
@@ -712,6 +825,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       stations.push({ pos: v3(-HALF_W + 4.4, EYE, z), look: v3(-HALF_W, 1.7, z), room: "journey", frieze: true });
     }
     const zc = (L.portraitZ - portrait.W / 2 + aboutZText + ABW / 2) / 2;
+    walkThrough(0, zc + 1.5, "about");
     stations.push({ pos: v3(HALF_W - 4.6, EYE, zc), look: v3(HALF_W, EYE + 0.05, zc), room: "about" });
   }
   stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 7.5 : 6.0)), look: v3(0, 2.05, Z_BACK), room: "exit", contact: true });
@@ -730,13 +844,30 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const tmp = new THREE.Vector3();
   const right = new THREE.Vector3();
 
+  const quats = stations.map((st) => {
+    const m = new THREE.Matrix4().lookAt(st.pos, st.look, new THREE.Vector3(0, 1, 0));
+    return new THREE.Quaternion().setFromRotationMatrix(m);
+  });
+  const quat = new THREE.Quaternion();
+  const fwd = new THREE.Vector3();
+  /** ease a segment: slow down only where the visitor actually stops */
+  const segEase = (f: number, a: Station, b: Station) => {
+    const sa = !a.walk;
+    const sb = !b.walk;
+    if (sa && sb) return f * f * (3 - 2 * f);
+    if (sa) return f * f;
+    if (sb) return 1 - (1 - f) * (1 - f);
+    return f;
+  };
   function poseAt(s: number) {
     const max = stations.length - 1;
     const c = Math.min(Math.max(s, 0), max);
     const i = Math.min(Math.floor(c), max - 1);
-    const f = ease(c - i);
+    const f = segEase(c - i, stations[i], stations[i + 1]);
     pos.lerpVectors(stations[i].pos, stations[i + 1].pos, f);
-    look.lerpVectors(stations[i].look, stations[i + 1].look, f);
+    quat.slerpQuaternions(quats[i], quats[i + 1], f);
+    fwd.set(0, 0, -1).applyQuaternion(quat);
+    look.copy(pos).addScaledVector(fwd, 5);
   }
 
   const clock = new THREE.Clock();
@@ -761,11 +892,11 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
         d();
       }
     } else {
-      current += (target - current) * (1 - Math.exp(-dt * 4.2));
+      current += (target - current) * (1 - Math.exp(-dt * 2.4));
       poseAt(current);
       ptrSmooth.lerp(pointer, 1 - Math.exp(-dt * 3));
       camera.position.copy(pos);
-      const speed = Math.min(Math.abs(target - current) * 1.6, 1);
+      const speed = Math.min(Math.abs(target - current) * 1.2, 1);
       walkT += dt * 7.5 * speed;
       camera.position.y += Math.sin(walkT * 2) * 0.012 * speed;
       right.subVectors(look, pos).cross(camera.up).normalize();
