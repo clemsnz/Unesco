@@ -8,7 +8,7 @@ import type { MuseumApi, Station } from "./scene";
 import MuseumLite from "./MuseumLite";
 import ContactForm from "./ContactForm";
 
-const STEP_VH = 100; // scroll length between two stations
+const STEP_VH = 85; // scroll length between two stations
 
 function canRun3D() {
   if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return false;
