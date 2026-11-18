@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { about, entrance, exit, journey, rooms, works, type Work } from "@/content/museum";
 import { site } from "@/content/site";
+import ContactForm from "./ContactForm";
 
 /**
  * The museum for phones, reduced motion and devices without WebGL:
@@ -107,6 +108,14 @@ export default function MuseumLite() {
             </div>
           ))}
         </dl>
+      </section>
+
+      <section className="px-6 pb-10">
+        <div className="mx-auto max-w-sm bg-[#faf9f5] p-6 shadow-[6px_14px_30px_-14px_rgba(30,22,15,0.35)]">
+          <p className="text-2xl">Écrivez-moi</p>
+          <p className="mb-5 mt-1 text-sm text-[#6b6259]">Votre message arrive directement dans ma boîte mail.</p>
+          <ContactForm compact />
+        </div>
       </section>
 
       <section id="sortie" className="flex min-h-[90svh] flex-col items-center justify-center px-6 text-center">

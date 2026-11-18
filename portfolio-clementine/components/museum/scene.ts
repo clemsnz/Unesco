@@ -1,4 +1,6 @@
 import * as THREE from "three";
+import { Reflector } from "three/examples/jsm/objects/Reflector.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import type { Work } from "@/content/museum";
 
 /**
@@ -13,7 +15,7 @@ const H = 4.6;
 const Z_FRONT = 10;
 const SANS = '"Instrument Sans", Helvetica, Arial, sans-serif';
 
-export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; j?: number };
+export type Station = { pos: THREE.Vector3; look: THREE.Vector3; room: keyof RoomNames | "entrance"; art?: number; j?: number; contact?: boolean };
 type RoomNames = { main: string; cabinet: string; journey: string; about: string; exit: string };
 
 export type MuseumInput = {
@@ -34,6 +36,10 @@ export type MuseumApi = {
   hit: (x: number, y: number) => number | null;
   setHover: (i: number | null) => void;
   focus: (i: number, onDone: () => void) => void;
+  /** screen rectangle (px) of the contact form area on the wall, or null if off-screen */
+  contactRect: () => { x: number; y: number; w: number; h: number } | null;
+  /** true once the camera has settled on its station */
+  settled: () => boolean;
   resize: () => void;
   dispose: () => void;
 };
@@ -130,6 +136,61 @@ const wash = () =>
     c.fillRect(0, 0, 256, 256);
   });
 
+/** Painted plaster: fine grain, darker towards the floor, slightly lighter under the ceiling. */
+function plasterTexture() {
+  const t = canvasTex(1024, 512, (c) => {
+    const g = c.createLinearGradient(0, 0, 0, 512);
+    g.addColorStop(0, "#f4f2ee");
+    g.addColorStop(0.35, "#f1eee9");
+    g.addColorStop(0.8, "#e9e5df");
+    g.addColorStop(1, "#ddd8d0");
+    c.fillStyle = g;
+    c.fillRect(0, 0, 1024, 512);
+    const img = c.getImageData(0, 0, 1024, 512);
+    for (let i = 0; i < img.data.length; i += 4) {
+      const n = (Math.random() - 0.5) * 5;
+      img.data[i] += n;
+      img.data[i + 1] += n;
+      img.data[i + 2] += n;
+    }
+    c.putImageData(img, 0, 0);
+    for (let k = 0; k < 40; k++) {
+      const x = Math.random() * 1024;
+      const y = Math.random() * 512;
+      const r = 60 + Math.random() * 140;
+      const rg = c.createRadialGradient(x, y, 0, x, y, r);
+      rg.addColorStop(0, `rgba(${Math.random() > 0.5 ? "255,255,255" : "120,110,100"},0.025)`);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      c.fillStyle = rg;
+      c.fillRect(x - r, y - r, 2 * r, 2 * r);
+    }
+  });
+  t.wrapS = THREE.RepeatWrapping;
+  return t;
+}
+
+/** The light scallop a ceiling spot draws on a gallery wall: narrow at the top, opening downwards. */
+const scallop = () =>
+  canvasTex(256, 512, (c) => {
+    const img = c.createImageData(256, 512);
+    for (let y = 0; y < 512; y++) {
+      const v = y / 511;
+      const width = 0.08 + 0.42 * Math.sqrt(v);
+      const inten = Math.pow(Math.min(v / 0.42, 1), 0.6) * Math.pow(1 - v, 1.4) * 1.9;
+      for (let x = 0; x < 256; x++) {
+        const u = (x / 255 - 0.5) / width;
+        const edge = Math.exp(-Math.pow(Math.abs(u) * 1.25, 4));
+        const a = Math.max(0, Math.min(1, inten * edge));
+        const i = (y * 256 + x) * 4;
+        img.data[i] = 255;
+        img.data[i + 1] = 247;
+        img.data[i + 2] = 232;
+        img.data[i + 3] = a * 255;
+      }
+    }
+    c.putImageData(img, 0, 0);
+  });
+
 const shadowTex = () =>
   canvasTex(256, 256, (c) => {
     c.shadowColor = "rgba(30,22,15,0.55)";
@@ -188,7 +249,7 @@ function layout(input: MuseumInput) {
   const journeyZ = input.journey.map((_, k) => wallJourney - 6 - k * 5.5);
   const wallAbout = journeyZ[journeyZ.length - 1] - 5.5;
   const aboutZ = wallAbout - 7;
-  const back = aboutZ - 13;
+  const back = aboutZ - 16;
   return { z, side, wallCab, wallJourney, journeyZ, wallAbout, aboutZ, back };
 }
 
@@ -207,15 +268,20 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, narrow ? 1.5 : 1.75));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.12;
+  renderer.toneMappingExposure = 0.98;
 
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(WALL);
   scene.fog = new THREE.Fog(WALL, 14, 46);
   const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 140);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xd6cfc3, 2.4));
-  const sun = new THREE.DirectionalLight(0xfff4e6, 0.7);
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  const envRT = pmrem.fromScene(new RoomEnvironment(), 0.04);
+  scene.environment = envRT.texture;
+  scene.environmentIntensity = 0.4;
+  pmrem.dispose();
+  scene.add(new THREE.HemisphereLight(0xfffaf2, 0xbfb6a8, 1.45));
+  const sun = new THREE.DirectionalLight(0xfff1de, 0.55);
   sun.position.set(3, 10, 6);
   scene.add(sun);
 
@@ -223,23 +289,79 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const keep = <T extends { dispose: () => void }>(x: T) => (disposables.push(x), x);
   const basic = (map: THREE.Texture, transparent = true) => keep(new THREE.MeshBasicMaterial({ map, transparent, toneMapped: false }));
 
-  const wallMat = keep(new THREE.MeshStandardMaterial({ color: WALL, roughness: 0.95 }));
+  disposables.push(envRT);
+  const plaster = keep(plasterTexture());
+  const wallMat = keep(new THREE.MeshStandardMaterial({ map: plaster, roughness: 0.92 }));
+  const plasterLong = keep(plaster.clone());
+  plasterLong.needsUpdate = true;
+  plasterLong.repeat.set(len / 7, 1);
+  const wallMatLong = keep(new THREE.MeshStandardMaterial({ map: plasterLong, roughness: 0.92 }));
+  const gapMat = keep(new THREE.MeshBasicMaterial({ color: 0x77706a }));
+  /** recessed shadow gap at the foot of a wall, as in real galleries */
+  const shadowGap = (w: number, x: number, z: number, ry: number) => {
+    const m = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, 0.02)), gapMat);
+    m.rotation.y = ry;
+    m.position.set(x, 0.01, z);
+    scene.add(m);
+  };
 
   /* architecture */
   const floorTex = keep(concreteTexture());
   floorTex.repeat.set(4, len / 3);
-  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), keep(new THREE.MeshStandardMaterial({ map: floorTex, roughness: 0.9 })));
+  // polished concrete: a faint mirror under a slightly translucent stone layer (desktop only)
+  const floorMat = keep(new THREE.MeshStandardMaterial({ map: floorTex, color: 0xd2cbc0, roughness: 0.55, transparent: !narrow, opacity: narrow ? 1 : 0.9 }));
+  const floor = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), floorMat);
   floor.rotation.x = -Math.PI / 2;
-  floor.position.z = midZ;
+  floor.position.set(0, 0.002, midZ);
   scene.add(floor);
+  if (!narrow) {
+    const mirror = new Reflector(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), {
+      color: 0x6c6862,
+      textureWidth: Math.round(window.innerWidth * 0.6),
+      textureHeight: Math.round(window.innerHeight * 0.6),
+    });
+    mirror.rotation.x = -Math.PI / 2;
+    mirror.position.z = midZ;
+    scene.add(mirror);
+    disposables.push({ dispose: () => mirror.dispose() });
+  }
 
-  const ceil = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), keep(new THREE.MeshBasicMaterial({ color: 0xe9e6e0 })));
+  const ceil = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), keep(new THREE.MeshBasicMaterial({ color: 0xcfcbc4 })));
   ceil.rotation.x = Math.PI / 2;
   ceil.position.set(0, H, midZ);
   scene.add(ceil);
   const slotMat = keep(new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false }));
-  for (const x of [-3, 3]) {
-    const slot = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.22, len - 4)), slotMat);
+  // lighting tracks along both walls
+  const trackMat = keep(new THREE.MeshStandardMaterial({ color: 0x2c2926, roughness: 0.45, metalness: 0.2 }));
+  for (const x of [-(HALF_W - 1.5), HALF_W - 1.5]) {
+    const track = new THREE.Mesh(keep(new THREE.BoxGeometry(0.03, 0.022, len - 2)), trackMat);
+    track.position.set(x, H - 0.015, midZ);
+    scene.add(track);
+  }
+  const spotGeo = keep(new THREE.CylinderGeometry(0.045, 0.06, 0.2, 20));
+  const lensMat = keep(new THREE.MeshBasicMaterial({ color: 0xfff6e4, toneMapped: false }));
+  const lensGeo = keep(new THREE.CircleGeometry(0.05, 20));
+  /** a spot on the track, aimed at the wall */
+  const spot = (side: -1 | 1, z: number) => {
+    const g = new THREE.Group();
+    g.position.set(side * (HALF_W - 1.5), H - 0.05, z);
+    const arm = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.008, 0.008, 0.12, 6)), trackMat);
+    arm.position.y = -0.06;
+    g.add(arm);
+    const head = new THREE.Group();
+    head.position.y = -0.14;
+    head.rotation.z = side * -0.85;
+    const body = new THREE.Mesh(spotGeo, trackMat);
+    head.add(body);
+    const lens = new THREE.Mesh(lensGeo, lensMat);
+    lens.rotation.x = Math.PI / 2;
+    lens.position.y = -0.101;
+    head.add(lens);
+    g.add(head);
+    scene.add(g);
+  };
+  for (const x of [-0.6, 0.6]) {
+    const slot = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.14, len - 4)), slotMat);
     slot.rotation.x = Math.PI / 2;
     slot.position.set(x, H - 0.01, midZ);
     scene.add(slot);
@@ -247,15 +369,17 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
 
   const wallGeo = keep(new THREE.PlaneGeometry(len, H));
   for (const s of [-1, 1] as const) {
-    const w = new THREE.Mesh(wallGeo, wallMat);
+    const w = new THREE.Mesh(wallGeo, wallMatLong);
     w.rotation.y = s === -1 ? Math.PI / 2 : -Math.PI / 2;
     w.position.set(s * HALF_W, H / 2, midZ);
     scene.add(w);
+    shadowGap(len, s * (HALF_W - 0.003), midZ, w.rotation.y);
   }
   const endGeo = keep(new THREE.PlaneGeometry(HALF_W * 2, H));
   const back = new THREE.Mesh(endGeo, wallMat);
   back.position.set(0, H / 2, Z_BACK);
   scene.add(back);
+  shadowGap(HALF_W * 2, 0, Z_BACK + 0.003, 0);
   const front = new THREE.Mesh(endGeo, wallMat);
   front.rotation.y = Math.PI;
   front.position.set(0, H / 2, Z_FRONT);
@@ -284,6 +408,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       const p = new THREE.Mesh(g, wallMat);
       p.position.set(s * (OPEN + wsz / 2), H / 2, z);
       scene.add(p);
+      shadowGap(wsz, s * (OPEN + wsz / 2), z + 0.152, 0);
       const ao = new THREE.Mesh(keep(new THREE.PlaneGeometry(wsz, 0.6)), aoFloor);
       ao.position.set(s * (OPEN + wsz / 2), 0.3, z + 0.155);
       scene.add(ao);
@@ -310,6 +435,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const part = new THREE.Mesh(keep(new THREE.BoxGeometry(partW, 4.0, 0.3)), wallMat);
   part.position.set(-1.6, 2.0, -6);
   scene.add(part);
+  shadowGap(partW, -1.6, -5.848, 0);
   const nameTex = keep(
     vinyl(4096, 1400, (c) => {
       c.font = `500 210px ${SANS}`;
@@ -352,7 +478,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   /* works */
   const loader = new THREE.TextureLoader();
   const shadowMap = keep(shadowTex());
-  const poolMap = keep(wash());
+  const poolMap = keep(scallop());
   const hitMeshes: THREE.Object3D[] = [];
   const pools: THREE.MeshBasicMaterial[] = [];
   const groups: THREE.Group[] = [];
@@ -368,11 +494,15 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     const W = imgW + 2 * (mat + border);
     const Hh = imgH + 2 * (mat + border);
 
-    const poolMat = keep(new THREE.MeshBasicMaterial({ map: poolMap, transparent: true, opacity: 0.32, depthWrite: false, blending: THREE.AdditiveBlending }));
+    const poolMat = keep(new THREE.MeshBasicMaterial({ map: poolMap, transparent: true, opacity: 0.42, depthWrite: false, blending: THREE.AdditiveBlending }));
     pools.push(poolMat);
-    const pool = new THREE.Mesh(keep(new THREE.PlaneGeometry(W * 2.2, Hh * 2.3)), poolMat);
-    pool.position.set(0, 0.45, 0.002);
+    const gy = opts.y ?? EYE + 0.08;
+    const top = H - 0.02;
+    const bottom = 0.25;
+    const pool = new THREE.Mesh(keep(new THREE.PlaneGeometry(Math.max(W * 1.9, 2.2), top - bottom)), poolMat);
+    pool.position.set(0, (top + bottom) / 2 - gy, 0.002);
     g.add(pool);
+    spot(opts.side, opts.z);
     const shadow = new THREE.Mesh(keep(new THREE.PlaneGeometry(W * 1.45, Hh * 1.45)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.55, depthWrite: false })));
     shadow.position.set(0.04, -0.09, 0.004);
     g.add(shadow);
@@ -489,12 +619,69 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   skillsMesh.position.set(HALF_W - 0.012, EYE + 0.1, L.aboutZ - 1.2);
   scene.add(skillsMesh);
 
+  /* benches in the main gallery */
+  const oak = keep(new THREE.MeshStandardMaterial({ color: 0xc2a985, roughness: 0.6 }));
+  const legMat = keep(new THREE.MeshStandardMaterial({ color: 0x1b1916, roughness: 0.5 }));
+  const benchShadow = keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.6, depthWrite: false }));
+  const mainIdx = works.map((w, i) => (w.room === "main" ? i : -1)).filter((i) => i >= 0);
+  [mainIdx[1], mainIdx[4]].filter((i) => i !== undefined).forEach((i) => {
+    const b = new THREE.Group();
+    b.position.set(0, 0, L.z[i]);
+    const seat = new THREE.Mesh(keep(new THREE.BoxGeometry(0.5, 0.07, 1.9)), oak);
+    seat.position.y = 0.44;
+    b.add(seat);
+    for (const dz of [-0.8, 0.8]) {
+      const leg = new THREE.Mesh(keep(new THREE.BoxGeometry(0.42, 0.41, 0.05)), legMat);
+      leg.position.set(0, 0.205, dz);
+      b.add(leg);
+    }
+    const sh = new THREE.Mesh(keep(new THREE.PlaneGeometry(1.0, 2.6)), benchShadow);
+    sh.rotation.x = -Math.PI / 2;
+    sh.position.y = 0.006;
+    b.add(sh);
+    scene.add(b);
+  });
+
+  /* Galerie 04 — contact wall (the HTML form is laid over it) */
+  const contactZ = L.aboutZ - 6.8;
+  const contactTex = keep(
+    vinyl(2400, 1650, (c) => {
+      c.font = `400 120px ${SANS}`;
+      c.fillText("Écrivez-moi", 0, 130);
+      c.fillStyle = "#6b6259";
+      c.font = `400 54px ${SANS}`;
+      c.fillText("Votre message arrive directement dans ma boîte mail.", 0, 230);
+      c.strokeStyle = "rgba(28,25,22,0.18)";
+      c.lineWidth = 3;
+      c.strokeRect(2, 330, 2396, 1316);
+      c.fillStyle = "rgba(250,249,245,0.85)";
+      c.fillRect(4, 332, 2392, 1312);
+    }),
+  );
+  const CW = 3.2;
+  const CH = CW * (1650 / 2400);
+  const contactMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(CW, CH)), basic(contactTex));
+  contactMesh.rotation.y = -Math.PI / 2;
+  contactMesh.position.set(HALF_W - 0.012, EYE + 0.05, contactZ);
+  scene.add(contactMesh);
+  // form area corners in world space (the light rectangle on the texture)
+  const formTop = EYE + 0.05 + CH / 2 - CH * (332 / 1650);
+  const formBottom = EYE + 0.05 - CH / 2;
+  const formCorners = [
+    new THREE.Vector3(HALF_W - 0.012, formTop, contactZ + CW / 2),
+    new THREE.Vector3(HALF_W - 0.012, formTop, contactZ - CW / 2),
+    new THREE.Vector3(HALF_W - 0.012, formBottom, contactZ + CW / 2),
+    new THREE.Vector3(HALF_W - 0.012, formBottom, contactZ - CW / 2),
+  ];
+  spot(1, contactZ);
+
   /* Sortie — end wall */
   const exitTex = keep(
     vinyl(3600, 900, (c) => {
       c.font = `400 210px ${SANS}`;
       c.textAlign = "center";
       c.fillText(input.exit.line, 1800, 420);
+      c.textAlign = "left";
       c.fillStyle = "#6b6259";
       c.font = `500 64px ${SANS}`;
       spaced(c, input.rooms.exit.toUpperCase(), 1800, 640, 20, "center");
@@ -533,7 +720,8 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     stations.push({ pos: v3(-HALF_W + 5.2, EYE, L.aboutZ - 1.4), look: v3(-HALF_W, EYE + 0.05, L.aboutZ - 1.5), room: "about" });
   }
   stations.push({ pos: v3(narrow ? HALF_W - 4.8 : HALF_W - 5.0, EYE, L.aboutZ - 1.2), look: v3(HALF_W, EYE + 0.05, L.aboutZ - 1.2), room: "about" });
-  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 12.5 : 8.2)), look: v3(0, 2.0, Z_BACK), room: "exit" });
+  stations.push({ pos: v3(HALF_W - (narrow ? 4.8 : 4.4), EYE, contactZ), look: v3(HALF_W, EYE + 0.05, contactZ), room: "about", contact: true });
+  stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 12.5 : 7.2)), look: v3(0, 2.0, Z_BACK), room: "exit" });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   let target = 0;
@@ -541,6 +729,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const pointer = new THREE.Vector2();
   const ptrSmooth = new THREE.Vector2();
   let hovered: number | null = null;
+  let walkT = 0;
   let frozen: { p: THREE.Vector3; l: THREE.Vector3 } | null = null;
   let focusAnim: { from: THREE.Vector3; fromLook: THREE.Vector3; to: THREE.Vector3; toLook: THREE.Vector3; t0: number; done: () => void } | null = null;
   const pos = new THREE.Vector3();
@@ -583,13 +772,17 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       poseAt(current);
       ptrSmooth.lerp(pointer, 1 - Math.exp(-dt * 3));
       camera.position.copy(pos);
+      const speed = Math.min(Math.abs(target - current) * 1.6, 1);
+      walkT += dt * 7.5 * speed;
+      camera.position.y += Math.sin(walkT * 2) * 0.012 * speed;
       right.subVectors(look, pos).cross(camera.up).normalize();
+      camera.position.addScaledVector(right, Math.sin(walkT) * 0.01 * speed);
       tmp.copy(look).addScaledVector(right, ptrSmooth.x * 0.35);
       tmp.y -= ptrSmooth.y * 0.2;
       camera.lookAt(tmp);
     }
     pools.forEach((m, i) => {
-      const goal = i === hovered ? 0.6 : 0.32;
+      const goal = i === hovered ? 0.62 : 0.42;
       m.opacity += (goal - m.opacity) * 0.1;
     });
     renderer.render(scene, camera);
@@ -621,8 +814,21 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     return { to: center.clone().addScaledVector(new THREE.Vector3(-L.side[i], 0, 0), dist), toLook: center };
   };
 
+  const proj = new THREE.Vector3();
   return {
     stations,
+    contactRect: () => {
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (const c of formCorners) {
+        proj.copy(c).project(camera);
+        if (proj.z > 1) return null;
+        const x = ((proj.x + 1) / 2) * canvas.clientWidth;
+        const y = ((1 - proj.y) / 2) * canvas.clientHeight;
+        x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+      }
+      return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 };
+    },
+    settled: () => !focusAnim && Math.abs(target - current) < 0.02,
     setProgress: (s) => (target = s),
     jump: (s) => {
       frozen = null;
