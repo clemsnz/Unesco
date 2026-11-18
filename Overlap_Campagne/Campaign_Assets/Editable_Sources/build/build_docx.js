@@ -20,7 +20,7 @@ function runs(t, base = {}) {
   return out;
 }
 const P = (t, o = {}) => new Paragraph({ children: runs(t, o.run || {}), spacing: { after: 120, line: 288 }, ...o.p });
-const ROM = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X']; let c1 = 0, c2 = 0, c3 = 0, fig = 0;
+const ROM = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII']; let c1 = 0, c2 = 0, c3 = 0, fig = 0;
 const H1 = t => { c1++; c2 = 0; return new Paragraph({ heading: HeadingLevel.HEADING_2, children: [new TextRun(`${ROM[c1 - 1]}. ${t.replace(/^12\.\d\s+/, '')}`)] }); };
 const H2 = t => { c2++; c3 = 0; return new Paragraph({ heading: HeadingLevel.HEADING_3, children: [new TextRun(`${String.fromCharCode(64 + c2)}. ${t.replace(/^[A-D]\. /, '')}`)] }); };
 const H3 = t => { c3++; return new Paragraph({ heading: HeadingLevel.HEADING_4, children: [new TextRun(`${c3}. ${t.replace(/^C\d — /, '')}`)] }); };

@@ -2,276 +2,138 @@
 
 **Launch campaign « La semaine pro » — Less chatting – More meeting**
 
-This section presents our launch strategy, the campaign idea, the creations and their texts, the roll-out calendar, the budget and the pilot that will test the campaign. The print files and editable sources are delivered with the presentation.
+This section presents our marketing plan (objectives, targets, positioning, marketing mix and launch phases) and our communication plan (platform, campaign idea, channels, creations, social media plan, budget and indicators).
 
-## I. The question we have to answer
+## I. Objectives
 
-We know why a student who often organises outings would try Overlap: she is the one who suffers most from the group chat. The harder question is the one a jury could ask us:
+### A. Marketing objectives
 
-> *« I see why an organiser would try Overlap. But why would her friends make the effort to join her, and how will you know that your campaign really helped them fix a date? »*
+| **Objective** | **What we want**                                                        | **Target (hypothesis)**                                              |
+|---------------|-------------------------------------------------------------------------|----------------------------------------------------------------------|
+| Awareness     | Make Overlap known on the EFAP campus and in our audience's group chats | ≈ 2,000 people reached on Instagram · 120 conversations at the stand |
+| Acquisition   | Get organisers to sign their friend group up for the free launch beta   | 25 organisers signed up · 15 groups started                          |
+| Activation    | Turn sign-ups into real plans                                           | ≥ 11 groups with a confirmed date · ≥ 9 groups that actually meet    |
 
-We built the whole section around this question. Our answer has three parts:
+### B. Communication objectives
 
-1.  **Make it cost the friends almost nothing:** 30 seconds and nothing to install during the pilot.
+| **Level**        | **What our audience should know, feel or do**                                      |
+|------------------|------------------------------------------------------------------------------------|
+| Know (cognitive) | Overlap finds the slot when the whole group is free, in one tap.                   |
+| Feel (affective) | « That's us »: the group recognises its own « on se capte la semaine pro ».        |
+| Do (conative)    | The organiser signs the group up (stand or DM « GROUPE ») and forwards the invite. |
 
-2.  **Make the invitation come from a friend, not from a brand:** the organiser forwards it in her own group chat.
+*All targets are steering hypotheses for the launch period (23 November – 18 December 2026).*
 
-3.  **Measure success at group level:** not downloads or likes, but the share of groups that actually meet.
+## II. Targets
 
-### A. What the course asks, and how we apply it
+| **Role**         | **Who**                  | **Profile**                                                                                                                                                                                 | **Pain point**                                                 |
+|------------------|--------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| Core target      | The organiser            | Students aged 18–25 who usually launch the plans, like our persona Camille (24, Master's student + part-time job, several friend groups). First: EFAP students with a group of 3–6 friends. | Is tired of chasing everyone in the group chat.                |
+| Secondary target | Her friends              | The 3–5 people in her group chat. They don't look for an app; they receive the invitation from her.                                                                                         | Hate the 47 messages too, but won't install one more app.      |
+| Relays           | The campus community     | EFAP student union (BDE), class delegates, student associations: they share our content and bring groups to the stand.                                                                      | Want content that makes students laugh and gets them together. |
+| Next             | Segments 2 and 3 (Canva) | Busy professionals (25–35) and people with distant friend groups: targeted after the campus launch.                                                                                         | —                                                              |
 
-We separate the professor's method (left) from our own creative choices (right).
+Our core target is the **organiser**, the person who usually launches the plans in a friend group. Our persona Camille (24, Master's student in Marketing & Communications with a part-time job, several friend groups) is exactly this person: *"I text my friends every day, yet we barely see each other because we can never agree on a time."* Through her, we reach her friends, who receive the invitation from someone they trust.
 
-| **Course requirement (page)**                                                                  | **How we apply it in this section**                                                                                    |
-|------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------|
-| 1.6 Introduction to Entrepreneurship, p.11: Assumption → Experiment → Evidence → Decision      | The campaign is built as an experiment: we state the assumption, run a pilot, collect evidence and decide (part VIII). |
-| 1.6, p.13: attention is scarcer, trust is harder                                               | We reach friends through someone they trust (the organiser), not through ads.                                          |
-| 1.6, p.17: start with what you have                                                            | We launch on our own campus (EFAP), with our network and a student budget.                                             |
-| 1.6, p.22: "Here is the evidence we have so far"                                               | We show our four interviews and secondary data, with their limits (part II).                                           |
-| 2.8 From Idea to Concept, p.16: primary research includes prototype tests and actual behaviour | The pilot is a prototype test that observes real behaviour: did the group meet?                                        |
-| 2.8, p.18: behaviour \> opinion                                                                | Our main indicator is a behaviour (a meeting that happened), not a like or an intention.                               |
-| 2.8, p.20: AI can generate hypotheses, reality validates them                                  | All our targets are hypotheses for steering; only the pilot can validate them.                                         |
-| 2.8, p.29 (Workshop 2): riskiest assumption, evidence, next test                               | We use these three headings explicitly in part VIII.                                                                   |
+## III. Positioning
 
-## II. Strategy: one audience, one situation, one channel
+> *For 18–25-year-olds who want to see their friends but get lost in group chats, Overlap is the planning app that finds the slot when the whole group is free and locks the date in one tap. Unlike WhatsApp or Doodle, it turns « on se capte » into a confirmed date; unlike Howbout, your friends can join without creating an account.*
 
-### A. First audience: the organiser
+**Competitors.** WhatsApp groups and Doodle polls are manual: information gets lost and someone has to chase everyone. Timeleft, Bumble For Friends and Frimake help people meet strangers, not their existing friends. Our closest competitors, Howbout and To Gather, also compare calendars; we stand out by our simplicity (one promise: finding the slot) and because friends can join without creating an account.
 
-Our priority target in the Canva is students and young professionals aged 18–25. Inside this group, we start with **the person who usually launches the plans**, like our persona Camille (24, Master's student in Marketing & Communications with a part-time job, several friend groups). She feels the problem most, and she can bring her friends. Concretely, we start with **EFAP students who tried to plan something with a group of 3 to 6 friends in the last month**. Their friends can study or work anywhere.
+**Brand values used in our communication:** Connection, Simplicity, Trust & Privacy.
 
-### B. The situation
+## IV. Marketing mix
 
-Someone writes « on se capte la semaine pro ? » ("shall we catch up next week?") in the group chat. Replies pile up, people are busy on different days, nobody decides, and the plan dies. Camille's user scenario in our working document describes exactly this: 40 messages and nothing planned. In December the deadline is real: everyone wants to see each other **before the holidays**.
+| **Lever** | **Our choice**                                                                                                                                                             |
+|-----------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Product   | Core promise: 2–3 common slots, one-tap confirmation, a convenient place, reminders. Friends join with a guest link (no download needed). Privacy: free / busy only.       |
+| Price     | Free for users during the launch beta. Monetisation is presented in our Business Model section.                                                                            |
+| Place     | Launch beta on the EFAP campus (stand + DM sign-up), run with our team. Then App Store / Google Play. Growth through the group itself: every organiser brings 3–5 friends. |
+| Promotion | Campaign « La semaine pro »: poster, 28-second film, 8 social posts, a campus activation, student-union relays, an ambassador per class.                                   |
 
-### C. The channel
+## V. Launch strategy
 
-We meet organisers **in person, on campus**: posters where students wait together and a stand at lunchtime. The invitation then travels **from friend to friend**, inside the group chat they already use. Instagram supports the campaign (a shareable carousel, a "how it works" carousel, a recruiting story and the film).
+| **Phase**              | **When**               | **Goal**                                                            | **What we do**                                                                 |
+|------------------------|------------------------|---------------------------------------------------------------------|--------------------------------------------------------------------------------|
+| 1 · Teaser             | Mon 23 – Sun 29 Nov    | Create curiosity: « 47 messages. 0 date. » with no full reveal.     | P1 teaser · film shoot · posters printed                                       |
+| 2 · Launch             | Mon 30 Nov – Fri 4 Dec | Reveal the campaign, recruit organisers.                            | Posters · P2 carousel · P3 Reel · P4 how it works · P5 story · stand 1 & 3 Dec |
+| 3 · Engagement         | Sat 5 – Fri 18 Dec     | Keep the conversation going until the holidays, share first groups. | P6 meme · P7 countdown · P8 TikTok · stories of groups who met (with consent)  |
+| 4 · After the holidays | January 2027           | Open to more campuses and to segments 2–3.                          | Ambassadors, student-union partnerships, referral « invite another group »     |
 
-### D. Evidence we start from
+## VI. Communication platform
 
-- **Four interviews** (ages 22–25, Paris region): Capucine: *"After a while, there are like 50 messages and nobody really knows what we decided."* Julia: a group trying to find a date for 3 months with last-minute postponements. Pablo: a drink missed two weeks ago because of organising the moment. Mathieu: promises made at parties that never happen.
+| **Element** | **Content**                                                                                                                                                                       |
+|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Insight     | « On se capte la semaine pro » is the sentence every group chat sends and never keeps. Wanting to meet is easy; agreeing on a date is not.                                        |
+| Promise     | Less chatting, more meeting: Overlap finds the slot when the whole group is free.                                                                                                 |
+| Proof       | 2–3 common slots, everyone confirms in one tap; friends answer in 30 seconds without installing anything; only free / busy is read.                                               |
+| Tone        | Friendly, funny, self-aware, like a message in the group chat. Short sentences, French slang the audience uses (« on se capte », « c'est calé »), never preachy about loneliness. |
+| Signature   | Less chatting – More meeting                                                                                                                                                      |
 
-- **None of the four named the place as a barrier.** Last-minute plans work better than plans made in advance, and group chats stall before a decision.
+### A. Campaign idea: « La semaine pro »
 
-- **Secondary data:** about one third of 18–24-year-olds identify organising outings as a challenge (Harris Interactive); 52% of Gen Z use group chats to interact with friends (Morning Consult).
-
-**Limits.** Four interviews give us a direction, not a proof. We have no evidence yet that friends will answer an organiser through a tool, that a confirmed date turns into a real meeting, that people will share their calendar, or that anyone will pay. The campaign is designed to test the first two points.
-
-## III. The journey on both sides
-
-| **Step**           | **The organiser (Camille)**                                                                           | **Her friends**                                                                     |
-|--------------------|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------|
-| 1\. Trigger        | Sees the poster in the student lounge, a carousel a friend shared, or the stand.                      | —                                                                                   |
-| 2\. Action         | Signs her group up for the free pilot: 1 minute, at the stand or by replying « GROUPE » to our story. | —                                                                                   |
-| 3\. Invitation     | Forwards our ready-made message in her usual group chat, with a link to a temporary planning group.   | Receive it **from Camille**, in their own chat. Not an ad.                          |
-| 4\. Answer         | Sends her own free evenings.                                                                          | Join with one tap and send their free evenings: **30 seconds, nothing to install**. |
-| 5\. Choice         | Gets 2–3 slots when everyone is free.                                                                 | Tap one slot in the poll.                                                           |
-| 6\. Confirmed date | When everyone voted for the same slot (5/5), the date is locked + a convenient place.                 | Same. Reminder the day before and 2 hours before.                                   |
-| 7\. Meeting        | They meet. Next morning, a check-in poll: « Did you meet? »                                           | Answer the check-in.                                                                |
-
-### A. Why would her friends join?
-
-4.  **It comes from a friend.** Camille sends the invitation in their own chat. We never message the friends as a brand first.
-
-5.  **It costs 30 seconds.** No app, no account during the pilot: one tap to join, one message, one vote.
-
-6.  **It ends their pain too.** They also dislike the 47 messages. They don't negotiate: they tap a slot that already works for everyone.
-
-7.  **A shared deadline.** « Before the holidays », plus a visible count (4/5 answered). Nobody wants to be the one who blocks the group.
-
-**Product decision.** Every extra download is a risk for a group app: our working document already notes that "if a single person in the group does not sign up, the service collapses". Howbout requires every friend to create an account; To Gather lets guests reply by web link. We follow the second model: **only the organiser needs the app; friends join with a guest link.**
-
-**Stage of the project.** Overlap is a prototype (screens in our Canva). The call to action is therefore a **free pilot run by our team** (a concierge or "Wizard of Oz" test, as planned in our working document). We do not promise an app download.
-
-## IV. The campaign idea: « La semaine pro »
-
-**Lived detail.** « On se capte la semaine pro » is the sentence every group chat sends and never keeps. Our audience can send it to their group immediately, because everybody recognises it.
-
-**Name:** « La semaine pro » ("Next week").
+**Lived detail.** « On se capte la semaine pro » ("shall we catch up next week?") is the sentence every group chat sends and never keeps. Everybody recognises it, so our audience can forward the campaign to their own group.
 
 **Hook:** « On se capte ~~la semaine pro~~ jeudi 19h30 ✓ » — "Let's catch up ~~next week~~ Thursday 7:30 pm".
 
-**Visual principle: the strike-out.** A vague promise is crossed out in orange and replaced by a real, confirmed slot in a blue pill, with the group count (5/5). The same device is used on every piece: poster, film, carousels, story, activation board.
+**Visual principle: the strike-out.** A vague promise is crossed out in orange and replaced by a confirmed slot in a blue pill, with the group count (5/5). It is used on every piece: poster, film, posts and the event board. The design keeps our identity: cream background, Overlap blue and orange, Monument Extended for titles, Syne for text, the mascot logo and the signature.
 
-**What it shows.** The benefit is shown from the friends' side: no debate, one tap, a date that holds.
+**Language.** Ads are in French, because this is how our audience talks. Every French line is translated in this section.
 
-**Brand.** Cream background, Overlap blue and orange, Monument Extended for titles and Syne for text (from our Visual Identity slides), the mascot logo and our signature **Less chatting – More meeting**.
+### B. Key messages
 
-**Language.** The ads are in French because this is how our audience talks; « on se capte » does not translate naturally. All texts for the jury are in English, and every French line is translated in this section and in the presentation notes.
+| **Audience**  | **Message (FR)**                                                                              | **English**                                                                  |
+|---------------|-----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| The organiser | « Arrête de relancer tout le monde. Overlap trouve le créneau, ton groupe tape, c'est calé. » | Stop chasing everyone. Overlap finds the slot, your group taps, it's locked. |
+| Her friends   | « 30 secondes, rien à installer. Tu tapes ton créneau, c'est tout. »                          | 30 seconds, nothing to install. You tap your slot, that's it.                |
+| Campus relays | « Partage le dico des promesses de groupe : tout le monde a un groupe comme ça. »             | Share the group-chat dictionary: everybody has a group like that.            |
 
-## V. The creations
+## VII. Channel mix
+
+| **Type** | **Channels**                                                                                                            | **Role**                                                 |
+|----------|-------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------|
+| Owned    | Instagram account (feed, Reels, stories) · TikTok · campus posters · the stand                                          | Tell the story, recruit organisers                       |
+| Earned   | Shares in group chats · tags in comments · student-union and class-delegate reposts · word of mouth from groups who met | Reach the friends through people they trust              |
+| Paid     | €40 Instagram boost on the Reel and the recruiting story (Paris, 18–25)                                                 | Push the best content beyond our followers               |
+| Event    | « Le Mur des Semaines Pro », EFAP hall, 1 & 3 Dec                                                                       | Meet organisers face to face, sign groups up on the spot |
+
+**Ambassadors.** One volunteer per class relays our posts in class group chats and brings their friends to the stand. **Student union (BDE):** repost of the posts and the story (envisaged, not yet confirmed).
+
+## VIII. Creations
 
 ### A. Launch poster
 
 *Figure 1 – Launch poster (A2, also printed in A3)*
 
-| **Element**    | **Final text (FR)**                                                                                                                 | **English**                                                                                                                    |
-|----------------|-------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| Hook           | On se capte ~~la semaine pro~~ jeudi 19h30 ✓                                                                                        | Let's catch up ~~next week~~ Thursday 7:30 pm ✓                                                                                |
-| Card           | C'est calé · Jeu. 10 déc · 19h30 · 5/5                                                                                              | Locked in · Thu 10 Dec · 7:30 pm · 5/5                                                                                         |
-| Body           | Overlap compare vos dispos et propose 2 à 3 créneaux où tout le groupe est libre. Chacun confirme en un tap.                        | Overlap compares your availability and suggests 2–3 slots when the whole group is free. Everyone confirms in one tap.          |
-| Call to action | Pilote gratuit · 15 groupes · rien à télécharger. Inscris ton groupe au stand Overlap. Hall EFAP · mar. 1er & jeu. 3 déc. · 12h–14h | Free pilot · 15 groups · nothing to download. Sign up your group at the Overlap stand. EFAP hall · Tue 1 & Thu 3 Dec · 12–2 pm |
-| Signature      | Less chatting – More meeting                                                                                                        | —                                                                                                                              |
+| **Element**    | **Text (FR)**                                                                                                                       | **English**                                                                                                                  |
+|----------------|-------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| Hook           | On se capte ~~la semaine pro~~ jeudi 19h30 ✓                                                                                        | Let's catch up ~~next week~~ Thursday 7:30 pm ✓                                                                              |
+| Body           | Overlap compare vos dispos et propose 2 à 3 créneaux où tout le groupe est libre. Chacun confirme en un tap.                        | Overlap compares your availability and suggests 2–3 slots when the whole group is free. Everyone confirms in one tap.        |
+| Call to action | Pilote gratuit · 15 groupes · rien à télécharger. Inscris ton groupe au stand Overlap. Hall EFAP · mar. 1er & jeu. 3 déc. · 12h–14h | Free pilot · 15 groups · nothing to download. Sign up your group at the Overlap stand, EFAP hall, Tue 1 & Thu 3 Dec, 12–2 pm |
 
-**Where:** EFAP student lounge, between the lifts and the coffee machine, at eye level. Classmates wait there together, phone in hand, so they read it together and forward the idea. 30 × A3 across campus + 2 × A2 at the stand.
+**Placement:** 30 × A3 across campus (student lounge by the lifts and the coffee machine, cafeteria) and 2 × A2 at the stand, at eye level, where classmates wait together, phone in hand.
 
-**No QR code.** We only print a link or a QR code whose destination exists and has been tested. The pilot form is not online yet, so the action is the stand or a DM. Once the form is live and tested, a QR code can be added in the black call-to-action box.
+*Figure 2 – The poster in the student lounge (mock-up)*
 
-*Figure 2 – Mock-up: the poster in the student lounge*
+### B. Film « 47 messages » (28 seconds, vertical)
 
-### B. Vertical film « 47 messages » (28 seconds)
-
-Shot on one phone in about three hours, edited in CapCut, subtitled so it works without sound. A full 6-page storyboard with the bilingual script is delivered with the presentation.
+Shot on a phone in three hours and posted as a Reel and on TikTok. Camille sends « On se capte la semaine pro ? », 47 messages follow without a date; she moves the group to Overlap; her friends answer in 30 seconds; the slot reaches 5/5 (« C'est calé ✓ »); on Thursday at 19:30 they actually meet. All lines are subtitled.
 
 *Figure 3 – Shots 1–4: the problem*
 
-*Figure 4 – Shots 5–8: the friends' side, the confirmed date (shot 6) and the real meeting*
+*Figure 4 – Shots 5–8: the friends answer, the date is locked, they meet*
+
+### C. Event « Le Mur des Semaines Pro »
+
+Two lunch breaks in the EFAP hall (Tue 1 and Thu 3 Dec, 12:00–14:00). Students stick their « plan that never happened » on the wall; groups of friends cross out their busy evenings on transparent week grids and stack them: the cell that stays clear is their slot. They leave with a « C'est calé » card to post in their group chat, and organisers sign their group up for the free pilot.
+
+*Figure 5 – The event in the EFAP hall (mock-up)*
 
 <table>
 <colgroup>
-<col style="width: 4%" />
-<col style="width: 10%" />
-<col style="width: 20%" />
-<col style="width: 31%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th><strong>#</strong></th>
-<th><strong>Time</strong></th>
-<th><strong>Framing</strong></th>
-<th><strong>Action</strong></th>
-<th><strong>On screen / sound</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>1</td>
-<td><p>0:00–0:03</p>
-<p>3 s</p></td>
-<td>Extreme close-up on the phone screen (handheld, vertical)</td>
-<td>Camille types in her group chat "Les Inséparables" and hits send.</td>
-<td><p>Chat: « On se capte la semaine pro ? » (Shall we catch up next week?)</p>
-<p>Sound: Keyboard taps, "send" whoosh. Upbeat royalty-free track starts low.</p></td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td><p>0:03–0:07</p>
-<p>4 s</p></td>
-<td>Screen recording, fast scroll; unread badge climbs 2 → 47</td>
-<td>Replies pile up and contradict each other. Nobody decides.</td>
-<td><p>Léo: « grave chaud » · Sarah: « mardi j'peux pas, partiel » · Yanis: « jeudi je suis en alternance jusqu'à 19h » · Nora: « mercredi ? » · Léo: « ah non mercredi foot » · Sarah: « on dit la semaine d'après alors ? » — Caption: « 47 messages. 0 date. »</p>
-<p>Sound: Notification pings speed up until they overlap.</p></td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td><p>0:07–0:09</p>
-<p>2 s</p></td>
-<td>Medium shot, Camille seated in the metro, phone in hand</td>
-<td>She stares at the camera, deadpan. Types « bon… on laisse tomber ? », then deletes it.</td>
-<td><p>Caption: « Ça fait 3 semaines. » (It's been 3 weeks.)</p>
-<p>Sound: Music cuts. Metro ambience. One long sigh.</p></td>
-</tr>
-<tr class="even">
-<td>4</td>
-<td><p>0:09–0:12</p>
-<p>3 s</p></td>
-<td>Over-the-shoulder, phone in sharp focus</td>
-<td>She opens Overlap, selects "Les Inséparables (5)" and taps « Trouver un créneau commun ».</td>
-<td><p>Prototype screen "Avec qui ?" — Caption: « Elle passe le groupe sur Overlap. »</p>
-<p>Sound: Music restarts on the tap (beat drop).</p></td>
-</tr>
-<tr class="odd">
-<td>5</td>
-<td><p>0:12–0:16</p>
-<p>4 s</p></td>
-<td>Vertical split screen, 3 friends in 3 places (office, library, street)</td>
-<td>Léo, Sarah and Yanis each get the invite from Camille, tick their free evenings and send. 4–5 seconds each, filmed in one take.</td>
-<td><p>Notification: « Camille te demande tes dispos · 30 s » — Caption: « Côté potes : 30 secondes. Pas de débat. »</p>
-<p>Sound: Three soft taps on the beat.</p></td>
-</tr>
-<tr class="even">
-<td>6</td>
-<td><p>0:16–0:20</p>
-<p>4 s</p></td>
-<td>Close-up on the phone screen — THE CONFIRMATION MOMENT</td>
-<td>Three common slots appear. Votes fill up on « Jeu. 10 déc. · 19h30 »: 1/5, 3/5, 5/5. The card turns blue: « C'est calé ✓ ». In the group chat, Léo writes « ENFIN ». Then the chat goes quiet.</td>
-<td><p>« 3 créneaux où vous êtes tous libres » → « C'est calé ✓ Jeudi 10 déc. · 19h30 · 5/5 » + « Bar à mi-chemin : 12 à 18 min pour chacun »</p>
-<p>Sound: Five taps, then a bright "ding". Silence for half a second.</p></td>
-</tr>
-<tr class="odd">
-<td>7</td>
-<td><p>0:20–0:25</p>
-<p>5 s</p></td>
-<td>Handheld wide → medium, bar terrace, warm light</td>
-<td>Thursday, 19:30. The five friends meet; Yanis arrives last, hugs. Sarah: « Pour une fois, personne n'a annulé. » Laughs, glasses clink.</td>
-<td><p>Animated caption: « On se capte <del>la semaine pro</del> jeudi 19h30 ✓ »</p>
-<p>Sound: Live dialogue + music back at full volume.</p></td>
-</tr>
-<tr class="even">
-<td>8</td>
-<td><p>0:25–0:28</p>
-<p>3 s</p></td>
-<td>End card (static graphic, cream background)</td>
-<td>Logo + signature + call to action.</td>
-<td><p>« Less chatting – More meeting » · « Teste-le avec ton groupe : stand Overlap, hall EFAP, 1er &amp; 3 déc. »</p>
-<p>Sound: Music ends on the beat.</p></td>
-</tr>
-</tbody>
-</table>
-
-**The confirmation moment (shot 6):** three common slots appear; votes fill up on « Jeu. 10 déc. · 19h30 »: 1/5, 3/5, 5/5. The card turns blue: « C'est calé ✓ ». In the group chat, Léo writes « ENFIN » ("FINALLY"), then the chat goes quiet.
-
-**Real exchanges in the group chat (shot 2):** Léo: « grave chaud » (totally up for it) · Sarah: « mardi j'peux pas, partiel » (can't do Tuesday, exam) · Yanis: « jeudi je suis en alternance jusqu'à 19h » (Thursday I'm at my work-study job until 7 pm) · Nora: « mercredi ? » · Léo: « ah non mercredi foot » (no, Wednesday is football) · Sarah: « on dit la semaine d'après alors ? » (the week after, then?).
-
-*The phone screens are illustrative prototype screens. During the pilot, the same steps happen by message.*
-
-### C. Three social media posts
-
-#### 1. Shareable carousel « Le dico des promesses de groupe » (6 screens, 1080 × 1350)
-
-*Figure 5 – Post 1, carousel screens 1–6*
-
-Each screen "translates" a group-chat promise and corrects it with a real slot: « On se capte la semaine pro » = "we'll see each other in 2027" → jeudi 19h30 ✓; « Faut qu'on se fasse un verre un de ces quatre » = "never, but with love" → mardi 20h ✓; « Dites-moi vos dispos » = "47 messages later, still no date" → 3 créneaux · 1 tap ✓; « Avant les vacances, promis » = "after the holidays, maybe" → sam. 12 déc, 12h ✓.
-
-**Caption (FR):** *Le dico officiel des promesses de groupe. Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée. On sait qu'il existe. Overlap trouve 2 à 3 créneaux où tout le groupe est libre. Chacun tape le sien, c'est calé. Pilote gratuit : 15 groupes, 14 jours, rien à télécharger. Stand Overlap, hall EFAP · mar. 1er & jeu. 3 déc. · 12h–14h — ou réponds GROUPE en DM. Less chatting – More meeting.*
-
-**EN:** The official dictionary of group-chat promises. Send this carousel to the group that has been saying "next week" since September. We know it exists. Overlap finds 2–3 slots when the whole group is free… Free pilot: 15 groups, 14 days, nothing to download.
-
-#### 2. Carousel « De 47 messages à 1 date » (how it works, 5 screens)
-
-*Figure 6 – Post 2, carousel screens 1–5*
-
-**Caption (FR):** *De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos (30 secondes, rien à installer pendant le pilote). 3. Overlap propose 2 à 3 créneaux où tout le monde est libre. Chacun tape. 4. Un lieu pratique pour tous + un rappel la veille. Overlap ne lit que « libre / occupé », jamais le contenu de ton agenda.*
-
-**EN:** From 47 messages to 1 date in 4 steps… Overlap only reads "free / busy", never what is in your calendar. These steps match our "How it works" slide and our Legal section.
-
-#### 3. Interactive story « On cherche 15 groupes » (3 frames, 1080 × 1920)
-
-*Figure 7 – Post 3, story frames 1–3*
-
-| **Frame** | **Sticker and exact text (FR)**                                                                                                                               | **English**                                                                                          |
-|-----------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
-| 1         | Poll: « Ton groupe dit "la semaine pro" depuis… » Options: 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter                                    | Your group has been saying "next week" for… 1 week / 1 month / Since September / We stopped counting |
-| 2         | Question: « Raconte ton dernier "on se capte" resté dans le groupe »                                                                                          | Tell us about your last "let's catch up" that stayed in the group chat                               |
-| 3         | Call to action: « On cherche 15 groupes pour le pilote · 14 jours, gratuit · Rien à télécharger · Réponds "GROUPE" à cette story, ou viens au stand Overlap » | We are looking for 15 groups for the pilot… Reply "GROUPE" to this story, or come to the stand       |
-
-*Proposed account name: overlap.pilot (to check and reserve before posting). No link is used: the only actions are a DM reply or a visit to the stand.*
-
-### D. Field activation « Le Mur des Semaines Pro »
-
-*Figure 8 – Mock-up of the activation in the EFAP hall*
-
-**The scene, from a participant's point of view.** Léa (21, first-year Master's) walks to the cafeteria with two classmates. A big board says « Le Mur des Semaines Pro ». Clémentine asks: « Depuis quand ton groupe dit "la semaine pro" ? » ("Since when has your group been saying next week?"). Léa laughs: « depuis septembre ». She writes « Les filles de L3, depuis septembre » on an orange post-it and sticks it in the "graveyard of plans". Opale gives the three of them a transparent week grid each: they cross out the evenings they are busy and stack the sheets. One cell stays clear: that is their slot. They fill in a « C'est calé » card, take a photo and send it to their group chat. Léa's two other friends were not there, so she signs the whole group up for the pilot on Hénora's tablet (one minute). That evening, the planning group asks for their free evenings; two days later, a poll with three common slots arrives; the five friends vote; the date is locked.
-
-*Figure 9 – Main on-site support: the A1 wall board*
-
-*Figure 10 – « C'est calé » card (A6) and transparent week grid (A5)*
-
-<table>
-<colgroup>
-<col style="width: 26%" />
-<col style="width: 73%" />
+<col style="width: 24%" />
+<col style="width: 75%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -280,14 +142,6 @@ Each screen "translates" a group-chat promise and corrects it with a real slot: 
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td>Place and time</td>
-<td>EFAP Paris hall, near the cafeteria. Tue 1 and Thu 3 Dec 2026, 12:00–14:00 (set-up 11:15). Subject to approval by the school.</td>
-</tr>
-<tr class="even">
-<td>Partnerships (envisaged, not secured)</td>
-<td>EFAP administration: space (required, request by Agathe). Student union (BDE): relay of the C3 story (optional). No bar or brand partner, so free drinks do not bias the meeting rate.</td>
-</tr>
 <tr class="odd">
 <td>Team roles</td>
 <td><p>Opale: Runs the stacking table; designs the board, grids and cards</p>
@@ -299,132 +153,159 @@ Each screen "translates" a group-chat promise and corrects it with a real slot: 
 </tr>
 <tr class="even">
 <td>Material</td>
-<td>A1 board on foam board, 2 × A2 posters, 50 transparent A5 grids, 12 dry-erase markers, 300 cards, sticky notes, borrowed table, tablet, coffee and sweets.</td>
+<td>A1 board, 2 × A2 posters, 50 transparent A5 grids, 12 markers, 300 « C'est calé » cards, sticky notes, tablet, coffee.</td>
 </tr>
 <tr class="odd">
-<td>Cost</td>
-<td>€161.00 for the activation lines (estimate, see part VII).</td>
+<td>Partners (envisaged)</td>
+<td>EFAP administration (space), student union (story relay).</td>
 </tr>
 <tr class="even">
-<td>Observable result (targets, hypotheses)</td>
-<td>≈ 120 stand conversations · ≈ 60 post-its · ≈ 20 groups leave with a card · 25 organisers signed up → 15 groups started.</td>
+<td>Expected result</td>
+<td>≈ 120 conversations · ≈ 60 post-its · ≈ 20 groups leave with a card · 25 organisers signed up.</td>
 </tr>
 </tbody>
 </table>
 
-## VI. Launch calendar
+## IX. Social media plan
 
-| **When (2026)**     | **What**                                                                                                                            | **Who**                |
-|---------------------|-------------------------------------------------------------------------------------------------------------------------------------|------------------------|
-| Wed 18 – Fri 20 Nov | Ask EFAP for the hall (2 lunch slots) and poster spots; contact the student union (BDE) for relays; write the pilot privacy notice. | Agathe, Hénora         |
-| Mon 23 – Fri 27 Nov | Print posters, board, grids, cards; set up the pilot WhatsApp number and Google Sheet; dry-run the pilot with 1 team group.         | Opale, Ines, Hénora    |
-| Sat 28 Nov          | Shoot the 28-second film (3 h) and edit it.                                                                                         | Francesca + cast       |
-| Mon 30 Nov          | Posters go up on campus. C1 carousel « Le dico des promesses de groupe » posted.                                                    | Clémentine, Francesca  |
-| Tue 1 Dec           | Activation day 1 (12:00–14:00). Film posted as Reel at 8 pm. Pilot opens.                                                           | Whole team             |
-| Wed 2 Dec           | C2 carousel « Comment ça marche » posted. First slot polls sent to groups.                                                          | Francesca, team        |
-| Thu 3 Dec           | Activation day 2 (12:00–14:00). C3 interactive story.                                                                               | Whole team             |
-| Fri 4 Dec           | Sign-ups close (last call story). Mid-point check of the funnel.                                                                    | Hénora                 |
-| Mon 7 – Fri 18 Dec  | Pilot runs: slot polls, reminders (day before + 2 h before), check-in the morning after each meetup.                                | Team (2–3 groups each) |
-| Sat 19 – Mon 21 Dec | End survey + 5 short calls (groups that did not lock a date). Count results, decision meeting on Mon 21 Dec.                        | Hénora, Ines           |
+### A. Strategy
 
-## VII. Budget
+**Platforms:** Instagram (feed, Reels, stories) is our home; TikTok brings reach. **Rhythm:** 8 posts in two weeks, plus live stories on the two stand days. **Account:** overlap.pilot (name to reserve).
+
+| **Content pillar** | **Purpose**                                                           | **Posts**      |
+|--------------------|-----------------------------------------------------------------------|----------------|
+| Relatable          | Humour about group chats: people recognise their own group and share. | P1, P2, P6, P8 |
+| How it works       | Show the product simply and the privacy promise.                      | P3, P4         |
+| Join               | One clear action: reply « GROUPE » or come to the stand.              | P5, P7         |
+
+### B. Editorial calendar
+
+| **\#** | **When**         | **Post**                                             | **Format**                                         | **Goal**                                  | **KPI**                           |
+|--------|------------------|------------------------------------------------------|----------------------------------------------------|-------------------------------------------|-----------------------------------|
+| P1     | Fri 27 Nov, 6 pm | Teaser « 47 messages. 0 date. »                      | Feed post 1080 × 1350 + same as story              | Curiosity                                 | Reach, profile visits             |
+| P2     | Mon 30 Nov, 6 pm | Carousel « Le dico des promesses de groupe »         | Carousel, 6 screens 1080 × 1350                    | Be shared in group chats                  | Shares, saves                     |
+| P3     | Tue 1 Dec, 8 pm  | Reel « 47 messages » (28-second film)                | Reel / TikTok 9:16                                 | Show the friends' side and the 5/5 moment | Views, watch to the end, shares   |
+| P4     | Wed 2 Dec, 6 pm  | Carousel « De 47 messages à 1 date »                 | Carousel, 5 screens 1080 × 1350                    | Explain in 4 steps + privacy              | Saves, DMs « GROUPE »             |
+| P5     | Thu 3 Dec, 11 am | Interactive story « On cherche 15 groupes »          | 3 story frames 1080 × 1920 (poll, question, reply) | Recruit organisers                        | Poll votes, replies « GROUPE »    |
+| P6     | Sat 5 Dec, 12 pm | Meme « Les 5 réponses de chaque groupe »             | Feed post 1080 × 1350                              | Comments and tags                         | Comments, tags, shares            |
+| P7     | Mon 7 Dec, 6 pm  | Countdown story « Avant les vacances »               | Story 1080 × 1920 with countdown sticker           | Last call before the holidays             | Reminders set, replies « GROUPE » |
+| P8     | Wed 9 Dec, 7 pm  | TikTok « POV : tu proposes une date dans le groupe » | TikTok / Reel 9:16, 12 s, trending audio           | Reach beyond our followers                | Views, shares                     |
+
+### C. The posts and their captions
+
+#### 1. P1 · Teaser « 47 messages. 0 date. » — Fri 27 Nov, 6 pm
+
+*Figure 6 – P1 · Teaser « 47 messages. 0 date. »*
+
+**Format:** Feed post 1080 × 1350 + same as story · **Pillar:** Relatable · **KPI:** Reach, profile visits
+
+**Caption (FR):** *47 messages. 0 date. Ça te dit quelque chose ? Lundi, on règle ça. 👀*
+
+**English:** 47 messages. 0 dates. Sound familiar? On Monday, we fix it.
+
+#### 2. P2 · Carousel « Le dico des promesses de groupe » — Mon 30 Nov, 6 pm
+
+*Figure 7 – P2 · Carousel « Le dico des promesses de groupe »*
+
+**Format:** Carousel, 6 screens 1080 × 1350 · **Pillar:** Relatable · **KPI:** Shares, saves
+
+**Caption (FR):** *Le dico officiel des promesses de groupe 📖 Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée. On sait qu'il existe. Overlap trouve 2 à 3 créneaux où tout le groupe est libre. Chacun tape le sien, c'est calé. Pilote gratuit : stand Overlap, hall EFAP, mar. 1er & jeu. 3 déc., 12h–14h, ou réponds GROUPE en DM. \#onsecapte \#lasemainepro*
+
+**English:** The official dictionary of group-chat promises. Send it to the group that has been saying 'next week' since September…
+
+#### 3. P3 · Reel « 47 messages » (28-second film) — Tue 1 Dec, 8 pm
+
+*Figure 8 – P3 · Reel « 47 messages » (28-second film)*
+
+**Format:** Reel / TikTok 9:16 · **Pillar:** How it works · **KPI:** Views, watch to the end, shares
+
+**Caption (FR):** *47 messages. 0 date. Ça vous parle ? Overlap trouve le créneau où tout le groupe est libre. Vous tapez, c'est calé. Pilote gratuit avant les vacances : réponds GROUPE en DM.*
+
+**English:** 47 messages. 0 dates. Sound familiar? Overlap finds the slot when the whole group is free. You tap, it's locked.
+
+#### 4. P4 · Carousel « De 47 messages à 1 date » — Wed 2 Dec, 6 pm
+
+*Figure 9 – P4 · Carousel « De 47 messages à 1 date »*
+
+**Format:** Carousel, 5 screens 1080 × 1350 · **Pillar:** How it works · **KPI:** Saves, DMs « GROUPE »
+
+**Caption (FR):** *De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos (30 s, rien à installer). 3. Overlap propose 2 à 3 créneaux où tout le monde est libre. 4. Un lieu pratique + un rappel la veille. Overlap ne lit que « libre / occupé ».*
+
+**English:** From 47 messages to 1 date in 4 steps… Overlap only reads 'free / busy'.
+
+#### 5. P5 · Interactive story « On cherche 15 groupes » — Thu 3 Dec, 11 am
+
+*Figure 10 – P5 · Interactive story « On cherche 15 groupes »*
+
+**Format:** 3 story frames 1080 × 1920 (poll, question, reply) · **Pillar:** Join · **KPI:** Poll votes, replies « GROUPE »
+
+**Content (FR):** *Poll: « Ton groupe dit "la semaine pro" depuis… » 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter · Question: « Raconte ton dernier "on se capte" resté dans le groupe » · CTA: « Réponds "GROUPE" à cette story »*
+
+**English:** Your group has been saying 'next week' for… / Tell us your last 'let's catch up' that never happened / Reply 'GROUPE'.
+
+#### 6. P6 · Meme « Les 5 réponses de chaque groupe » — Sat 5 Dec, 12 pm
+
+*Figure 11 – P6 · Meme « Les 5 réponses de chaque groupe »*
+
+**Format:** Feed post 1080 × 1350 · **Pillar:** Relatable · **KPI:** Comments, tags, shares
+
+**Caption (FR):** *Le motivé, le flou, le pris, le fantôme et le fataliste. Tague celui que tu es. Et ton groupe. 👇*
+
+**English:** The keen one, the vague one, the busy one, the ghost and the fatalist. Tag who you are. And your group.
+
+#### 7. P7 · Countdown story « Avant les vacances » — Mon 7 Dec, 6 pm
+
+*Figure 12 – P7 · Countdown story « Avant les vacances »*
+
+**Format:** Story 1080 × 1920 with countdown sticker · **Pillar:** Join · **KPI:** Reminders set, replies « GROUPE »
+
+**Content (FR):** *« Ton groupe s'est vu avant les vacances ? » + countdown sticker + « Il reste des places dans le pilote : réponds GROUPE »*
+
+**English:** Has your group met before the holidays? Spots left in the pilot: reply GROUPE.
+
+#### 8. P8 · TikTok « POV : tu proposes une date dans le groupe » — Wed 9 Dec, 7 pm
+
+**Format:** TikTok / Reel 9:16, 12 s, trending audio · **Pillar:** Relatable · **KPI:** Views, shares
+
+**Content (FR):** *0–3 s face cam: « POV : tu proposes une date dans le groupe » · 3–8 s screen recording of the chat, badge up to 47 · 8–12 s text « Le groupe avec Overlap : » + the 5/5 screen. Caption: « Le groupe qui répond "ça dépend des jours" 🙃 \#pov \#groupedepotes »*
+
+**English:** POV: you suggest a date in the group chat.
+
+## X. Budget
 
 *No budget is validated in our documents (the Business Model slide is still empty). All amounts below are estimates for a student launch, VAT included, to be confirmed with quotes.*
 
-| **\#** | **Item**                                                     | **Qty** | **Unit** | **Total**   | **Owner**  | **Indicator**                     |
-|--------|--------------------------------------------------------------|---------|----------|-------------|------------|-----------------------------------|
-| 1      | A3 colour posters (campus)                                   | 30      | €1.20    | €36.00      | Clémentine | Sign-ups with source = poster     |
-| 2      | A2 colour posters (stand + lounge)                           | 2       | €9.00    | €18.00      | Clémentine | Sign-ups with source = poster     |
-| 3      | A1 wall board printed on foam board                          | 1       | €45.00   | €45.00      | Opale      | Post-its on the wall              |
-| 4      | Transparency film A4, printed week grid (cut to A5)          | 50      | €0.50    | €25.00      | Opale      | Groups who play the stacking game |
-| 5      | Dry-erase markers (reusable grids)                           | 12      | €1.25    | €15.00      | Ines       | \-                                |
-| 6      | « C'est calé » cards, A6 colour                              | 300     | €0.12    | €36.00      | Opale      | Cards handed out                  |
-| 7      | Sticky notes + tape                                          | 1       | €10.00   | €10.00      | Ines       | \-                                |
-| 8      | Coffee and sweets for stand visitors (2 days)                | 2       | €15.00   | €30.00      | Clémentine | Stand conversations               |
-| 9      | Prepaid SIM for the pilot WhatsApp number (per month)        | 2       | €2.00    | €4.00       | Hénora     | Friend response rate              |
-| 10     | Thank-you draw: one group dinner voucher (survey completers) | 1       | €60.00   | €60.00      | Ines       | End-survey completion             |
-| 11     | Instagram boost of Reel + C3 story (per day)                 | 10      | €4.00    | €40.00      | Francesca  | Reach, story replies « GROUPE »   |
-| 12     | Props and drinks for the bar scene                           | 1       | €25.00   | €25.00      | Francesca  | Reel views, completion rate       |
-|        | **Subtotal**                                                 |         |          | **€344.00** |            |                                   |
-|        | Contingency (10%)                                            |         |          | €34.40      |            |                                   |
-|        | **TOTAL launch envelope**                                    |         |          | **€378.40** |            | Estimate                          |
+| **Item**                                                     | **Qty** | **Unit** | **Total**   | **Owner**  |
+|--------------------------------------------------------------|---------|----------|-------------|------------|
+| A3 colour posters (campus)                                   | 30      | €1.20    | €36.00      | Clémentine |
+| A2 colour posters (stand + lounge)                           | 2       | €9.00    | €18.00      | Clémentine |
+| A1 wall board printed on foam board                          | 1       | €45.00   | €45.00      | Opale      |
+| Transparency film A4, printed week grid (cut to A5)          | 50      | €0.50    | €25.00      | Opale      |
+| Dry-erase markers (reusable grids)                           | 12      | €1.25    | €15.00      | Ines       |
+| « C'est calé » cards, A6 colour                              | 300     | €0.12    | €36.00      | Opale      |
+| Sticky notes + tape                                          | 1       | €10.00   | €10.00      | Ines       |
+| Coffee and sweets for stand visitors (2 days)                | 2       | €15.00   | €30.00      | Clémentine |
+| Prepaid SIM for the pilot WhatsApp number (per month)        | 2       | €2.00    | €4.00       | Hénora     |
+| Thank-you draw: one group dinner voucher (survey completers) | 1       | €60.00   | €60.00      | Ines       |
+| Instagram boost of Reel + C3 story (per day)                 | 10      | €4.00    | €40.00      | Francesca  |
+| Props and drinks for the bar scene                           | 1       | €25.00   | €25.00      | Francesca  |
+| **Subtotal**                                                 |         |          | **€344.00** |            |
+| Contingency (10%)                                            |         |          | €34.40      |            |
+| **TOTAL**                                                    |         |          | **€378.40** |            |
 
-By category: posters €54.00 · activation €161.00 · pilot €64.00 · social €40.00 · film €25.00 (= €344.00). That is about €25.23 per group started and €42.04 per group that meets if we reach the target.
+By category: posters €54.00 · event €161.00 · pilot service €64.00 · social media €40.00 · film €25.00. Free: campus space (to request), team phones, CapCut, Canva, Google Forms.
 
-**Free or borrowed (not counted):** Campus space (to request from EFAP), borrowed table, team smartphones, CapCut, Canva, Google Forms and Sheets, team time.
+## XI. Indicators
 
-Our budget spreadsheet contains the same lines with formulas, next to the pilot tracking sheet.
+| **Level**  | **Indicator**                                               | **Target**        | **Source**                  |
+|------------|-------------------------------------------------------------|-------------------|-----------------------------|
+| Awareness  | Instagram reach (organic + boost)                           | ≈ 2,000           | Instagram insights          |
+| Awareness  | Stand conversations (2 days)                                | ≈ 120             | Tally at the stand          |
+| Engagement | Shares of the « dico » carousel (P2)                        | ≥ 80              | Instagram insights          |
+| Engagement | Reel views (P3) · share of viewers who watch to the end     | ≥ 1,500 · ≥ 30 %  | Instagram / TikTok insights |
+| Conversion | Organisers who sign their group up                          | 25                | Sign-up form (source asked) |
+| Conversion | Groups started (invite forwarded)                           | 15                | Tracking sheet              |
+| Result     | Groups with a confirmed date (everyone chose the same slot) | ≥ 11 of 15 (70 %) | Tracking sheet              |
+| Result     | Groups that actually met (« yes, we met » the next morning) | ≥ 9 of 15 (60 %)  | Check-in message            |
 
-## VIII. How we will test the campaign
-
-### A. Evidence
-
-In all four interviews, plans failed because of **timing**, not place: "50 messages", three months without a date, a missed drink, party promises never kept. Last-minute plans work better. Around one third of 18–24-year-olds say organising outings is a challenge (Harris Interactive).
-
-### B. Riskiest assumption
-
-> *When an organiser invites them, at least 3 out of 4 friends send their free times within 48 hours, without installing anything, and the group locks a date that it really keeps.*
-
-It is our riskiest assumption because a group app fails as soon as one person does not join, and because a confirmed date is still only an intention.
-
-### C. Next test: a 14-day concierge pilot
-
-| **Question**           | **Our plan**                                                                                                                                                                                                                                                                                                                                          |
-|------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Who we recruit         | Organisers aged 18–25 studying at EFAP Paris, who tried to plan something with a group of 3 to 6 friends in the last month. Their friends may study or work anywhere. Target: 25 organisers → 15 groups (≈ 60 people).                                                                                                                                |
-| How long               | Groups start 1–4 Dec 2026; meetups must happen by Fri 18 Dec (14 days for each group, before the holidays).                                                                                                                                                                                                                                           |
-| What participants do   | Organiser: sign up (1 min) and forward the invitation. Friends: join a temporary planning group (1 tap), send free evenings (30 s), vote in a poll with 2–3 common slots, receive reminders, meet, answer the check-in.                                                                                                                               |
-| How we collect results | The team plays the app by hand on one shared WhatsApp number (as planned in our working document, "Wizard of Oz" test). One row per group in a Google Sheet (our tracking template computes every rate automatically), check-in poll the morning after each meeting, end survey (5 questions) and 5 short calls with groups that did not lock a date. |
-| Privacy                | Consent form at sign-up; we never join the friends' own group chat; only first names and free evenings are collected; data deleted by 31 Jan 2027 (in line with our Legal section).                                                                                                                                                                   |
-
-### D. Confirmed date vs. meeting that happened
-
-- Started group: an organiser signed up and at least 2 friends received the invitation (group of 3+ people).
-
-- Confirmed date: every member of the group voted for the same slot in the planning poll (5/5, 4/4…). It is an intention.
-
-- Met: the next morning, at least 2 members (including one who is not the organiser) answer « yes, we met » in the check-in poll. It is a behaviour.
-
-### E. Main indicator (group level)
-
-**Group meet-up rate** = Groups that actually met within 14 days ÷ groups that started the trial.
-
-**Success threshold: ≥ 60 % (9 of 15 groups).** Same bar as the success criterion already written in our working document: at least 3 groups out of 5 meet within 2 weeks. To see whether the campaign changes behaviour, we compare it with each group's baseline, asked at sign-up: "Of the last 3 plans you tried to make in this group chat, how many actually happened?"
-
-| **Step**             | **Metric**                                                           | **Target (hypothesis)**                   | **Owner**              |
-|----------------------|----------------------------------------------------------------------|-------------------------------------------|------------------------|
-| Campaign reach       | Instagram reach + stand conversations                                | ≈ 2,000 reached · 120 stand conversations | Francesca / Clémentine |
-| Organiser sign-up    | Organisers who sign up                                               | 25                                        | Hénora                 |
-| Invite rate          | Organisers who send the invite to their group ÷ organisers signed up | ≥ 60 % → 15 groups                        | Hénora                 |
-| Friend response rate | Friends who send their free evenings within 48 h ÷ friends invited   | ≥ 75 %                                    | Team (2–3 groups each) |
-| Date-lock rate       | Groups with a confirmed date ÷ groups started                        | ≥ 70 % (11 of 15)                         | Team                   |
-| Meet-up rate (main)  | Groups that met ÷ groups started                                     | ≥ 60 % (9 of 15)                          | Hénora                 |
-| Show-up rate         | Groups that met ÷ groups with a confirmed date                       | ≥ 85 %                                    | Hénora                 |
-
-*All targets are steering hypotheses, not results. Study data is quoted with its source; our own figures are estimates.*
-
-### F. Decisions we take in advance
-
-**Case A — many people discover the campaign, but few invite their friends** (invite rate below 40%). The problem is the organiser's ask, not the friends. We call 5 organisers who did not invite ("What stopped you?"), rewrite the invitation message and let organisers send it with us at the stand. If the rate is still below 40% after one week, the pain is too weak in this situation: we test segment 3 (friends who live far away) or the "free tonight" idea from our working document.
-
-**Case B — many groups start the trial, but few confirm a date** (date-lock rate below 50%). The friend side breaks. If friends do not answer: a reminder at 24 hours and a quorum rule (lock at 4/5, the missing person is informed). If they answer but no slot fits: a wider window or last-minute slots. Product consequence: keep guest access without download.
-
-**Case C — dates are confirmed, but few groups meet** (show-up rate below 85%). Commitment is weak: we add a reminder 2 hours before, send the place earlier and ask in the survey why people cancelled.
-
-## IX. What the pilot will teach us
-
-- Whether friends answer an organiser within 48 hours **without installing anything**: this tells us if our friend-side flow works.
-
-- Whether confirmed dates turn into **real meetings** more often than in their group chat today.
-
-- **Which step breaks first** (the invitation, the slots or the reminder), so we know what to build next.
-
-Whatever the result, the decision rules above tell us what we change. Less chatting, more meeting.
-
-## X. Sources
-
-- Course material: « 1.6 Introduction to Entrepreneurship » (p.11, 13, 17, 22) and « 2.8 From Idea to Concept » (p.16, 18, 20, 29), Octave Friant, EFAP.
-
-- Our working document « Entrepreneurship »: interviews (Pablo, Capucine, Mathieu, Julia), Workshop 2 (riskiest assumption, next test), persona Camille, competitor analysis (Howbout, To Gather).
-
-- Harris Interactive (organising outings, 18–24-year-olds); Morning Consult, Gen Z 2025 (group chats) — as cited in our Canva and working document.
+A confirmed date (everyone chose the same slot) is an intention; a meeting that happened (« yes, we met » the next morning) is the result we judge the campaign on. Less chatting, more meeting.

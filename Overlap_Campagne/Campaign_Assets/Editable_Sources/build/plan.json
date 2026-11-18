@@ -1,0 +1,84 @@
+{
+  "objectives": {
+    "marketing": [
+      ["Awareness", "Make Overlap known on the EFAP campus and in our audience's group chats", "≈ 2,000 people reached on Instagram · 120 conversations at the stand"],
+      ["Acquisition", "Get organisers to sign their friend group up for the free launch beta", "25 organisers signed up · 15 groups started"],
+      ["Activation", "Turn sign-ups into real plans", "≥ 11 groups with a confirmed date · ≥ 9 groups that actually meet"]
+    ],
+    "communication": [
+      ["Know (cognitive)", "Overlap finds the slot when the whole group is free, in one tap."],
+      ["Feel (affective)", "« That's us »: the group recognises its own « on se capte la semaine pro »."],
+      ["Do (conative)", "The organiser signs the group up (stand or DM « GROUPE ») and forwards the invite."]
+    ]
+  },
+  "targets": [
+    ["Core target", "The organiser", "Students aged 18–25 who usually launch the plans, like our persona Camille (24, Master's student + part-time job, several friend groups). First: EFAP students with a group of 3–6 friends.", "Is tired of chasing everyone in the group chat."],
+    ["Secondary target", "Her friends", "The 3–5 people in her group chat. They don't look for an app; they receive the invitation from her.", "Hate the 47 messages too, but won't install one more app."],
+    ["Relays", "The campus community", "EFAP student union (BDE), class delegates, student associations: they share our content and bring groups to the stand.", "Want content that makes students laugh and gets them together."],
+    ["Next", "Segments 2 and 3 (Canva)", "Busy professionals (25–35) and people with distant friend groups: targeted after the campus launch.", "—"]
+  ],
+  "positioning": "For 18–25-year-olds who want to see their friends but get lost in group chats, Overlap is the planning app that finds the slot when the whole group is free and locks the date in one tap. Unlike WhatsApp or Doodle, it turns « on se capte » into a confirmed date; unlike Howbout, your friends can join without creating an account.",
+  "mix": [
+    ["Product", "Core promise: 2–3 common slots, one-tap confirmation, a convenient place, reminders. Friends join with a guest link (no download needed). Privacy: free / busy only."],
+    ["Price", "Free for users during the launch beta. Monetisation is presented in our Business Model section."],
+    ["Place", "Launch beta on the EFAP campus (stand + DM sign-up), run with our team. Then App Store / Google Play. Growth through the group itself: every organiser brings 3–5 friends."],
+    ["Promotion", "Campaign « La semaine pro »: poster, 28-second film, 8 social posts, a campus activation, student-union relays, an ambassador per class."]
+  ],
+  "phases": [
+    ["1 · Teaser", "Mon 23 – Sun 29 Nov", "Create curiosity: « 47 messages. 0 date. » with no full reveal.", "P1 teaser · film shoot · posters printed"],
+    ["2 · Launch", "Mon 30 Nov – Fri 4 Dec", "Reveal the campaign, recruit organisers.", "Posters · P2 carousel · P3 Reel · P4 how it works · P5 story · stand 1 & 3 Dec"],
+    ["3 · Engagement", "Sat 5 – Fri 18 Dec", "Keep the conversation going until the holidays, share first groups.", "P6 meme · P7 countdown · P8 TikTok · stories of groups who met (with consent)"],
+    ["4 · After the holidays", "January 2027", "Open to more campuses and to segments 2–3.", "Ambassadors, student-union partnerships, referral « invite another group »"]
+  ],
+  "platform": [
+    ["Insight", "« On se capte la semaine pro » is the sentence every group chat sends and never keeps. Wanting to meet is easy; agreeing on a date is not."],
+    ["Promise", "Less chatting, more meeting: Overlap finds the slot when the whole group is free."],
+    ["Proof", "2–3 common slots, everyone confirms in one tap; friends answer in 30 seconds without installing anything; only free / busy is read."],
+    ["Tone", "Friendly, funny, self-aware, like a message in the group chat. Short sentences, French slang the audience uses (« on se capte », « c'est calé »), never preachy about loneliness."],
+    ["Signature", "Less chatting – More meeting"]
+  ],
+  "messages": [
+    ["The organiser", "« Arrête de relancer tout le monde. Overlap trouve le créneau, ton groupe tape, c'est calé. »", "Stop chasing everyone. Overlap finds the slot, your group taps, it's locked."],
+    ["Her friends", "« 30 secondes, rien à installer. Tu tapes ton créneau, c'est tout. »", "30 seconds, nothing to install. You tap your slot, that's it."],
+    ["Campus relays", "« Partage le dico des promesses de groupe : tout le monde a un groupe comme ça. »", "Share the group-chat dictionary: everybody has a group like that."]
+  ],
+  "channels": [
+    ["Owned", "Instagram account (feed, Reels, stories) · TikTok · campus posters · the stand", "Tell the story, recruit organisers"],
+    ["Earned", "Shares in group chats · tags in comments · student-union and class-delegate reposts · word of mouth from groups who met", "Reach the friends through people they trust"],
+    ["Paid", "€40 Instagram boost on the Reel and the recruiting story (Paris, 18–25)", "Push the best content beyond our followers"],
+    ["Event", "« Le Mur des Semaines Pro », EFAP hall, 1 & 3 Dec", "Meet organisers face to face, sign groups up on the spot"]
+  ],
+  "pillars": [
+    ["Relatable", "Humour about group chats: people recognise their own group and share.", "P1, P2, P6, P8"],
+    ["How it works", "Show the product simply and the privacy promise.", "P3, P4"],
+    ["Join", "One clear action: reply « GROUPE » or come to the stand.", "P5, P7"]
+  ],
+  "posts": [
+    {"id": "P1", "date": "Fri 27 Nov, 6 pm", "name": "Teaser « 47 messages. 0 date. »", "format": "Feed post 1080 × 1350 + same as story", "pillar": "Relatable", "goal": "Curiosity", "kpi": "Reach, profile visits",
+     "caption": "47 messages. 0 date. Ça te dit quelque chose ? Lundi, on règle ça. 👀", "en": "47 messages. 0 dates. Sound familiar? On Monday, we fix it."},
+    {"id": "P2", "date": "Mon 30 Nov, 6 pm", "name": "Carousel « Le dico des promesses de groupe »", "format": "Carousel, 6 screens 1080 × 1350", "pillar": "Relatable", "goal": "Be shared in group chats", "kpi": "Shares, saves",
+     "caption": "Le dico officiel des promesses de groupe 📖 Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée. On sait qu'il existe. Overlap trouve 2 à 3 créneaux où tout le groupe est libre. Chacun tape le sien, c'est calé. Pilote gratuit : stand Overlap, hall EFAP, mar. 1er & jeu. 3 déc., 12h–14h, ou réponds GROUPE en DM. #onsecapte #lasemainepro", "en": "The official dictionary of group-chat promises. Send it to the group that has been saying 'next week' since September…"},
+    {"id": "P3", "date": "Tue 1 Dec, 8 pm", "name": "Reel « 47 messages » (28-second film)", "format": "Reel / TikTok 9:16", "pillar": "How it works", "goal": "Show the friends' side and the 5/5 moment", "kpi": "Views, watch to the end, shares",
+     "caption": "47 messages. 0 date. Ça vous parle ? Overlap trouve le créneau où tout le groupe est libre. Vous tapez, c'est calé. Pilote gratuit avant les vacances : réponds GROUPE en DM.", "en": "47 messages. 0 dates. Sound familiar? Overlap finds the slot when the whole group is free. You tap, it's locked."},
+    {"id": "P4", "date": "Wed 2 Dec, 6 pm", "name": "Carousel « De 47 messages à 1 date »", "format": "Carousel, 5 screens 1080 × 1350", "pillar": "How it works", "goal": "Explain in 4 steps + privacy", "kpi": "Saves, DMs « GROUPE »",
+     "caption": "De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos (30 s, rien à installer). 3. Overlap propose 2 à 3 créneaux où tout le monde est libre. 4. Un lieu pratique + un rappel la veille. Overlap ne lit que « libre / occupé ».", "en": "From 47 messages to 1 date in 4 steps… Overlap only reads 'free / busy'."},
+    {"id": "P5", "date": "Thu 3 Dec, 11 am", "name": "Interactive story « On cherche 15 groupes »", "format": "3 story frames 1080 × 1920 (poll, question, reply)", "pillar": "Join", "goal": "Recruit organisers", "kpi": "Poll votes, replies « GROUPE »",
+     "caption": "Poll: « Ton groupe dit \"la semaine pro\" depuis… » 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter · Question: « Raconte ton dernier \"on se capte\" resté dans le groupe » · CTA: « Réponds \"GROUPE\" à cette story »", "en": "Your group has been saying 'next week' for… / Tell us your last 'let's catch up' that never happened / Reply 'GROUPE'."},
+    {"id": "P6", "date": "Sat 5 Dec, 12 pm", "name": "Meme « Les 5 réponses de chaque groupe »", "format": "Feed post 1080 × 1350", "pillar": "Relatable", "goal": "Comments and tags", "kpi": "Comments, tags, shares",
+     "caption": "Le motivé, le flou, le pris, le fantôme et le fataliste. Tague celui que tu es. Et ton groupe. 👇", "en": "The keen one, the vague one, the busy one, the ghost and the fatalist. Tag who you are. And your group."},
+    {"id": "P7", "date": "Mon 7 Dec, 6 pm", "name": "Countdown story « Avant les vacances »", "format": "Story 1080 × 1920 with countdown sticker", "pillar": "Join", "goal": "Last call before the holidays", "kpi": "Reminders set, replies « GROUPE »",
+     "caption": "« Ton groupe s'est vu avant les vacances ? » + countdown sticker + « Il reste des places dans le pilote : réponds GROUPE »", "en": "Has your group met before the holidays? Spots left in the pilot: reply GROUPE."},
+    {"id": "P8", "date": "Wed 9 Dec, 7 pm", "name": "TikTok « POV : tu proposes une date dans le groupe »", "format": "TikTok / Reel 9:16, 12 s, trending audio", "pillar": "Relatable", "goal": "Reach beyond our followers", "kpi": "Views, shares",
+     "caption": "0–3 s face cam: « POV : tu proposes une date dans le groupe » · 3–8 s screen recording of the chat, badge up to 47 · 8–12 s text « Le groupe avec Overlap : » + the 5/5 screen. Caption: « Le groupe qui répond \"ça dépend des jours\" 🙃 #pov #groupedepotes »", "en": "POV: you suggest a date in the group chat."}
+  ],
+  "kpis": [
+    ["Awareness", "Instagram reach (organic + boost)", "≈ 2,000", "Instagram insights"],
+    ["Awareness", "Stand conversations (2 days)", "≈ 120", "Tally at the stand"],
+    ["Engagement", "Shares of the « dico » carousel (P2)", "≥ 80", "Instagram insights"],
+    ["Engagement", "Reel views (P3) · share of viewers who watch to the end", "≥ 1,500 · ≥ 30 %", "Instagram / TikTok insights"],
+    ["Conversion", "Organisers who sign their group up", "25", "Sign-up form (source asked)"],
+    ["Conversion", "Groups started (invite forwarded)", "15", "Tracking sheet"],
+    ["Result", "Groups with a confirmed date (everyone chose the same slot)", "≥ 11 of 15 (70 %)", "Tracking sheet"],
+    ["Result", "Groups that actually met (« yes, we met » the next morning)", "≥ 9 of 15 (60 %)", "Check-in message"]
+  ]
+}

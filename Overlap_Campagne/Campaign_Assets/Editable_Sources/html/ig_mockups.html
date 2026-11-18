@@ -29,6 +29,10 @@
 <section class="s" id="s3"><div id="p3"></div></section>
 <section class="s" id="s4"><div id="p4"></div></section>
 <section class="s" id="s5"><div id="p5"></div></section>
+<section class="s" id="s6"><div id="p6"></div></section>
+<section class="s" id="s7"><div id="p7"></div></section>
+<section class="s" id="s8"><div id="p8"></div></section>
+<section class="s" id="s9"><div id="p9"></div></section>
 <script src="components.js"></script>
 <script>
  const heart='<svg viewBox="0 0 24 24"><path d="M12 21s-7-4.6-9.3-9C1 8.4 3 4.5 6.7 4.5c2.1 0 3.6 1.2 4.3 2.4.7-1.2 2.2-2.4 4.3-2.4C19 4.5 21 8.4 20.3 12 19 16.4 12 21 12 21z" fill="none" stroke="#000" stroke-width="2"/></svg>';
@@ -47,6 +51,10 @@
  document.getElementById('p1').innerHTML=phone(feed('../../03_Social/C1_Share_Carousel_1.png',6,'Aimé par sarah.lmr et 231 autres personnes','Le dico officiel des promesses de groupe. Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée.'),2);
  document.getElementById('p2').innerHTML=phone(feed('../../03_Social/C2_How_It_Works_1.png',5,'Aimé par yanis_b et 148 autres personnes','De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos…'),2);
  [3,4,5].forEach((k,i)=>document.getElementById('p'+k).innerHTML=phone(S(`../../03_Social/C3_Pilot_Story_${i+1}.png`),2));
+ document.getElementById('p6').innerHTML=phone(feed('../../03_Social/P1_Teaser.png',1,'','47 messages. 0 date. Ça te dit quelque chose ? Lundi, on règle ça.'),2);
+ document.getElementById('p7').innerHTML=phone(feed('../../03_Social/P6_Meme_5_reponses.png',1,'','Tague celui que tu es. Et ton groupe. On les connaît tous.'),2);
+ document.getElementById('p8').innerHTML=phone(`<div style="background:#000;height:844px"><img style="width:390px;height:693px;display:block;margin-top:0" src="../../03_Social/P3_Reel_cover.png"><div style="color:#fff;font:600 14px var(--ui);padding:12px 14px"><b>overlap.pilot</b> · 47 messages. 0 date. Ça vous parle ?</div></div>`,2);
+ document.getElementById('p9').innerHTML=phone(S('../../03_Social/P7_Countdown_story.png'),2);
  show();
 </script>
 </body></html>

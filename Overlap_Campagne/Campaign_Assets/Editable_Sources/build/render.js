@@ -18,7 +18,8 @@ const JOBS = [
   ['grid_a5.html', '04_Activation/Transparent_Week_Grid_A5.png', 794, 559, 2, '04_Activation/Transparent_Week_Grid_A5_print.pdf', ['210mm', '148mm']],
   ['rdv_card.html', '04_Activation/RDV_Card_A6.png', 559, 397, 3, '04_Activation/RDV_Card_A6_print.pdf', ['148mm', '105mm']],
   ['activation_scene.html', '04_Activation/Activation_Scene.png', 1920, 1080, 2, null],
-  ...['C1_feed', 'C2_feed', 'C3_story_1', 'C3_story_2', 'C3_story_3'].map((n, i) => [`ig_mockups.html#s${i + 1}`, `03_Social/Seen_on_Instagram_${n}.png`, 840, 1750, 2, null, null, true]),
+  ...[['s1','P1_Teaser',1350],['s2','P6_Meme_5_reponses',1350],['s3','P3_Reel_cover',1920],['s4','P7_Countdown_story',1920]].map(([h,n,hh]) => [`new_posts.html#${h}`, `03_Social/${n}.png`, 1080, hh, 1, null]),
+  ...['C1_feed', 'C2_feed', 'C3_story_1', 'C3_story_2', 'C3_story_3', 'P1_feed', 'P6_feed', 'P3_reel', 'P7_story'].map((n, i) => [`ig_mockups.html#s${i + 1}`, `03_Social/Seen_on_Instagram_${n}.png`, 840, 1750, 2, null, null, true]),
 ];
 
 (async () => {

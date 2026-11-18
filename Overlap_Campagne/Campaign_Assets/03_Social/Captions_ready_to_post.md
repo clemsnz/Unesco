@@ -1,74 +1,92 @@
-# Overlap — campagne « La semaine pro » — légendes prêtes à publier
+# Overlap — social media plan: 8 posts ready to publish
 
-Compte proposé : **overlap.pilot** (nom à vérifier et à réserver avant publication ; aucun lien ni QR code n'est utilisé : la seule action demandée est de venir au stand ou de répondre « GROUPE » en DM).
-Les publications sont en français (public étudiant parisien). La traduction anglaise suit chaque texte, pour le jury.
+Account: **overlap.pilot** (to reserve). Phone mock-ups: `Seen_on_Instagram_*.png`.
 
----
+## P1 · Teaser « 47 messages. 0 date. »
+- **When:** Fri 27 Nov, 6 pm
+- **Format:** Feed post 1080 × 1350 + same as story
+- **Pillar / goal / KPI:** Relatable · Curiosity · Reach, profile visits
+- **Files:** P1_Teaser.png
 
-## C1 — Carrousel à partager · « Le dico des promesses de groupe » (6 écrans, 1080 × 1350)
-Fichiers : `C1_Share_Carousel_1.png` → `C1_Share_Carousel_6.png` · Publication : lun. 30 nov., 18h.
+**Texte (FR) :**
+> 47 messages. 0 date. Ça te dit quelque chose ? Lundi, on règle ça. 👀
 
-**Légende (FR)**
-> Le dico officiel des promesses de groupe 📖
-> Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée. On sait qu'il existe.
->
-> Overlap trouve 2 à 3 créneaux où tout le groupe est libre. Chacun tape le sien, c'est calé.
-> Pilote gratuit : 15 groupes, 14 jours, rien à télécharger.
-> 📍 Stand Overlap, hall EFAP · mar. 1er & jeu. 3 déc. · 12h–14h — ou réponds GROUPE en DM.
->
-> Less chatting – More meeting.
-> #onsecapte #lasemainepro #EFAP #Overlap
+**English:** 47 messages. 0 dates. Sound familiar? On Monday, we fix it.
 
-**Translation (EN)**
-> The official dictionary of group-chat promises 📖 Send this carousel to the group that has been saying "next week" since September. We know it exists. Overlap finds 2–3 slots when the whole group is free. Everyone taps theirs, it's locked. Free pilot: 15 groups, 14 days, nothing to download. Overlap stand, EFAP hall, Tue 1 & Thu 3 Dec, 12–2 pm — or reply GROUPE by DM. Less chatting – More meeting.
+## P2 · Carousel « Le dico des promesses de groupe »
+- **When:** Mon 30 Nov, 6 pm
+- **Format:** Carousel, 6 screens 1080 × 1350
+- **Pillar / goal / KPI:** Relatable · Be shared in group chats · Shares, saves
+- **Files:** C1_Share_Carousel_1…6.png
 
-Screens: 1 « Le dico des promesses de groupe — et leur vraie traduction » · 2 « On se capte la semaine pro » = We'll see each other in 2027 → jeudi 19h30 ✓ · 3 « Faut qu'on se fasse un verre un de ces quatre » = Never, but with love → mardi 20h ✓ · 4 « Dites-moi vos dispos » = 47 messages later, still no date → 3 slots · 1 tap ✓ · 5 « Avant les vacances, promis » = After the holidays, maybe → Sat 12 Dec, 12 pm ✓ · 6 « Ton groupe est dans ce carrousel ? » Send it to them + pilot details.
+**Texte (FR) :**
+> Le dico officiel des promesses de groupe 📖 Envoie ce carrousel au groupe qui dit « la semaine pro » depuis la rentrée. On sait qu'il existe. Overlap trouve 2 à 3 créneaux où tout le groupe est libre. Chacun tape le sien, c'est calé. Pilote gratuit : stand Overlap, hall EFAP, mar. 1er & jeu. 3 déc., 12h–14h, ou réponds GROUPE en DM. #onsecapte #lasemainepro
 
----
+**English:** The official dictionary of group-chat promises. Send it to the group that has been saying 'next week' since September…
 
-## C2 — Carrousel « Comment ça marche » (5 écrans, 1080 × 1350)
-Fichiers : `C2_How_It_Works_1.png` → `C2_How_It_Works_5.png` · Publication : mer. 2 déc., 18h.
+## P3 · Reel « 47 messages » (28-second film)
+- **When:** Tue 1 Dec, 8 pm
+- **Format:** Reel / TikTok 9:16
+- **Pillar / goal / KPI:** How it works · Show the friends' side and the 5/5 moment · Views, watch to the end, shares
+- **Files:** P3_Reel_cover.png + the film (02_Film)
 
-**Légende (FR)**
-> De 47 messages à 1 date, en 4 étapes :
-> 1. Tu choisis le groupe.
-> 2. Tes potes donnent leurs dispos (30 secondes, rien à installer pendant le pilote).
-> 3. Overlap propose 2 à 3 créneaux où tout le monde est libre. Chacun tape.
-> 4. Un lieu pratique pour tous + un rappel la veille.
->
-> Overlap ne lit que « libre / occupé », jamais le contenu de ton agenda. Tes données du pilote sont effacées après le test.
-> Teste-le avec ton groupe : stand Overlap, hall EFAP, jeu. 3 déc., 12h–14h, ou réponds GROUPE en DM.
-> #Overlap #LessChattingMoreMeeting
+**Texte (FR) :**
+> 47 messages. 0 date. Ça vous parle ? Overlap trouve le créneau où tout le groupe est libre. Vous tapez, c'est calé. Pilote gratuit avant les vacances : réponds GROUPE en DM.
 
-**Translation (EN)**
-> From 47 messages to 1 date, in 4 steps: 1. You choose the group. 2. Your friends share their free times (30 seconds, nothing to install during the pilot). 3. Overlap suggests 2–3 slots when everyone is free; everyone taps. 4. A convenient place for all + a reminder the day before. Overlap only reads "free / busy", never what is in your calendar. Pilot data is deleted after the test. Try it with your group: Overlap stand, EFAP hall, Thu 3 Dec, 12–2 pm, or reply GROUPE by DM.
+**English:** 47 messages. 0 dates. Sound familiar? Overlap finds the slot when the whole group is free. You tap, it's locked.
 
----
+## P4 · Carousel « De 47 messages à 1 date »
+- **When:** Wed 2 Dec, 6 pm
+- **Format:** Carousel, 5 screens 1080 × 1350
+- **Pillar / goal / KPI:** How it works · Explain in 4 steps + privacy · Saves, DMs « GROUPE »
+- **Files:** C2_How_It_Works_1…5.png
 
-## C3 — Story interactive « Pilote » (3 écrans, 1080 × 1920)
-Fichiers : `C3_Pilot_Story_1.png` → `C3_Pilot_Story_3.png` · Publication : jeu. 3 déc., 11h (republiée ven. 4 déc., « dernier appel »).
+**Texte (FR) :**
+> De 47 messages à 1 date, en 4 étapes : 1. Tu choisis le groupe. 2. Tes potes donnent leurs dispos (30 s, rien à installer). 3. Overlap propose 2 à 3 créneaux où tout le monde est libre. 4. Un lieu pratique + un rappel la veille. Overlap ne lit que « libre / occupé ».
 
-| Écran | Sticker | Texte exact (FR) | Translation (EN) |
-|---|---|---|---|
-| 1 | Sondage (4 options) | Question : « Ton groupe dit "la semaine pro" depuis… » Options : « 1 semaine » / « 1 mois » / « Depuis la rentrée » / « On a arrêté de compter » | "Your group has been saying 'next week' for…" 1 week / 1 month / Since September / We stopped counting |
-| 2 | Question | « Raconte ton dernier "on se capte" resté dans le groupe » | "Tell us about your last 'let's catch up' that stayed in the group chat" |
-| 3 | Réponse en DM | « On cherche 15 groupes pour le pilote · 14 jours, gratuit · Rien à télécharger · 2 à 3 créneaux où vous êtes tous libres · Une date calée avant les vacances » — CTA : « Réponds "GROUPE" à cette story, ou viens au stand Overlap, hall EFAP, mar. 1er & jeu. 3 déc., 12h–14h » | "We're looking for 15 groups for the pilot… Reply 'GROUPE' to this story, or come to the Overlap stand." |
+**English:** From 47 messages to 1 date in 4 steps… Overlap only reads 'free / busy'.
 
-Réponses au sticker Question : avec l'accord de la personne, les meilleures sont repartagées en story (anonymisées) le lendemain.
+## P5 · Interactive story « On cherche 15 groupes »
+- **When:** Thu 3 Dec, 11 am
+- **Format:** 3 story frames 1080 × 1920 (poll, question, reply)
+- **Pillar / goal / KPI:** Join · Recruit organisers · Poll votes, replies « GROUPE »
+- **Files:** C3_Pilot_Story_1…3.png
 
----
+**Texte (FR) :**
+> Poll: « Ton groupe dit "la semaine pro" depuis… » 1 semaine / 1 mois / Depuis la rentrée / On a arrêté de compter · Question: « Raconte ton dernier "on se capte" resté dans le groupe » · CTA: « Réponds "GROUPE" à cette story »
 
-## Reel — film « 47 messages » (28 s, 9:16)
-Publication : mar. 1er déc., 20h (Instagram Reel + TikTok).
+**English:** Your group has been saying 'next week' for… / Tell us your last 'let's catch up' that never happened / Reply 'GROUPE'.
 
-**Légende (FR)**
-> 47 messages. 0 date. Ça vous parle ?
-> Overlap trouve le créneau où tout le groupe est libre. Vous tapez, c'est calé.
-> Pilote gratuit avant les vacances : stand Overlap, hall EFAP, mar. 1er & jeu. 3 déc. — ou réponds GROUPE en DM.
-> #onsecapte #lasemainepro #Overlap
+## P6 · Meme « Les 5 réponses de chaque groupe »
+- **When:** Sat 5 Dec, 12 pm
+- **Format:** Feed post 1080 × 1350
+- **Pillar / goal / KPI:** Relatable · Comments and tags · Comments, tags, shares
+- **Files:** P6_Meme_5_reponses.png
 
-**Translation (EN)**
-> 47 messages. 0 date. Sound familiar? Overlap finds the slot when the whole group is free. You tap, it's locked. Free pilot before the holidays: Overlap stand, EFAP hall, Tue 1 & Thu 3 Dec — or reply GROUPE by DM.
+**Texte (FR) :**
+> Le motivé, le flou, le pris, le fantôme et le fataliste. Tague celui que tu es. Et ton groupe. 👇
 
-## Affiche — traduction
-« On se capte ~~la semaine pro~~ jeudi 19h30 ✓ » = "Let's catch up ~~next week~~ Thursday 7:30 pm ✓". « C'est calé — Jeu. 10 déc · 19h30 — 5/5 » = "Locked in — Thu 10 Dec, 7:30 pm — 5/5". « Overlap compare vos dispos et propose 2 à 3 créneaux où tout le groupe est libre. Chacun confirme en un tap. » = "Overlap compares your availability and suggests 2–3 slots when the whole group is free. Everyone confirms in one tap." « Pilote gratuit · 15 groupes · rien à télécharger — Inscris ton groupe au stand Overlap — Hall EFAP · mar. 1er & jeu. 3 déc. · 12h–14h » = "Free pilot · 15 groups · nothing to download — Sign up your group at the Overlap stand — EFAP hall, Tue 1 & Thu 3 Dec, 12–2 pm".
+**English:** The keen one, the vague one, the busy one, the ghost and the fatalist. Tag who you are. And your group.
+
+## P7 · Countdown story « Avant les vacances »
+- **When:** Mon 7 Dec, 6 pm
+- **Format:** Story 1080 × 1920 with countdown sticker
+- **Pillar / goal / KPI:** Join · Last call before the holidays · Reminders set, replies « GROUPE »
+- **Files:** P7_Countdown_story.png
+
+**Texte (FR) :**
+> « Ton groupe s'est vu avant les vacances ? » + countdown sticker + « Il reste des places dans le pilote : réponds GROUPE »
+
+**English:** Has your group met before the holidays? Spots left in the pilot: reply GROUPE.
+
+## P8 · TikTok « POV : tu proposes une date dans le groupe »
+- **When:** Wed 9 Dec, 7 pm
+- **Format:** TikTok / Reel 9:16, 12 s, trending audio
+- **Pillar / goal / KPI:** Relatable · Reach beyond our followers · Views, shares
+- **Files:** script only (reuses the film footage)
+
+**Texte (FR) :**
+> 0–3 s face cam: « POV : tu proposes une date dans le groupe » · 3–8 s screen recording of the chat, badge up to 47 · 8–12 s text « Le groupe avec Overlap : » + the 5/5 screen. Caption: « Le groupe qui répond "ça dépend des jours" 🙃 #pov #groupedepotes »
+
+**English:** POV: you suggest a date in the group chat.
+
