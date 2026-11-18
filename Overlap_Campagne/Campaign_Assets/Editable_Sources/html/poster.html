@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Overlap — Affiche « La semaine pro »</title>
+<link rel="stylesheet" href="../css/brand.css">
+<style>
+ @page{size:420mm 594mm;margin:0}
+ body{width:1587px;height:2245px;overflow:hidden;position:relative}
+ .pad{position:absolute;inset:0;padding:120px 120px 100px}
+ .chip{display:inline-flex;align-items:center;gap:18px;background:#fff;border-radius:999px;padding:14px 30px 14px 16px;font:600 30px var(--ui);box-shadow:0 2px 0 rgba(0,0,0,.05)}
+ .chip .ic{width:52px;height:52px;border-radius:50%;background:var(--yellow);display:flex;align-items:center;justify-content:center;font:800 22px var(--ui)}
+ .chip .badge{font-size:26px;padding:4px 16px}
+ .bubbles{position:absolute;right:120px;top:112px;display:flex;flex-direction:column;align-items:flex-end;gap:16px;opacity:.55}
+ .bubbles .msg{font-size:27px;max-width:none;padding:12px 22px}
+ .bubbles .who{font-size:20px}
+ h1{margin-top:250px;font-size:142px}
+ h1 .l{display:block}
+ h1 .l2{margin-top:18px;color:var(--ink)}
+ .slotline{margin-top:46px;font-size:142px;position:relative}
+ .slotline .slot{padding:.14em .5em .2em .55em}
+ .slotline .tick{width:.62em;height:.62em}
+ .slotline .tick::after{left:.21em;top:.1em;width:.16em;height:.3em;border-width:0 .07em .07em 0}
+ .hug{position:absolute;right:120px;top:1300px;width:330px;height:330px}
+ .lock{margin-top:70px;display:flex;align-items:center;gap:34px;background:#fff;border-radius:40px;padding:30px 40px;width:1080px}
+ .lock .avs{display:flex}.lock .av{width:78px;height:78px;font-size:30px;border-width:5px;margin-right:-16px}
+ .lock .t{font:800 40px var(--ui)} .lock .s{font:500 28px var(--ui);color:var(--grey);margin-top:6px}
+ .lock .ok{margin-left:auto;background:var(--blue);color:#fff;font:800 34px var(--ui);border-radius:999px;padding:14px 26px;display:flex;align-items:center;gap:12px}
+ .copy{margin-top:70px;font:600 50px/1.28 var(--text);max-width:960px}
+ .copy b{font-weight:800}
+ .cta{position:absolute;left:120px;right:120px;bottom:330px;background:#000;color:#fff;border-radius:46px;padding:42px 54px}
+ .cta .k{font:700 27px var(--text);letter-spacing:.22em;color:var(--yellow)}
+ .cta .h{font:800 52px/1.12 var(--title);margin-top:16px}
+ .cta .w{font:600 38px var(--text);margin-top:16px}
+ .foot{position:absolute;left:120px;right:120px;bottom:100px;display:flex;align-items:center;gap:34px}
+ .foot img{width:150px;height:150px;border-radius:34px;border:3px solid #000}
+ .foot .wm{font:800 92px var(--title);letter-spacing:-.02em}
+ .foot .sig{font-size:25px;margin-top:8px}
+</style></head>
+<body><div class="pad">
+ <div class="chip"><span class="ic">LI</span>Les Inséparables <span class="badge">47</span></div>
+ <div class="bubbles">
+   <div class="msg"><span class="who c2">Léo</span>grave chaud</div>
+   <div class="msg"><span class="who c1">Sarah</span>mardi j'peux pas, partiel</div>
+   <div class="msg"><span class="who c4">Yanis</span>jeudi alternance jusqu'à 19h</div>
+ </div>
+ <h1 class="title"><span class="l">On se capte</span><span class="l l2"><span class="strike">la semaine pro</span></span></h1>
+ <div class="slotline"><span class="slot">jeudi 19h30 <span class="tick"></span></span></div>
+ <svg class="hug" viewBox="0 0 300 300" aria-hidden="true"><g style="mix-blend-mode:multiply"><circle cx="112" cy="118" r="88" fill="#1143F7" opacity=".85"/><circle cx="188" cy="118" r="88" fill="#FE512D" opacity=".85" style="mix-blend-mode:multiply"/><circle cx="150" cy="184" r="88" fill="#FBB736" opacity=".9" style="mix-blend-mode:multiply"/></g></svg>
+ <div class="lock">
+   <div class="avs"><span class="av a1">C</span><span class="av a2">L</span><span class="av a3">S</span><span class="av a4">Y</span><span class="av a5">N</span></div>
+   <div style="margin-left:26px"><div class="t">C'est calé</div><div class="s">Jeu. 10 déc · 19h30</div></div>
+   <div class="ok"><span class="tick" style="width:30px;height:30px"></span>5/5</div>
+ </div>
+ <p class="copy">Overlap compare vos dispos et propose <b>2 à 3 créneaux</b> où tout le groupe est libre. Chacun confirme <b>en un tap</b>.</p>
+ <div class="cta">
+   <div class="k">PILOTE GRATUIT · 15 GROUPES · RIEN À TÉLÉCHARGER</div>
+   <div class="h">Inscris ton groupe au stand Overlap</div>
+   <div class="w">Hall EFAP · mar. 1<sup>er</sup> & jeu. 3 déc. · 12h–14h</div>
+ </div>
+ <div class="foot"><img src="../img/logo_icon.png" alt="Overlap"><div><div class="wm">Overlap</div><div class="sig"><b>Less</b> chatting – <b>More</b> meeting</div></div></div>
+</div></body></html>

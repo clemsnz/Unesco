@@ -1,0 +1,14 @@
+# Film « 47 messages » — shot list (28 s, 9:16)
+
+Full visual storyboard: Overlap_Film_Storyboard.pdf · frames: frames/Shot_1.png → Shot_8.png
+
+| # | Time | Framing | Action | On screen | Sound / lines |
+|---|---|---|---|---|---|
+| 1 | 0:00–0:03 (3 s) | Extreme close-up on the phone screen (handheld, vertical) | Camille types in her group chat "Les Inséparables" and hits send. | Chat: « On se capte la semaine pro ? » (Shall we catch up next week?) | Keyboard taps, "send" whoosh. Upbeat royalty-free track starts low. |
+| 2 | 0:03–0:07 (4 s) | Screen recording, fast scroll; unread badge climbs 2 → 47 | Replies pile up and contradict each other. Nobody decides. | Léo: « grave chaud » · Sarah: « mardi j'peux pas, partiel » · Yanis: « jeudi je suis en alternance jusqu'à 19h » · Nora: « mercredi ? » · Léo: « ah non mercredi foot » · Sarah: « on dit la semaine d'après alors ? » — Caption: « 47 messages. 0 date. » | Notification pings speed up until they overlap. |
+| 3 | 0:07–0:09 (2 s) | Medium shot, Camille seated in the metro, phone in hand | She stares at the camera, deadpan. Types « bon… on laisse tomber ? », then deletes it. | Caption: « Ça fait 3 semaines. » (It's been 3 weeks.) | Music cuts. Metro ambience. One long sigh. |
+| 4 | 0:09–0:12 (3 s) | Over-the-shoulder, phone in sharp focus | She opens Overlap, selects "Les Inséparables (5)" and taps « Trouver un créneau commun ». | Prototype screen "Avec qui ?" — Caption: « Elle passe le groupe sur Overlap. » | Music restarts on the tap (beat drop). |
+| 5 | 0:12–0:16 (4 s) | Vertical split screen, 3 friends in 3 places (office, library, street) | Léo, Sarah and Yanis each get the invite from Camille, tick their free evenings and send. 4–5 seconds each, filmed in one take. | Notification: « Camille te demande tes dispos · 30 s » — Caption: « Côté potes : 30 secondes. Pas de débat. » | Three soft taps on the beat. |
+| 6 | 0:16–0:20 (4 s) | Close-up on the phone screen — THE CONFIRMATION MOMENT | Three common slots appear. Votes fill up on « Jeu. 10 déc. · 19h30 »: 1/5, 3/5, 5/5. The card turns blue: « C'est calé ✓ ». In the group chat, Léo writes « ENFIN ». Then the chat goes quiet. | « 3 créneaux où vous êtes tous libres » → « C'est calé ✓ Jeudi 10 déc. · 19h30 · 5/5 » + « Bar à mi-chemin : 12 à 18 min pour chacun » | Five taps, then a bright "ding". Silence for half a second. |
+| 7 | 0:20–0:25 (5 s) | Handheld wide → medium, bar terrace, warm light | Thursday, 19:30. The five friends meet; Yanis arrives last, hugs. Sarah: « Pour une fois, personne n'a annulé. » Laughs, glasses clink. | Animated caption: « On se capte ~~la semaine pro~~ jeudi 19h30 ✓ » | Live dialogue + music back at full volume. |
+| 8 | 0:25–0:28 (3 s) | End card (static graphic, cream background) | Logo + signature + call to action. | « Less chatting – More meeting » · « Teste-le avec ton groupe : stand Overlap, hall EFAP, 1er & 3 déc. » | Music ends on the beat. |

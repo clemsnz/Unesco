@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Overlap — C2 Carrousel « Comment ça marche »</title>
+<link rel="stylesheet" href="../css/brand.css">
+<style>
+ body{width:1080px;height:1350px;overflow:hidden}
+ .s{position:relative;width:1080px;height:1350px;padding:84px 86px;overflow:hidden}
+ .step{display:inline-flex;align-items:center;justify-content:center;width:84px;height:84px;border-radius:50%;background:var(--blue);color:#fff;font:800 40px var(--title)}
+ h2{font-size:62px;line-height:1.1;margin-top:30px}
+ .p{font:600 34px/1.3 var(--text);margin-top:22px;max-width:900px}
+ .p b{font-weight:800}
+ .ph{position:absolute;left:50%;transform:translateX(-50%);top:560px}
+ .note{position:absolute;right:36px;top:600px;width:228px;background:var(--yellow);border-radius:28px;padding:22px 24px;font:700 24px/1.25 var(--text);transform:rotate(3deg)}
+ .notel{left:36px;right:auto;transform:rotate(-3deg)}
+ .brand{position:absolute;left:86px;top:84px;display:flex;align-items:center;gap:14px;font:800 28px var(--title)}
+ .brand img{width:54px;height:54px;border-radius:14px;border:2px solid #000}
+ .cover h1{font-size:96px;line-height:1.06;margin-top:150px}
+ .cover .from{font-size:96px}
+ .duo{position:absolute;bottom:-220px;left:70px;right:70px;display:flex;justify-content:space-between;align-items:flex-start}
+ .arrow{font:800 90px var(--title);color:var(--orange);margin-top:300px}
+</style></head>
+<body>
+<section class="s cover" id="s1">
+ <div class="brand"><img src="../img/logo_icon.png">Overlap · comment ça marche</div>
+ <h1 class="title">De <span class="strike">47 messages</span><br>à <span class="slot" style="font-size:.9em">1 date <span class="tick"></span></span></h1>
+ <div class="p">4 étapes. 30 secondes pour tes potes.</div>
+ <div class="duo"><div id="ph1"></div><div class="arrow">→</div><div id="ph2"></div></div>
+</section>
+<section class="s" id="s2"><span class="step">1</span>
+ <h2 class="title">Tu choisis le groupe</h2>
+ <div class="p">L'organisateur·rice choisit qui inviter et la période. <b>Overlap ne lit que libre / occupé</b>, jamais le contenu de l'agenda.</div>
+ <div class="ph" id="ph3"></div>
+</section>
+<section class="s" id="s3"><span class="step">2</span>
+ <h2 class="title">Tes potes donnent leurs dispos</h2>
+ <div class="p">Ils reçoivent l'invitation de toi, pas d'une pub. <b>30 secondes, rien à installer</b> pendant le pilote.</div>
+ <div class="ph" id="ph4"></div>
+ <div class="note">Dans l'appli : synchro agenda. Pendant le pilote : un simple message.</div>
+</section>
+<section class="s" id="s4"><span class="step">3</span>
+ <h2 class="title">2 à 3 créneaux. Chacun tape le sien.</h2>
+ <div class="p">Overlap compare les dispos et ne propose que les moments où <b>tout le groupe</b> est libre. 5/5 = c'est calé.</div>
+ <div class="ph" id="ph5"></div>
+</section>
+<section class="s" id="s5"><span class="step">4</span>
+ <h2 class="title">Un lieu pratique + un rappel</h2>
+ <div class="p">Un endroit à mi-chemin selon la position de chacun, et un rappel la veille. <b>Less chatting – More meeting.</b></div>
+ <div class="ph" id="ph6"></div>
+ <div class="note notel">Teste-le : stand Overlap, hall EFAP, 1<sup>er</sup> & 3 déc.</div>
+</section>
+<script src="components.js"></script>
+<script>
+ const chat=screenChat([bubble('','', 'On se capte la semaine pro ?',true),bubble('Léo','c2','grave chaud'),bubble('Sarah','c1','mardi j\'peux pas'),bubble('Yanis','c4','jeudi alternance'),bubble('Nora','c3','on dit la semaine d\'après ?'),bubble('Léo','c2','ah non mercredi foot')],47);
+ document.getElementById('ph1').innerHTML=phone(chat,.95);
+ document.getElementById('ph2').innerHTML=phone(screenSlots([2,5,1],1),.95);
+ document.getElementById('ph3').innerHTML=phone(screenGroup(),1.12);
+ document.getElementById('ph4').innerHTML=phone(screenInvite(),1.12);
+ document.getElementById('ph5').innerHTML=phone(screenSlots([2,5,1],1),1.12);
+ document.getElementById('ph6').innerHTML=phone(screenPlace(),1.12);
+ show();
+</script>
+</body></html>

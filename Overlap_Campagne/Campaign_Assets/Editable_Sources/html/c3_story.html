@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><title>Overlap — C3 Story interactive « Pilote »</title>
+<link rel="stylesheet" href="../css/brand.css">
+<style>
+ body{width:1080px;height:1920px;overflow:hidden}
+ .s{position:relative;width:1080px;height:1920px;padding:0 80px;overflow:hidden}
+ .bars{position:absolute;top:34px;left:24px;right:24px;display:flex;gap:8px}
+ .bars i{flex:1;height:6px;border-radius:3px;background:rgba(0,0,0,.18)}.bars i.on{background:rgba(0,0,0,.85)}
+ .light .bars i{background:rgba(255,255,255,.35)}.light .bars i.on{background:#fff}
+ .acct{position:absolute;top:66px;left:30px;display:flex;align-items:center;gap:16px;font:700 30px var(--ui)}
+ .acct img{width:72px;height:72px;border-radius:50%;border:3px solid #fff}
+ .acct span{opacity:.6;font-weight:500}
+ .light{color:#fff}
+ .big{font-size:84px;line-height:1.1;margin-top:330px}
+ .sticker{background:#fff;color:#000;border-radius:40px;padding:38px;box-shadow:0 18px 40px rgba(0,0,0,.18);margin-top:70px}
+ .poll .o{border:3px solid #E7E1D8;border-radius:22px;padding:24px 28px;font:700 38px var(--ui);margin-top:18px;text-align:center}
+ .poll .q{font:800 36px var(--ui);text-align:center;color:#6E6A64}
+ .ask{text-align:center;background:var(--orange);color:#fff;border-radius:40px;padding:44px 40px 40px;margin-top:70px}
+ .ask .h{font:800 44px/1.2 var(--ui)} .ask .in{background:rgba(255,255,255,.25);border-radius:22px;padding:26px;font:500 34px var(--ui);margin-top:28px;color:rgba(255,255,255,.9)}
+ .reply{position:absolute;left:30px;right:30px;bottom:56px;border:3px solid rgba(255,255,255,.75);border-radius:999px;padding:26px 36px;font:500 32px var(--ui);color:rgba(255,255,255,.9)}
+ .dark .reply{border-color:rgba(0,0,0,.4);color:rgba(0,0,0,.6)}
+ .list{margin-top:60px;display:flex;flex-direction:column;gap:22px}
+ .list div{display:flex;align-items:center;gap:22px;font:700 44px var(--text)}
+ .list .tick{width:52px;height:52px;flex:none}
+ .list .tick::after{left:18px;top:9px;width:12px;height:24px;border-width:0 6px 6px 0}
+ .cta{margin-top:70px;background:#fff;color:#000;border-radius:40px;padding:40px}
+ .cta .h{font:800 52px/1.15 var(--title)} .cta .w{font:600 32px/1.35 var(--text);margin-top:18px}
+ .arrowdown{position:absolute;bottom:190px;left:0;right:0;text-align:center;font:800 40px var(--title)}
+</style></head>
+<body>
+<section class="s light" id="s1" style="background:var(--blue)">
+ <div class="bars"><i class="on"></i><i></i><i></i></div>
+ <div class="acct"><img src="../img/logo_icon.png">overlap.pilot <span>· 2 h</span></div>
+ <div class="big title">Ton groupe dit « <span class="strike">la semaine pro</span> » depuis…</div>
+ <div class="sticker poll"><div class="q">SONDAGE</div>
+  <div class="o">1 semaine</div><div class="o">1 mois</div><div class="o">Depuis la rentrée</div><div class="o">On a arrêté de compter</div></div>
+ <div class="reply">Envoyer un message…</div>
+</section>
+<section class="s dark" id="s2" style="background:var(--cream)">
+ <div class="bars"><i class="on"></i><i class="on"></i><i></i></div>
+ <div class="acct"><img src="../img/logo_icon.png" style="border-color:#000">overlap.pilot <span>· 2 h</span></div>
+ <div class="big title" style="font-size:78px">Le plan qui n'a jamais eu lieu ?</div>
+ <div class="ask"><div class="h">Raconte ton dernier « on se capte » resté dans le groupe</div><div class="in">Écris quelque chose…</div></div>
+ <div style="margin-top:60px;display:flex;flex-direction:column;gap:14px" class="chat">
+   <div class="msg" style="font-size:30px;max-width:80%"><span class="who c2" style="font-size:20px">Léo</span>bon on dit janvier alors</div>
+   <div class="msg" style="font-size:30px;max-width:80%"><span class="who c1" style="font-size:20px">Sarah</span>janvier c'est les partiels…</div>
+ </div>
+ <div class="reply">Envoyer un message…</div>
+</section>
+<section class="s light" id="s3" style="background:#000">
+ <div class="bars"><i class="on"></i><i class="on"></i><i class="on"></i></div>
+ <div class="acct"><img src="../img/logo_icon.png">overlap.pilot <span>· 2 h</span></div>
+ <div class="big title" style="margin-top:300px">On cherche <span style="color:var(--yellow)">15 groupes</span> pour le pilote</div>
+ <div class="list">
+  <div><span class="tick o"></span>14 jours, gratuit</div>
+  <div><span class="tick o"></span>Rien à télécharger</div>
+  <div><span class="tick o"></span>2 à 3 créneaux où vous êtes tous libres</div>
+  <div><span class="tick o"></span>Une date calée avant les vacances</div>
+ </div>
+ <div class="cta"><div class="h">Réponds « GROUPE » à cette story</div><div class="w">ou viens au stand Overlap · hall EFAP<br>mar. 1<sup>er</sup> & jeu. 3 déc. · 12h–14h</div></div>
+ <div class="reply" style="border-color:var(--yellow);color:#fff">GROUPE</div>
+</section>
+<script src="components.js"></script><script>show()</script>
+</body></html>

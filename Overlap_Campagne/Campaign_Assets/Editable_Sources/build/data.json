@@ -1,0 +1,69 @@
+{
+  "budget_note": "No budget is validated in our documents (the Business Model slide is still empty). All amounts below are estimates for a student launch, VAT included, to be confirmed with quotes.",
+  "budget": [
+    {"cat": "Poster", "item": "A3 colour posters (campus)", "qty": 30, "unit": 1.20, "owner": "Clémentine", "kpi": "Sign-ups with source = poster"},
+    {"cat": "Poster", "item": "A2 colour posters (stand + lounge)", "qty": 2, "unit": 9.00, "owner": "Clémentine", "kpi": "Sign-ups with source = poster"},
+    {"cat": "Activation", "item": "A1 wall board printed on foam board", "qty": 1, "unit": 45.00, "owner": "Opale", "kpi": "Post-its on the wall"},
+    {"cat": "Activation", "item": "Transparency film A4, printed week grid (cut to A5)", "qty": 50, "unit": 0.50, "owner": "Opale", "kpi": "Groups who play the stacking game"},
+    {"cat": "Activation", "item": "Dry-erase markers (reusable grids)", "qty": 12, "unit": 1.25, "owner": "Ines", "kpi": "-"},
+    {"cat": "Activation", "item": "« C'est calé » cards, A6 colour", "qty": 300, "unit": 0.12, "owner": "Opale", "kpi": "Cards handed out"},
+    {"cat": "Activation", "item": "Sticky notes + tape", "qty": 1, "unit": 10.00, "owner": "Ines", "kpi": "-"},
+    {"cat": "Activation", "item": "Coffee and sweets for stand visitors (2 days)", "qty": 2, "unit": 15.00, "owner": "Clémentine", "kpi": "Stand conversations"},
+    {"cat": "Pilot", "item": "Prepaid SIM for the pilot WhatsApp number (per month)", "qty": 2, "unit": 2.00, "owner": "Hénora", "kpi": "Friend response rate"},
+    {"cat": "Pilot", "item": "Thank-you draw: one group dinner voucher (survey completers)", "qty": 1, "unit": 60.00, "owner": "Ines", "kpi": "End-survey completion"},
+    {"cat": "Social", "item": "Instagram boost of Reel + C3 story (per day)", "qty": 10, "unit": 4.00, "owner": "Francesca", "kpi": "Reach, story replies « GROUPE »"},
+    {"cat": "Film", "item": "Props and drinks for the bar scene", "qty": 1, "unit": 25.00, "owner": "Francesca", "kpi": "Reel views, completion rate"}
+  ],
+  "contingency_rate": 0.10,
+  "free_items": "Campus space (to request from EFAP), borrowed table, team smartphones, CapCut, Canva, Google Forms and Sheets, team time.",
+
+  "pilot": {
+    "recruit": "Organisers aged 18–25 studying at EFAP Paris, who tried to plan something with a group of 3 to 6 friends in the last month. Their friends may study or work anywhere.",
+    "groups_target": 15,
+    "organisers_target": 25,
+    "avg_group": 4,
+    "window": "Groups start 1–4 Dec 2026; meetups must happen by Fri 18 Dec (14 days for each group, before the holidays).",
+    "primary": {
+      "name": "Group meet-up rate",
+      "formula": "Groups that actually met within 14 days ÷ groups that started the trial",
+      "threshold": "≥ 60 % (9 of 15 groups)",
+      "why": "Same bar as the success criterion already written in our working document: at least 3 groups out of 5 meet within 2 weeks."
+    },
+    "definitions": {
+      "started": "Started group: an organiser signed up and at least 2 friends received the invitation (group of 3+ people).",
+      "confirmed": "Confirmed date: every member of the group voted for the same slot in the planning poll (5/5, 4/4…). It is an intention.",
+      "met": "Met: the next morning, at least 2 members (including one who is not the organiser) answer « yes, we met » in the check-in poll. It is a behaviour."
+    },
+    "funnel": [
+      {"step": "Campaign reach", "metric": "Instagram reach + stand conversations", "target": "≈ 2,000 reached · 120 stand conversations", "owner": "Francesca / Clémentine"},
+      {"step": "Organiser sign-up", "metric": "Organisers who sign up", "target": "25", "owner": "Hénora"},
+      {"step": "Invite rate", "metric": "Organisers who send the invite to their group ÷ organisers signed up", "target": "≥ 60 % → 15 groups", "owner": "Hénora"},
+      {"step": "Friend response rate", "metric": "Friends who send their free evenings within 48 h ÷ friends invited", "target": "≥ 75 %", "owner": "Team (2–3 groups each)"},
+      {"step": "Date-lock rate", "metric": "Groups with a confirmed date ÷ groups started", "target": "≥ 70 % (11 of 15)", "owner": "Team"},
+      {"step": "Meet-up rate (main)", "metric": "Groups that met ÷ groups started", "target": "≥ 60 % (9 of 15)", "owner": "Hénora"},
+      {"step": "Show-up rate", "metric": "Groups that met ÷ groups with a confirmed date", "target": "≥ 85 %", "owner": "Hénora"}
+    ]
+  },
+
+  "calendar": [
+    {"when": "Wed 18 – Fri 20 Nov", "what": "Ask EFAP for the hall (2 lunch slots) and poster spots; contact the student union (BDE) for relays; write the pilot privacy notice.", "who": "Agathe, Hénora"},
+    {"when": "Mon 23 – Fri 27 Nov", "what": "Print posters, board, grids, cards; set up the pilot WhatsApp number and Google Sheet; dry-run the pilot with 1 team group.", "who": "Opale, Ines, Hénora"},
+    {"when": "Sat 28 Nov", "what": "Shoot the 28-second film (3 h) and edit it.", "who": "Francesca + cast"},
+    {"when": "Mon 30 Nov", "what": "Posters go up on campus. C1 carousel « Le dico des promesses de groupe » posted.", "who": "Clémentine, Francesca"},
+    {"when": "Tue 1 Dec", "what": "Activation day 1 (12:00–14:00). Film posted as Reel at 8 pm. Pilot opens.", "who": "Whole team"},
+    {"when": "Wed 2 Dec", "what": "C2 carousel « Comment ça marche » posted. First slot polls sent to groups.", "who": "Francesca, team"},
+    {"when": "Thu 3 Dec", "what": "Activation day 2 (12:00–14:00). C3 interactive story.", "who": "Whole team"},
+    {"when": "Fri 4 Dec", "what": "Sign-ups close (last call story). Mid-point check of the funnel.", "who": "Hénora"},
+    {"when": "Mon 7 – Fri 18 Dec", "what": "Pilot runs: slot polls, reminders (day before + 2 h before), check-in the morning after each meetup.", "who": "Team (2–3 groups each)"},
+    {"when": "Sat 19 – Mon 21 Dec", "what": "End survey + 5 short calls (groups that did not lock a date). Count results, decision meeting on Mon 21 Dec.", "who": "Hénora, Ines"}
+  ],
+
+  "roles": [
+    {"name": "Opale", "role": "Creative Director", "activation": "Runs the stacking table; designs the board, grids and cards"},
+    {"name": "Hénora", "role": "Strategy Manager", "activation": "Pilot sign-ups on the tablet; owns the tracking sheet and the main KPI"},
+    {"name": "Francesca", "role": "Marketing Manager", "activation": "Films stories at the stand, answers DMs « GROUPE », runs the boost"},
+    {"name": "Clémentine", "role": "Marketing Manager", "activation": "Host at the wall: starts conversations, hands out coffee"},
+    {"name": "Agathe", "role": "Legal Manager", "activation": "Campus permission, consent and privacy notice for pilot data"},
+    {"name": "Ines", "role": "Business Model & Finance Manager", "activation": "Budget and purchases; counts visitors and post-its"}
+  ]
+}
