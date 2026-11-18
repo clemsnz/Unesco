@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { about, entrance, exit, journey, rooms, shop, works, type ShopId } from "@/content/museum";
+import { about, coulisses, entrance, exit, journey, rooms, shop, works, type ShopId } from "@/content/museum";
 import { site } from "@/content/site";
 import type { MuseumApi, Station } from "./scene";
 import MuseumLite from "./MuseumLite";
@@ -55,10 +55,10 @@ function Museum3D() {
   useEffect(() => {
     let disposed = false;
     (async () => {
-      await Promise.all([document.fonts.load('500 40px "Instrument Sans"'), document.fonts.load('400 40px "Instrument Sans"')]).catch(() => {});
+      await Promise.all([document.fonts.load('500 40px "Instrument Sans"'), document.fonts.load('400 40px "Instrument Sans"'), document.fonts.load('italic 400 40px "Newsreader"')]).catch(() => {});
       const { createMuseum } = await import("./scene");
       if (disposed || !canvas.current) return;
-      const m = createMuseum(canvas.current, { works, entrance, rooms, journey, about, exit, shop });
+      const m = createMuseum(canvas.current, { works, entrance, rooms, journey, about, exit, shop, coulisses });
       api.current = m;
       setStations(m.stations);
       setReady(true);
