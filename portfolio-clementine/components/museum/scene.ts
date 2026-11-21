@@ -5,6 +5,7 @@ import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry.js";
 import type { Work } from "@/content/museum";
 
 /**
@@ -1131,29 +1132,55 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const TW = 3.2; // table length (x)
   const TD = 1.9; // table depth (z)
   const TH = 0.88;
-  blob(TW + 1.4, TD + 1.4, 0, 0.008, tblZ, 0.55);
-  // a thick solid-oak bookshop table (photographed wood, Poly Haven)
-  const oak = (rx: number, ry: number) => {
-    const m = pbr("oak", rx, ry);
-    return keep(new THREE.MeshStandardMaterial({ ...m, color: 0xe2cdb0, roughness: 0.65 }));
+  blob(narrow ? TD + 1.4 : TW + 1.4, narrow ? TW + 1.4 : TD + 1.4, 0, 0.008, tblZ, 0.55);
+  // a solid light-oak bookshop table (photographed wood, Poly Haven), with a low shelf of books.
+  // On portrait screens it is turned lengthways, so the view from above fills the screen.
+  const tableG = new THREE.Group();
+  tableG.position.set(0, 0, tblZ);
+  tableG.rotation.y = narrow ? Math.PI / 2 : 0;
+  scene.add(tableG);
+  const oak = (rx: number, ry: number, rot = 0, rough = 0.55) => {
+    const load = (suffix: string, srgb: boolean) => {
+      const tx = keep(texLoader.load(`/textures/oak_${suffix}.jpg`));
+      tx.wrapS = tx.wrapT = THREE.RepeatWrapping;
+      tx.repeat.set(rx, ry);
+      tx.center.set(0.5, 0.5);
+      tx.rotation = rot;
+      tx.anisotropy = 8;
+      if (srgb) tx.colorSpace = THREE.SRGBColorSpace;
+      return tx;
+    };
+    return keep(new THREE.MeshStandardMaterial({ map: load("diff", true), normalMap: load("nor_gl", false), roughnessMap: load("rough", false), color: 0xf2e6d4, roughness: rough, normalScale: new THREE.Vector2(0.5, 0.5) }));
   };
-  const topMat = oak(1.6, 1);
-  const edgeMat = oak(1.6, 0.06);
-  const slab = new THREE.Mesh(keep(new THREE.BoxGeometry(TW, 0.07, TD)), [edgeMat, edgeMat, topMat, topMat, edgeMat, edgeMat]);
-  slab.position.set(0, TH - 0.035, tblZ);
-  scene.add(slab);
-  const legMat = oak(0.2, 1);
+  // grain running the length of the table
+  const slab = new THREE.Mesh(keep(new RoundedBoxGeometry(TW, 0.06, TD, 4, 0.014)), oak(1.1, 1.8, Math.PI / 2, 0.5));
+  slab.position.set(0, TH - 0.03, 0);
+  tableG.add(slab);
+  const legMat = oak(0.15, 1);
   for (const sx of [-1, 1])
     for (const sz of [-1, 1]) {
-      const leg = new THREE.Mesh(keep(new THREE.BoxGeometry(0.09, TH - 0.07, 0.09)), legMat);
-      leg.position.set(sx * (TW / 2 - 0.16), (TH - 0.07) / 2, tblZ + sz * (TD / 2 - 0.16));
-      scene.add(leg);
+      const leg = new THREE.Mesh(keep(new RoundedBoxGeometry(0.075, TH - 0.06, 0.075, 2, 0.008)), legMat);
+      leg.position.set(sx * (TW / 2 - 0.14), (TH - 0.06) / 2, sz * (TD / 2 - 0.14));
+      tableG.add(leg);
     }
   for (const sz of [-1, 1]) {
-    const apron = new THREE.Mesh(keep(new THREE.BoxGeometry(TW - 0.32, 0.12, 0.035)), legMat);
-    apron.position.set(0, TH - 0.13, tblZ + sz * (TD / 2 - 0.16));
-    scene.add(apron);
+    const apron = new THREE.Mesh(keep(new RoundedBoxGeometry(TW - 0.3, 0.1, 0.03, 2, 0.006)), oak(2, 0.1, Math.PI / 2));
+    apron.position.set(0, TH - 0.11, sz * (TD / 2 - 0.14));
+    tableG.add(apron);
   }
+  const shelfY = 0.2;
+  const lowShelf = new THREE.Mesh(keep(new RoundedBoxGeometry(TW - 0.3, 0.03, TD - 0.3, 2, 0.008)), oak(1, 1.6, Math.PI / 2));
+  lowShelf.position.set(0, shelfY, 0);
+  tableG.add(lowShelf);
+  for (const [x, z, ry] of [
+    [-1.3, 0.45, 0],
+    [-0.5, 0.45, 0],
+    [0.3, 0.45, 0],
+    [-1.0, -0.2, Math.PI],
+    [0.6, -0.2, Math.PI],
+  ] as const)
+    place("book_encyclopedia_set_01", x, shelfY + 0.015, z, ry, 1, tableG);
+  blob(TW * 1.25, TD * 1.4, 0, shelfY + 0.016, 0, 0.25, tableG);
   // by the closing wall: side tables with plants, a brass vase
   place("brass_vase_01", HALF_W - 0.9, 0, Z_BACK + 0.9, 0, 1.4);
   blob(0.6, 0.6, HALF_W - 0.9, 0.008, Z_BACK + 0.9, 0.5);
@@ -1300,9 +1327,10 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     const f = flat[it.id];
     if (!f) return;
     const g = new THREE.Group();
-    g.position.set(f.x, top, tblZ + f.z);
-    g.rotation.y = f.r;
-    scene.add(g);
+    g.position.set(f.x, top, f.z);
+    // keep the print facing the visitor whichever way the table is turned
+    g.rotation.y = f.r - tableG.rotation.y;
+    tableG.add(g);
     const tex = cover[it.id]?.();
     // a small pile: the top copy is printed, the others show their edges
     for (let k = 0; k < f.n; k++) {
@@ -1324,8 +1352,8 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     g.add(tag);
   });
   // more for sale around them: real books, postcards and a vase
-  place("book_encyclopedia_set_01", 1.05, top, tblZ - 0.6, -Math.PI / 2, 1);
-  place("antique_ceramic_vase_01", 1.35, top, tblZ - 0.2, 0, 0.8);
+  place("book_encyclopedia_set_01", 1.05, top, -0.6, -Math.PI / 2, 1, tableG);
+  place("antique_ceramic_vase_01", 1.35, top, -0.2, 0, 0.8, tableG);
   model("postcard_set_01")
     .then((set) => {
       let n = 0;
@@ -1334,9 +1362,9 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
         if (!m.isMesh || n > 5) return;
         const c = new THREE.Mesh(m.geometry, m.material);
         c.scale.setScalar(1.8);
-        c.position.set(0.62 + (n % 3) * 0.32, top + 0.002 + n * 0.0005, tblZ + 0.3 + Math.floor(n / 3) * 0.22);
-        c.rotation.y = (n % 2 ? 1 : -1) * 0.05 * n;
-        scene.add(c);
+        c.position.set(0.62 + (n % 3) * 0.32, top + 0.002 + n * 0.0005, 0.3 + Math.floor(n / 3) * 0.22);
+        c.rotation.y = (n % 2 ? 1 : -1) * 0.05 * n - tableG.rotation.y;
+        tableG.add(c);
         n++;
       });
     })
@@ -1344,8 +1372,8 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   // lit from above
   const tablePool = new THREE.Mesh(keep(new THREE.PlaneGeometry(TW + 1.2, TD + 1.2)), keep(new THREE.MeshBasicMaterial({ map: poolMap, transparent: true, opacity: 0.18, depthWrite: false, blending: THREE.AdditiveBlending })));
   tablePool.rotation.x = -Math.PI / 2;
-  tablePool.position.set(0, top + 0.02, tblZ);
-  scene.add(tablePool);
+  tablePool.position.set(0, top + 0.02, 0);
+  tableG.add(tablePool);
 
   /* ───────── the walk ───────── */
   const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
@@ -1387,7 +1415,8 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   walkThrough(0, L.wallShop + 1.2, "about");
   // the shop: the whole room, then the table of souvenirs seen from above, then the closing line
   stations.push({ pos: v3(0, EYE, L.wallShop - 0.8), look: v3(0, 1.4, Z_BACK), room: "about" });
-  stations.push({ pos: v3(0, EYE + 0.1, tblZ + (narrow ? 2.2 : 1.65)), look: v3(-0.1, TH, tblZ - 0.1), room: "exit", contact: true });
+  // leaning over the table: the souvenirs seen from above
+  stations.push({ pos: v3(0, TH + (narrow ? 2.35 : 2.05), tblZ + (narrow ? 0.75 : 0.6)), look: v3(0, TH, tblZ - 0.05), room: "exit", contact: true });
   stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 10 : 7)), look: v3(0, 2.2, Z_BACK), room: "exit" });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
@@ -1764,7 +1793,6 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       const st = stations[idx];
       if (!st) return;
       const start = camera.position.clone();
-      start.y = EYE;
       const dest = st.pos.clone();
       const pts = [start];
       const lo = Math.min(start.z, dest.z);
@@ -1795,7 +1823,6 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     },
     walkTo: (p0, onArrive) => {
       const start = camera.position.clone();
-      start.y = EYE;
       const dest = clampRoom(p0.clone());
       dest.y = EYE;
       // pass through doorways when the destination is in another room
