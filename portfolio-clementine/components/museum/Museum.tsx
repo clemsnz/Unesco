@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { about, aboutWall, coulisses, entrance, exit, journey, rooms, shop, works, type ShopId } from "@/content/museum";
+import { about, aboutWall, coulisses, entrance, exit, horsChamp, journey, rooms, shop, works, type ShopId } from "@/content/museum";
 import { site } from "@/content/site";
 import type { MuseumApi, Station } from "./scene";
 import MuseumLite from "./MuseumLite";
@@ -62,7 +62,7 @@ function Museum3D() {
       await Promise.all([document.fonts.load('500 40px "Instrument Sans"'), document.fonts.load('400 40px "Instrument Sans"'), document.fonts.load('italic 400 40px "Newsreader"')]).catch(() => {});
       const { createMuseum } = await import("./scene");
       if (disposed || !canvas.current) return;
-      const m = createMuseum(canvas.current, { works, entrance, rooms, journey, about, exit, shop, coulisses });
+      const m = createMuseum(canvas.current, { works, entrance, rooms, journey, about, exit, shop, coulisses, horsChamp });
       api.current = m;
       setStations(m.stations);
       setReady(true);
@@ -211,7 +211,7 @@ function Museum3D() {
 
   const here = stations[Math.min(station, stations.length - 1)];
   const art = here?.art !== undefined ? here.art : null;
-  const inShop = here?.room === "exit" || here?.room === "about";
+  const inShop = here?.room === "exit";
   const goShop = (id?: ShopId) => {
     setPlan(false);
     const i = stations.findIndex((s) => s.contact);
