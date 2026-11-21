@@ -282,10 +282,10 @@ export const shop: { title: string; sub: string; items: { id: ShopId; object: st
   title: "Boutique du musée",
   sub: "Souvenirs à emporter",
   items: [
-    { id: "cv", object: "L’affiche encadrée", name: "Le CV", tag: "À télécharger" },
-    { id: "portrait", object: "La photo encadrée", name: "Portrait", tag: "Qui je suis" },
-    { id: "skills", object: "Le mémo encadré", name: "Compétences", tag: "Outils & langues" },
-    { id: "linkedin", object: "La carte encadrée", name: "LinkedIn", tag: "Restons en contact" },
+    { id: "cv", object: "Le livret", name: "Le CV", tag: "À télécharger" },
+    { id: "portrait", object: "Le tirage photo", name: "Portrait", tag: "Qui je suis" },
+    { id: "skills", object: "Le carnet", name: "Compétences", tag: "Outils & langues" },
+    { id: "linkedin", object: "Les cartes de visite", name: "LinkedIn", tag: "Restons en contact" },
     { id: "contact", object: "Les cartes postales", name: "Écrivez-moi", tag: "Formulaire & e-mail" },
   ],
 };
