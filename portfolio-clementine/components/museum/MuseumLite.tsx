@@ -85,6 +85,23 @@ export default function MuseumLite() {
             </li>
           ))}
         </ol>
+        <div data-approach className="mx-auto mt-20 max-w-sm bg-[#3f5247] p-7 text-[#f3eee4] shadow-[6px_14px_30px_-14px_rgba(30,22,15,0.35)]">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={about.portrait.src} alt={about.portrait.alt} loading="lazy" className="w-full border-[6px] border-[#fbfaf6]" style={{ aspectRatio: String(about.portrait.ratio) }} />
+          <p className="mt-6 text-[11px] uppercase tracking-[0.24em] text-[#c9d2c8]">Portrait</p>
+          <p className="mt-3 text-xl italic leading-snug">« {about.quote} »</p>
+          {about.lines.map((l) => (
+            <p key={l} className="mt-2 text-sm text-[#dfe4dc]">{l}</p>
+          ))}
+          <p className="mt-2 text-sm text-[#efd9b4]">{about.seeking}</p>
+          <p className="mt-10 text-3xl italic">Compétences</p>
+          {about.skills.map((k) => (
+            <p key={k.title} className="mt-4 text-sm leading-relaxed">
+              <span className="block text-[11px] uppercase tracking-[0.2em] text-[#efd9b4]">{k.title}</span>
+              {k.text}
+            </p>
+          ))}
+        </div>
       </section>
 
       <section id="sortie" className="px-6 py-28" style={{ background: "linear-gradient(#f1eee9, #f1eee9 30%, #7a2f35 30%)" }}>
