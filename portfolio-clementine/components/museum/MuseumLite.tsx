@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef } from "react";
-import { about, entrance, exit, horsChamp, journey, rooms, shop, works, type Work } from "@/content/museum";
+import { about, entrance, exit, journey, rooms, shop, works, type Work } from "@/content/museum";
 import { site } from "@/content/site";
 import ContactForm from "./ContactForm";
 
@@ -100,17 +100,6 @@ export default function MuseumLite() {
               <span className="block text-[11px] uppercase tracking-[0.2em] text-[#efd9b4]">{k.title}</span>
               {k.text}
             </p>
-          ))}
-        </div>
-      </section>
-
-      <section className="px-6 pb-20">
-        <p className="text-center text-3xl italic">Hors champ</p>
-        <p className="mt-2 text-center text-sm text-[#6b6259]">Les amis, les terrasses, les soirées.</p>
-        <div className="mx-auto mt-10 grid max-w-sm grid-cols-2 gap-4">
-          {horsChamp.map((ph) => (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img key={ph.src} src={ph.src} alt={ph.alt} loading="lazy" className="w-full border-[5px] border-[#fbfaf6] object-cover shadow-[4px_10px_24px_-12px_rgba(30,22,15,0.45)]" style={{ aspectRatio: "3 / 4" }} />
           ))}
         </div>
       </section>
