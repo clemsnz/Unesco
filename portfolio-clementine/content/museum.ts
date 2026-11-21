@@ -276,14 +276,6 @@ export const coulisses = [
   { src: "/images/medias/live-shopping-2.webp", ratio: 1400 / 1867 },
 ];
 
-/** Boutique, mur de gauche : « Hors champ », quelques photos personnelles. */
-export const horsChamp = [
-  { src: "/images/hors-champ/terrasse-paris.webp", ratio: 800 / 1400, alt: "En terrasse entre amies, à Paris" },
-  { src: "/images/hors-champ/terrasse-amis.webp", ratio: 1400 / 1050, alt: "En terrasse entre amis" },
-  { src: "/images/hors-champ/cocktails.webp", ratio: 1104 / 828, alt: "Cocktails entre amies" },
-  { src: "/images/hors-champ/soiree.webp", ratio: 1050 / 1400, alt: "En soirée avec une amie" },
-];
-
 /** La boutique du musée : chaque souvenir ouvre un contenu. */
 export type ShopId = "cv" | "portrait" | "skills" | "linkedin" | "contact";
 export const shop: { title: string; sub: string; welcome: string; items: { id: ShopId; object: string; name: string; tag: string }[] } = {

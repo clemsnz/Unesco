@@ -31,7 +31,6 @@ export type MuseumInput = {
   entrance: { room: string; name: string; line: string };
   rooms: RoomNames;
   coulisses: { src: string; ratio: number }[];
-  horsChamp?: { src: string; ratio: number }[];
   journey: { years: string; title: string; org: string; details: string[] }[];
   about: { portrait: { src: string; ratio: number }; quote: string; lines: string[]; seeking?: string; skills: { title: string; text: string }[] };
   exit: { line: string };
@@ -1479,38 +1478,6 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   tablePool.position.set(0, top + 0.02, 0);
   tableG.add(tablePool);
 
-  /* the shop's left wall: "Hors champ", a few personal photographs in a row */
-  const hcZ = L.wallShop - 4.8;
-  const hc = input.horsChamp ?? [];
-  if (hc.length) {
-    const hcH = (r: number) => (r < 1 ? 1.25 : 0.95);
-    const widths = hc.map((ph) => hcH(ph.ratio) * ph.ratio + 0.49);
-    const gap = 0.28;
-    const total = widths.reduce((a, b) => a + b, 0) + gap * (hc.length - 1);
-    let z = hcZ + total / 2;
-    hc.forEach((ph, k) => {
-      const zc = z - widths[k] / 2;
-      hang({ src: ph.src, ratio: ph.ratio, height: hcH(ph.ratio), kind: "photo", side: -1, z: zc, y: EYE });
-      z -= widths[k] + gap;
-    });
-    const hcTitle = keep(
-      vinyl(1600, 420, (c) => {
-        c.font = `italic 400 130px ${SERIF}`;
-        c.fillText("Hors champ", 20, 170);
-        c.fillStyle = "#6b6259";
-        c.font = `400 46px ${SANS}`;
-        c.fillText("Les amis, les terrasses, les soirées.", 20, 290);
-      }),
-    );
-    const hcMat = basic(hcTitle);
-    hcMat.depthWrite = false;
-    const hcMesh = new THREE.Mesh(keep(new THREE.PlaneGeometry(2.9, 0.76)), hcMat);
-    hcMesh.renderOrder = 2;
-    hcMesh.rotation.y = Math.PI / 2;
-    hcMesh.position.set(-HALF_W + 0.012, 3.55, hcZ + total / 2 - 1.45);
-    scene.add(hcMesh);
-  }
-
   /* ───────── the walk ───────── */
   const v3 = (x: number, y: number, z: number) => new THREE.Vector3(x, y, z);
   const stations: Station[] = [
@@ -1557,7 +1524,6 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   walkThrough(0, L.wallShop + 1.2, "about");
   // the shop: the whole room, then the table of souvenirs seen from above, then the closing line
   stations.push({ pos: v3(0, EYE, L.wallShop - 0.8), look: v3(0, 1.4, Z_BACK), room: "about" });
-  if (hc.length) stations.push({ pos: v3(-HALF_W + (narrow ? 6.6 : 5.0), EYE, hcZ), look: v3(-HALF_W, 1.85, hcZ), room: "about" });
   // leaning over the table: the souvenirs seen from above
   stations.push({ pos: v3(0, TH + (narrow ? 2.35 : 2.1), tblZ + (narrow ? 0.75 : 0.8)), look: v3(0, TH, tblZ + (narrow ? -0.05 : 0.12)), room: "exit", contact: true });
   stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 10 : 7)), look: v3(0, 2.2, Z_BACK), room: "exit" });
