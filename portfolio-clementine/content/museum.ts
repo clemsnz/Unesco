@@ -278,9 +278,10 @@ export const coulisses = [
 
 /** La boutique du musée : chaque souvenir ouvre un contenu. */
 export type ShopId = "cv" | "portrait" | "skills" | "linkedin" | "contact";
-export const shop: { title: string; sub: string; items: { id: ShopId; object: string; name: string; tag: string }[] } = {
+export const shop: { title: string; sub: string; welcome: string; items: { id: ShopId; object: string; name: string; tag: string }[] } = {
   title: "Boutique du musée",
   sub: "Souvenirs à emporter",
+  welcome: "Vous êtes arrivés jusqu’ici ? Repartez avec un souvenir.",
   items: [
     { id: "cv", object: "Le livret", name: "Le CV", tag: "À télécharger" },
     { id: "linkedin", object: "Les cartes de visite", name: "LinkedIn", tag: "Restons en contact" },
