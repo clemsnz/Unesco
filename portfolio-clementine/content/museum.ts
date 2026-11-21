@@ -283,12 +283,16 @@ export const shop: { title: string; sub: string; items: { id: ShopId; object: st
   sub: "Souvenirs à emporter",
   items: [
     { id: "cv", object: "Le livret", name: "Le CV", tag: "À télécharger" },
-    { id: "portrait", object: "Le tirage photo", name: "Portrait", tag: "Qui je suis" },
-    { id: "skills", object: "Le carnet", name: "Compétences", tag: "Outils & langues" },
     { id: "linkedin", object: "Les cartes de visite", name: "LinkedIn", tag: "Restons en contact" },
     { id: "contact", object: "Les cartes postales", name: "Écrivez-moi", tag: "Formulaire & e-mail" },
   ],
 };
+
+/** Galerie 03, mur de droite : le portrait et les compétences (ouvrent une fiche au clic). */
+export const aboutWall: { id: ShopId; name: string }[] = [
+  { id: "portrait", name: "Portrait" },
+  { id: "skills", name: "Compétences" },
+];
 
 export const exit = {
   line: "Let’s create something meaningful.",

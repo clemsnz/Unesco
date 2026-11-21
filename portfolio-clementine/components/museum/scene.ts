@@ -32,7 +32,7 @@ export type MuseumInput = {
   rooms: RoomNames;
   coulisses: { src: string; ratio: number }[];
   journey: { years: string; title: string; org: string; details: string[] }[];
-  about: { portrait: { src: string; ratio: number }; quote: string; lines: string[]; skills: { title: string; text: string }[] };
+  about: { portrait: { src: string; ratio: number }; quote: string; lines: string[]; seeking?: string; skills: { title: string; text: string }[] };
   exit: { line: string };
 };
 
@@ -973,7 +973,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const cols = Math.ceil(input.coulisses.length / 2);
   const colStep = 1.75;
   // hung towards the end of the room, so the visitor just turns round after the timeline
-  const coulZ = L.fz1 + (cols * colStep) / 2 + 0.8;
+  const coulZ = L.fz1 + (cols * colStep) / 2 + 0.3;
   input.coulisses.forEach((ph, k) => {
     const col = Math.floor(k / 2);
     const row = k % 2;
@@ -982,7 +982,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     hang({ src: ph.src, ratio: ph.ratio, height: h, kind: "photo", side: 1, z, y: row === 0 ? 2.6 : 1.3, lit: false });
   });
   for (let col = 0; col < cols; col += 1) spot(1, coulZ + ((cols - 1) / 2 - col) * colStep);
-  const coulWash = new THREE.Mesh(keep(new THREE.PlaneGeometry(cols * colStep + 1.5, H - 0.4)), keep(new THREE.MeshBasicMaterial({ map: keep(gradientTex([[0, "rgba(255,248,235,0.0)"], [0.2, "rgba(255,248,235,0.22)"], [1, "rgba(255,248,235,0)"]])), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
+  const coulWash = new THREE.Mesh(keep(new THREE.PlaneGeometry(cols * colStep + 0.4, H - 0.4)), keep(new THREE.MeshBasicMaterial({ map: keep(gradientTex([[0, "rgba(255,248,235,0.0)"], [0.2, "rgba(255,248,235,0.22)"], [1, "rgba(255,248,235,0)"]])), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })));
   coulWash.rotation.y = -Math.PI / 2;
   coulWash.position.set(HALF_W - 0.005, (H + 0.4) / 2, coulZ);
   scene.add(coulWash);
@@ -1002,6 +1002,86 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   coulTitleMesh.rotation.y = -Math.PI / 2;
   coulTitleMesh.position.set(HALF_W - 0.012, 3.75, coulZ);
   scene.add(coulTitleMesh);
+
+  /* Galerie 03 — right wall, near the door: a deep green section with the portrait and the skills */
+  const aboutHits: THREE.Object3D[] = [];
+  const zP = L.wallJourney - 3.4; // portrait
+  const zS = L.wallJourney - 7.0; // skills panel
+  const greenZ0 = L.wallJourney - 0.4;
+  const greenZ1 = zS - 1.85;
+  const green = new THREE.Mesh(keep(new THREE.PlaneGeometry(greenZ0 - greenZ1, H)), keep(new THREE.MeshStandardMaterial({ ...pbr("plaster", 3, 1.6), color: 0x3f5247, roughness: 0.95, normalScale: new THREE.Vector2(0.15, 0.15) })));
+  green.rotation.y = -Math.PI / 2;
+  green.position.set(HALF_W - 0.004, H / 2, (greenZ0 + greenZ1) / 2);
+  scene.add(green);
+  const markAbout = (o: THREE.Object3D, id: string) =>
+    o.traverse((m) => {
+      if ((m as THREE.Mesh).isMesh) {
+        m.userData.shop = id;
+        aboutHits.push(m);
+      }
+    });
+  const portraitHang = hang({ src: input.about.portrait.src, ratio: input.about.portrait.ratio, height: 1.5, kind: "photo", side: 1, z: zP });
+  markAbout(portraitHang.g, "portrait");
+  const onGreen = (w: number, h: number, z: number, y: number, draw: (c: CanvasRenderingContext2D) => void) => {
+    const tex = keep(canvasTex(Math.round(w * 800), Math.round(h * 800), draw));
+    const mt = basic(tex);
+    mt.depthWrite = false;
+    const m = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, h)), mt);
+    m.renderOrder = 2;
+    m.rotation.y = -Math.PI / 2;
+    m.position.set(HALF_W - 0.008, y, z);
+    scene.add(m);
+    return m;
+  };
+  // beside the portrait, painted lettering: who I am, what I am looking for
+  const bio = onGreen(2.0, 2.0, zP + 2.0, 1.8, (c) => {
+    const W2 = 1600;
+    c.fillStyle = "#c9d2c8";
+    c.font = `500 46px ${SANS}`;
+    spaced(c, "PORTRAIT", 0, 150, 12);
+    c.fillStyle = "#f3eee4";
+    c.font = `italic 400 120px ${SERIF}`;
+    let y = 330;
+    y += wrap(c, `« ${input.about.quote} »`, 0, y, W2 - 30, 138) * 138 + 50;
+    c.font = `400 58px ${SANS}`;
+    c.fillStyle = "#dfe4dc";
+    input.about.lines.forEach((l) => {
+      y += wrap(c, l, 0, y, W2 - 30, 76) * 76;
+    });
+    if (input.about.seeking) {
+      y += 20;
+      c.fillStyle = "#efd9b4";
+      wrap(c, input.about.seeking, 0, y, W2 - 30, 76);
+    }
+  });
+  markAbout(bio, "portrait");
+  // the skills, painted on the wall in three columns
+  const skillsPanel = onGreen(3.5, 2.3, zS, 1.9, (c) => {
+    c.fillStyle = "#f3eee4";
+    c.font = `italic 400 200px ${SERIF}`;
+    c.fillText("Compétences", 0, 200);
+    const colW2 = 930;
+    input.about.skills.forEach((k, i) => {
+      const x = i * colW2;
+      c.fillStyle = "#efd9b4";
+      c.font = `500 50px ${SANS}`;
+      spaced(c, k.title.toUpperCase(), x, 400, 10);
+      c.fillStyle = "#f3eee4";
+      c.font = `400 60px ${SANS}`;
+      k.text.split(" · ").forEach((s, j) => c.fillText(s, x, 520 + j * 90, colW2 - 40));
+    });
+  });
+  markAbout(skillsPanel, "skills");
+  for (const z of [zS + 1.2, zS - 1.2, zP + 2.0]) spot(1, z);
+  for (const [z, w] of [
+    [zS, 4.0],
+    [zP + 2.0, 2.4],
+  ] as const) {
+    const wash = new THREE.Mesh(keep(new THREE.PlaneGeometry(w, H - 0.6)), keep(new THREE.MeshBasicMaterial({ map: poolMap, transparent: true, opacity: 0.22, depthWrite: false, blending: THREE.AdditiveBlending })));
+    wash.rotation.y = -Math.PI / 2;
+    wash.position.set(HALF_W - 0.006, (H + 0.6) / 2, z);
+    scene.add(wash);
+  }
 
   /* ───────── the museum shop ───────── */
   // coloured end wall with the closing line
@@ -1316,11 +1396,9 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     });
   /** size (x, z) and thickness of each souvenir, and where it lies on the table */
   const flat: Record<string, { w: number; d: number; t: number; n: number; x: number; z: number; r: number }> = {
-    cv: { w: 0.34, d: 0.48, t: 0.012, n: 3, x: -1.1, z: -0.4, r: 0.05 },
-    portrait: { w: 0.36, d: 0.47, t: 0.004, n: 4, x: -0.4, z: -0.42, r: -0.04 },
-    skills: { w: 0.34, d: 0.48, t: 0.01, n: 3, x: 0.3, z: -0.4, r: 0.03 },
-    linkedin: { w: 0.26, d: 0.16, t: 0.0035, n: 6, x: -0.85, z: 0.42, r: -0.08 },
-    contact: { w: 0.3, d: 0.19, t: 0.003, n: 5, x: -0.1, z: 0.42, r: 0.06 },
+    cv: { w: 0.34, d: 0.48, t: 0.012, n: 3, x: -0.8, z: -0.1, r: 0.05 },
+    linkedin: { w: 0.26, d: 0.16, t: 0.0035, n: 6, x: 0.05, z: -0.38, r: -0.08 },
+    contact: { w: 0.3, d: 0.19, t: 0.003, n: 5, x: 0.0, z: 0.28, r: 0.06 },
   };
   const top = TH + 0.003;
   input.shop.items.forEach((it) => {
@@ -1399,19 +1477,25 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   });
   stations.push({ pos: v3(0, EYE, L.wallJourney + 5), look: v3(-3, 2.1, L.wallJourney), room: "main" });
   walkThrough(0, L.wallJourney - 0.5, "journey");
+  // Galerie 03: the stops on both walls, visited in the order one walks past them
+  const g3: Station[] = [];
   if (narrow) {
     input.journey.forEach((_, k) => {
       const z = L.fz0 - (k + 0.5) * ENTRY_W;
-      stations.push({ pos: v3(-HALF_W + 3.3, EYE, z), look: v3(-HALF_W, 1.62, z), room: "journey", frieze: true });
+      g3.push({ pos: v3(-HALF_W + 3.3, EYE, z), look: v3(-HALF_W, 1.62, z), room: "journey", frieze: true });
     });
   } else {
     const m = Math.ceil(n / 3);
     for (let i = 0; i < m; i++) {
       const z = L.fz0 - ((i + 0.5) / m) * n * ENTRY_W;
-      stations.push({ pos: v3(-HALF_W + 4.4, EYE, z), look: v3(-HALF_W, 1.7, z), room: "journey", frieze: true });
+      g3.push({ pos: v3(-HALF_W + 4.4, EYE, z), look: v3(-HALF_W, 1.7, z), room: "journey", frieze: true });
     }
   }
-  stations.push({ pos: v3(HALF_W - (narrow ? 6.6 : 5.6), EYE, coulZ), look: v3(HALF_W, 1.9, coulZ), room: "journey" });
+  const zPv = narrow ? zP + 0.4 : zP + 1.0;
+  g3.push({ pos: v3(HALF_W - (narrow ? 5.6 : 3.9), EYE, zPv), look: v3(HALF_W, 1.75, zPv), room: "journey" });
+  g3.push({ pos: v3(HALF_W - (narrow ? 6.6 : 4.0), EYE, zS), look: v3(HALF_W, 1.85, zS), room: "journey" });
+  g3.push({ pos: v3(HALF_W - (narrow ? 6.6 : 5.6), EYE, coulZ), look: v3(HALF_W, 1.9, coulZ), room: "journey" });
+  g3.sort((a, b) => b.pos.z - a.pos.z).forEach((s) => stations.push(s));
   walkThrough(0, L.wallShop + 1.2, "about");
   // the shop: the whole room, then the table of souvenirs seen from above, then the closing line
   stations.push({ pos: v3(0, EYE, L.wallShop - 0.8), look: v3(0, 1.4, Z_BACK), room: "about" });
@@ -1753,7 +1837,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     },
     hitShop: (x, y) => {
       raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-      const h = raycaster.intersectObjects(shopHits, false)[0];
+      const h = raycaster.intersectObjects(shopHits.concat(aboutHits), false)[0];
       return h && h.distance < 8 ? (h.object.userData.shop as string) : null;
     },
     settled: () => !focusAnim && !free.anim && !trip && Math.abs(target - current) < 0.02,
@@ -1773,7 +1857,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     },
     floorAt: (x, y) => {
       raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-      const hitW = raycaster.intersectObjects(hitMeshes.concat(shopHits, [frieze]), false)[0];
+      const hitW = raycaster.intersectObjects(hitMeshes.concat(shopHits, aboutHits, [frieze]), false)[0];
       const p = new THREE.Vector3();
       if (!raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), p)) return null;
       if (hitW && hitW.distance < camera.position.distanceTo(p)) return null;

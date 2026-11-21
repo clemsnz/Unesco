@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { about, coulisses, entrance, exit, journey, rooms, shop, works, type ShopId } from "@/content/museum";
+import { about, aboutWall, coulisses, entrance, exit, journey, rooms, shop, works, type ShopId } from "@/content/museum";
 import { site } from "@/content/site";
 import type { MuseumApi, Station } from "./scene";
 import MuseumLite from "./MuseumLite";
@@ -52,7 +52,7 @@ function Museum3D() {
   const [overFloor, setOverFloor] = useState(false);
   const [hint, setHint] = useState(true);
   const [souvenir, setSouvenir] = useState<ShopId | null>(null);
-  const [overShop, setOverShop] = useState(false);
+  const [overShop, setOverShop] = useState<string | null>(null);
   const [narrowScreen, setNarrowScreen] = useState(false);
   const step = () => window.innerHeight * (STEP_VH / 100);
 
@@ -120,8 +120,9 @@ function Museum3D() {
       setHover(h);
       api.current?.setHover(h);
       setOverFrieze(h === null && (api.current?.hitFrieze(x, y) ?? null) !== null);
-      const sh = h === null && (api.current?.hitShop(x, y) ?? null) !== null;
-      setOverShop(sh);
+      const shId = h === null ? api.current?.hitShop(x, y) ?? null : null;
+      const sh = shId !== null;
+      setOverShop(shId);
       const sp = h === null && !sh && e.pointerType !== "touch" ? api.current?.hitSpot(x, y) ?? null : null;
       api.current?.setSpotHover(sp);
       const fl = h === null && sp === null && e.pointerType !== "touch" ? api.current?.floorAt(x, y) ?? null : null;
@@ -360,7 +361,7 @@ function Museum3D() {
 
       <div ref={cursor} className="pointer-events-none fixed left-0 top-0 z-30">
         <div className={`-translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1c1916] px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-white transition-opacity duration-300 ${hover !== null || overFrieze || overShop ? "opacity-100" : "opacity-0"}`}>
-          {overFrieze ? "Dérouler" : overShop ? "Emporter" : hover !== null && Math.abs(station - stations.findIndex((s) => s.art === hover)) < 0.5 ? "Explorer" : "S’approcher"}
+          {overFrieze ? "Dérouler" : overShop ? (aboutWall.some((a) => a.id === overShop) ? "Découvrir" : "Emporter") : hover !== null && Math.abs(station - stations.findIndex((s) => s.art === hover)) < 0.5 ? "Explorer" : "S’approcher"}
         </div>
       </div>
 
@@ -436,9 +437,9 @@ function Plan({ onClose, onRoom, onWork, onContact }: { onClose: () => void; onR
         </div>
         <div className="space-y-3">
           <p className={head}>03</p>
-          <button className={`${item} block`} onClick={() => onRoom("journey")}>Parcours</button>
+          <button className={`${item} block`} onClick={() => onRoom("journey")}>Parcours, portrait & compétences</button>
           <p className={`${head} pt-6`}>Boutique du musée</p>
-          <button className={`${item} block`} onClick={onContact}>Souvenirs : CV, portrait, contact</button>
+          <button className={`${item} block`} onClick={onContact}>Souvenirs : CV, LinkedIn, contact</button>
           <button onClick={onClose} className="block pt-10 text-[13px] text-[#6b6259]">Fermer ✕</button>
         </div>
       </div>
@@ -448,17 +449,18 @@ function Plan({ onClose, onRoom, onWork, onContact }: { onClose: () => void; onR
 
 /** A souvenir from the museum shop, "taken home": its content in a card. */
 function Souvenir({ id, onClose }: { id: ShopId; onClose: () => void }) {
-  const it = shop.items.find((x) => x.id === id)!;
+  const fromWall = aboutWall.find((x) => x.id === id);
+  const it = shop.items.find((x) => x.id === id) ?? { id, name: fromWall?.name ?? "", object: "" };
   const btn = "inline-block bg-[#1c1916] px-6 py-3 text-[12px] uppercase tracking-[0.2em] text-white hover:opacity-80";
   return (
     <div role="dialog" aria-modal="true" aria-label={it.name} className="fixed inset-0 z-40 flex items-center justify-center overflow-y-auto bg-[#1c1916]/30 p-4" onClick={onClose}>
       <div className="relative my-auto w-full max-w-lg bg-[#faf9f5] p-7 shadow-[0_30px_70px_-30px_rgba(30,22,15,0.6)] md:p-9" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-6">
           <div>
-            <p className="text-[11px] uppercase tracking-[0.22em] text-[#7a2f35]">{shop.title} · {it.object}</p>
+            <p className="text-[11px] uppercase tracking-[0.22em] text-[#7a2f35]">{fromWall ? rooms.journey : `${shop.title} · ${it.object}`}</p>
             <p className="mt-2 text-3xl">{it.name}</p>
           </div>
-          <span className="mt-1 shrink-0 border border-[#7a2f35] px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-[#7a2f35]">Offert</span>
+          {!fromWall && <span className="mt-1 shrink-0 border border-[#7a2f35] px-2 py-1 text-[10px] uppercase tracking-[0.2em] text-[#7a2f35]">Offert</span>}
         </div>
 
         {id === "cv" && (
