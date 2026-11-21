@@ -174,9 +174,18 @@ function Museum3D() {
     api.current.focus(i, () => router.push(`/oeuvres/${works[i].slug}/`));
   };
 
-  const go = (i: number) => {
+  /** walk straight to a stop, then put the scroll position there without moving the camera again */
+  const go = (i: number, after?: () => void) => {
     setPlan(false);
-    window.scrollTo({ top: i * step(), behavior: "smooth" });
+    const m = api.current;
+    if (!m) return;
+    syncing.current = true;
+    setStation(i);
+    m.travelTo(i, () => {
+      window.scrollTo(0, i * step());
+      setTimeout(() => (syncing.current = false), 150);
+      after?.();
+    });
   };
   const goRoom = (room: Station["room"]) => go(stations.findIndex((s) => s.room === room));
   /** walk to the next (1) or previous (-1) stop, skipping the points one only walks through */
@@ -205,8 +214,7 @@ function Museum3D() {
   const goShop = (id?: ShopId) => {
     setPlan(false);
     const i = stations.findIndex((s) => s.contact);
-    window.scrollTo({ top: i * step(), behavior: "smooth" });
-    if (id) setTimeout(() => setSouvenir(id), 900);
+    go(i, id ? () => setSouvenir(id) : undefined);
   };
 
 
