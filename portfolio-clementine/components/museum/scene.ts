@@ -26,7 +26,7 @@ type RoomNames = { main: string; cabinet: string; journey: string; about: string
 
 export type ShopItem = { id: string; object: string; name: string; tag: string };
 export type MuseumInput = {
-  shop: { title: string; sub: string; items: ShopItem[] };
+  shop: { title: string; sub: string; welcome?: string; items: ShopItem[] };
   works: Work[];
   entrance: { room: string; name: string; line: string };
   rooms: RoomNames;
@@ -1396,9 +1396,9 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     });
   /** size (x, z) and thickness of each souvenir, and where it lies on the table */
   const flat: Record<string, { w: number; d: number; t: number; n: number; x: number; z: number; r: number }> = {
-    cv: { w: 0.34, d: 0.48, t: 0.012, n: 3, x: -0.8, z: -0.1, r: 0.05 },
-    linkedin: { w: 0.26, d: 0.16, t: 0.0035, n: 6, x: 0.05, z: -0.38, r: -0.08 },
-    contact: { w: 0.3, d: 0.19, t: 0.003, n: 5, x: 0.0, z: 0.28, r: 0.06 },
+    cv: { w: 0.5, d: 0.7, t: 0.014, n: 3, x: -0.85, z: -0.22, r: 0.04 },
+    linkedin: { w: 0.44, d: 0.27, t: 0.004, n: 6, x: 0.12, z: -0.5, r: -0.06 },
+    contact: { w: 0.5, d: 0.32, t: 0.003, n: 5, x: 0.1, z: 0.15, r: 0.05 },
   };
   const top = TH + 0.003;
   input.shop.items.forEach((it) => {
@@ -1421,14 +1421,39 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       g.add(sheet);
     }
     blob(f.w * 1.5, f.d * 1.4, 0, 0.0005, 0, 0.35, g);
-      const tag = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.2, 0.094)), basic(tagTex(it), false));
+      const tag = new THREE.Mesh(keep(new THREE.PlaneGeometry(0.3, 0.142)), basic(tagTex(it), false));
     // its label lies on the table just in front
-    tag.position.set(0, 0.0015, f.d / 2 + 0.085);
+    tag.position.set(0, 0.0015, f.d / 2 + 0.11);
     tag.rotation.x = -Math.PI / 2;
     tag.userData.shop = it.id;
     shopHits.push(tag);
     g.add(tag);
   });
+  // a printed card for the visitors who made it this far
+  if (input.shop.welcome) {
+    const wTex = print(1500, 420, (c) => {
+      c.fillStyle = "#fbf7ef";
+      c.fillRect(0, 0, 1500, 420);
+      c.strokeStyle = "#7a2f35";
+      c.lineWidth = 4;
+      c.strokeRect(26, 26, 1448, 368);
+      c.fillStyle = "#7a2f35";
+      c.font = `500 30px ${SANS}`;
+      spaced(c, input.shop.title.toUpperCase(), 750, 110, 9, "center");
+      c.fillStyle = "#1c1916";
+      c.font = `italic 400 76px ${SERIF}`;
+      const [a, b] = input.shop.welcome!.split("? ");
+      center(c, b ? `${a}?` : a, 750, 225);
+      if (b) center(c, b, 750, 320);
+    });
+    const card = new THREE.Mesh(keep(new THREE.BoxGeometry(1.0, 0.004, 0.28)), [paperMat, paperMat, basic(wTex, false), paperMat, paperMat, paperMat]);
+    // in front of the souvenirs; on portrait screens, beside the CV
+    if (narrow) card.scale.setScalar(0.8);
+    card.position.set(narrow ? -0.8 : -0.35, top + 0.002, narrow ? 0.5 : 0.7);
+    card.rotation.y = 0.015 - tableG.rotation.y;
+    tableG.add(card);
+
+  }
   // more for sale around them: real books, postcards and a vase
   place("book_encyclopedia_set_01", 1.05, top, -0.6, -Math.PI / 2, 1, tableG);
   place("antique_ceramic_vase_01", 1.35, top, -0.2, 0, 0.8, tableG);
@@ -1500,7 +1525,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   // the shop: the whole room, then the table of souvenirs seen from above, then the closing line
   stations.push({ pos: v3(0, EYE, L.wallShop - 0.8), look: v3(0, 1.4, Z_BACK), room: "about" });
   // leaning over the table: the souvenirs seen from above
-  stations.push({ pos: v3(0, TH + (narrow ? 2.35 : 2.05), tblZ + (narrow ? 0.75 : 0.6)), look: v3(0, TH, tblZ - 0.05), room: "exit", contact: true });
+  stations.push({ pos: v3(0, TH + (narrow ? 2.35 : 2.1), tblZ + (narrow ? 0.75 : 0.8)), look: v3(0, TH, tblZ + (narrow ? -0.05 : 0.12)), room: "exit", contact: true });
   stations.push({ pos: v3(0, EYE, Z_BACK + (narrow ? 10 : 7)), look: v3(0, 2.2, Z_BACK), room: "exit" });
 
   const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
