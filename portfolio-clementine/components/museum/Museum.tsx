@@ -102,12 +102,13 @@ function Museum3D() {
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
       const d = drag.current;
-      if (d && d.down && !d.touch) {
+      if (d && d.down) {
         const dx = e.clientX - d.x;
         const dy = e.clientY - d.y;
-        if (d.moved || Math.hypot(dx, dy) > 5) {
+        // touch: a sideways swipe turns the head (an upward one still scrolls forward)
+        if (d.touch ? d.moved || (Math.abs(dx) > 8 && Math.abs(dx) > Math.abs(dy)) : d.moved || Math.hypot(dx, dy) > 5) {
           d.moved = true;
-          api.current?.lookAround(dx, dy);
+          api.current?.lookAround(dx * (d.touch ? 1.3 : 1), d.touch ? 0 : dy);
           d.x = e.clientX;
           d.y = e.clientY;
           api.current?.showRing(null);
@@ -119,13 +120,25 @@ function Museum3D() {
       setHover(h);
       api.current?.setHover(h);
       setOverFrieze(h === null && (api.current?.hitFrieze(x, y) ?? null) !== null);
-      setOverShop(h === null && (api.current?.hitShop(x, y) ?? null) !== null);
-      const fl = h === null && e.pointerType !== "touch" ? api.current?.floorAt(x, y) ?? null : null;
+      const sh = h === null && (api.current?.hitShop(x, y) ?? null) !== null;
+      setOverShop(sh);
+      const sp = h === null && !sh && e.pointerType !== "touch" ? api.current?.hitSpot(x, y) ?? null : null;
+      api.current?.setSpotHover(sp);
+      const fl = h === null && sp === null && e.pointerType !== "touch" ? api.current?.floorAt(x, y) ?? null : null;
       api.current?.showRing(fl);
-      setOverFloor(!!fl);
+      setOverFloor(!!fl || sp !== null);
       if (cursor.current) cursor.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     };
     const onKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+        e.preventDefault();
+        api.current?.lookAround(e.key === "ArrowLeft" ? -60 : 60, 0);
+      }
+      if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+        e.preventDefault();
+        stepTo.current(e.key === "ArrowUp" ? 1 : -1);
+      }
       if (e.key === "Escape") {
         setPlan(false);
         setOpenJ(null);
@@ -166,6 +179,25 @@ function Museum3D() {
     window.scrollTo({ top: i * step(), behavior: "smooth" });
   };
   const goRoom = (room: Station["room"]) => go(stations.findIndex((s) => s.room === room));
+  /** walk to the next (1) or previous (-1) stop, skipping the points one only walks through */
+  const neighbour = (dir: 1 | -1) => {
+    const cur = window.scrollY / step();
+    const idx = stations.map((s, k) => (s.walk ? -1 : k)).filter((k) => k >= 0 && (dir === 1 ? k > cur + 0.3 : k < cur - 0.3));
+    return idx.length ? (dir === 1 ? idx[0] : idx[idx.length - 1]) : null;
+  };
+  const stepTo = useRef<(dir: 1 | -1) => void>(() => {});
+  stepTo.current = (dir) => {
+    const k = neighbour(dir);
+    if (k !== null) go(k);
+  };
+  // gentle magnetism towards each stop when the visitor stops scrolling
+  useEffect(() => {
+    const el = document.documentElement;
+    el.style.scrollSnapType = "y proximity";
+    return () => {
+      el.style.scrollSnapType = "";
+    };
+  }, []);
 
   const here = stations[Math.min(station, stations.length - 1)];
   const art = here?.art !== undefined ? here.art : null;
@@ -180,7 +212,9 @@ function Museum3D() {
 
   return (
     <>
-      <div style={{ height: `${Math.max(stations.length - 1, 1) * STEP_VH + 100}vh` }} aria-hidden />
+      <div className="relative" style={{ height: `${Math.max(stations.length - 1, 1) * STEP_VH + 100}vh` }} aria-hidden>
+        {stations.map((s, k) => (s.walk ? null : <div key={k} className="absolute inset-x-0 h-px" style={{ top: `${k * STEP_VH}vh`, scrollSnapAlign: "start" }} />))}
+      </div>
       <canvas
         ref={canvas}
         className="fixed inset-0 h-screen w-screen"
@@ -209,6 +243,11 @@ function Museum3D() {
           if (f !== null) return setOpenJ(f);
           const sv = m.hitShop(x, y);
           if (sv !== null) return setSouvenir(sv as ShopId);
+          const sp = m.hitSpot(x, y);
+          if (sp !== null) {
+            m.setSpotHover(null);
+            return go(sp);
+          }
           const p = m.floorAt(x, y);
           if (p) {
             m.showRing(null);
@@ -260,8 +299,24 @@ function Museum3D() {
       {/* how to move, Street View style */}
       <div className={`pointer-events-none fixed left-1/2 top-20 z-20 -translate-x-1/2 transition-opacity duration-1000 ${hint && ready ? "opacity-100" : "opacity-0"}`}>
         <p className="whitespace-nowrap bg-[#1c1916]/75 px-4 py-2 text-[12px] text-white backdrop-blur">
-          {narrowScreen ? "Défilez pour avancer · touchez le sol ou une œuvre pour y aller" : "Défilez pour avancer · cliquez au sol pour vous déplacer · glissez pour regarder autour"}
+          {narrowScreen ? "Glissez vers le haut pour avancer · sur le côté pour tourner la tête" : "Cliquez sur les cercles au sol pour avancer · glissez pour tourner la tête"}
         </p>
+      </div>
+
+      {/* forward / back, for those who prefer buttons */}
+      <div className={`fixed right-3 top-1/2 z-20 flex -translate-y-1/2 flex-col gap-2 transition-opacity duration-700 md:right-6 ${ready && !leaving ? "opacity-100" : "pointer-events-none opacity-0"}`}>
+        {([1, -1] as const).map((dir) => (
+          <button
+            key={dir}
+            onClick={() => stepTo.current(dir)}
+            aria-label={dir === 1 ? "Avancer" : "Reculer"}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-[#faf9f5]/80 text-[#1c1916] shadow-[0_8px_24px_-12px_rgba(30,22,15,0.5)] backdrop-blur transition hover:bg-white"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden className={dir === 1 ? "" : "rotate-180"}>
+              <path d="M3 10.5 8 5.5l5 5" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        ))}
       </div>
 
       {/* timeline hint */}
@@ -310,7 +365,7 @@ function Museum3D() {
             {shop.items.map((it) => (
               <li key={it.id}>
                 <button onClick={() => setSouvenir(it.id)} className="text-left hover:opacity-60">
-                  {it.name} <span className="text-[11px] text-[#8a8178]">· {it.object.replace(/^L[ae] /, "")}</span>
+                  {it.name} <span className="text-[11px] text-[#8a8178]">· {it.object.replace(/^(L[ae] |L’|Les )/, "")}</span>
                 </button>
               </li>
             ))}
