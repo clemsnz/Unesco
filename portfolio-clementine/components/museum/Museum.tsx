@@ -47,6 +47,10 @@ function Museum3D() {
   const [openJ, setOpenJ] = useState<number | null>(null);
   const [overFrieze, setOverFrieze] = useState(false);
   const cursor = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ x: number; y: number; moved: boolean; touch: boolean; down: boolean } | null>(null);
+  const syncing = useRef(false);
+  const [overFloor, setOverFloor] = useState(false);
+  const [hint, setHint] = useState(true);
   const [souvenir, setSouvenir] = useState<ShopId | null>(null);
   const [overShop, setOverShop] = useState(false);
   const [narrowScreen, setNarrowScreen] = useState(false);
@@ -88,6 +92,7 @@ function Museum3D() {
 
   useEffect(() => {
     const onScroll = () => {
+      if (syncing.current) return;
       const s = window.scrollY / step();
       api.current?.setProgress(s);
       setStation(Math.round(s));
@@ -96,12 +101,28 @@ function Museum3D() {
     const onMove = (e: PointerEvent) => {
       const x = (e.clientX / window.innerWidth) * 2 - 1;
       const y = -(e.clientY / window.innerHeight) * 2 + 1;
+      const d = drag.current;
+      if (d && d.down && !d.touch) {
+        const dx = e.clientX - d.x;
+        const dy = e.clientY - d.y;
+        if (d.moved || Math.hypot(dx, dy) > 5) {
+          d.moved = true;
+          api.current?.lookAround(dx, dy);
+          d.x = e.clientX;
+          d.y = e.clientY;
+          api.current?.showRing(null);
+          return;
+        }
+      }
       api.current?.setPointer(x, y);
       const h = api.current?.hit(x, y) ?? null;
       setHover(h);
       api.current?.setHover(h);
       setOverFrieze(h === null && (api.current?.hitFrieze(x, y) ?? null) !== null);
       setOverShop(h === null && (api.current?.hitShop(x, y) ?? null) !== null);
+      const fl = h === null && e.pointerType !== "touch" ? api.current?.floorAt(x, y) ?? null : null;
+      api.current?.showRing(fl);
+      setOverFloor(!!fl);
       if (cursor.current) cursor.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
     };
     const onKey = (e: KeyboardEvent) => {
@@ -122,6 +143,11 @@ function Museum3D() {
       window.removeEventListener("pointermove", onMove);
       window.removeEventListener("keydown", onKey);
     };
+  }, []);
+
+  useEffect(() => {
+    const id = setTimeout(() => setHint(false), 9000);
+    return () => clearTimeout(id);
   }, []);
 
   const enter = (i: number) => {
@@ -158,16 +184,41 @@ function Museum3D() {
       <canvas
         ref={canvas}
         className="fixed inset-0 h-screen w-screen"
-        style={{ cursor: hover !== null || overFrieze || overShop ? "none" : "default" }}
-        onClick={(e) => {
+        style={{ cursor: hover !== null || overFrieze || overShop ? "none" : overFloor ? "pointer" : drag.current?.moved ? "grabbing" : "grab", touchAction: "pan-y" }}
+        onPointerDown={(e) => {
+          drag.current = { x: e.clientX, y: e.clientY, moved: false, touch: e.pointerType === "touch", down: true };
+          if (e.pointerType !== "touch") (e.target as HTMLElement).setPointerCapture(e.pointerId);
+        }}
+        onPointerCancel={() => (drag.current = null)}
+        onPointerUp={(e) => {
+          const d = drag.current;
+          drag.current = null;
+          if (!d || d.moved) return;
           const x = (e.clientX / window.innerWidth) * 2 - 1;
           const y = -(e.clientY / window.innerHeight) * 2 + 1;
-          const h = api.current?.hit(x, y) ?? null;
-          if (h !== null) return enter(h);
-          const f = api.current?.hitFrieze(x, y) ?? null;
+          const m = api.current;
+          if (!m) return;
+          const h = m.hit(x, y);
+          if (h !== null) {
+            // first click walks up to the work, the second one opens it
+            const st = stations.findIndex((s) => s.art === h);
+            if (Math.abs(window.scrollY / step() - st) < 0.25 && m.settled()) return enter(h);
+            return go(st);
+          }
+          const f = m.hitFrieze(x, y);
           if (f !== null) return setOpenJ(f);
-          const sv = api.current?.hitShop(x, y) ?? null;
-          if (sv !== null) setSouvenir(sv as ShopId);
+          const sv = m.hitShop(x, y);
+          if (sv !== null) return setSouvenir(sv as ShopId);
+          const p = m.floorAt(x, y);
+          if (p) {
+            m.showRing(null);
+            m.walkTo(p, (near) => {
+              syncing.current = true;
+              window.scrollTo(0, near * step());
+              setStation(near);
+              setTimeout(() => (syncing.current = false), 120);
+            });
+          }
         }}
         aria-hidden
       />
@@ -206,6 +257,13 @@ function Museum3D() {
           )}
         </div>
       </div>
+      {/* how to move, Street View style */}
+      <div className={`pointer-events-none fixed left-1/2 top-20 z-20 -translate-x-1/2 transition-opacity duration-1000 ${hint && ready ? "opacity-100" : "opacity-0"}`}>
+        <p className="whitespace-nowrap bg-[#1c1916]/75 px-4 py-2 text-[12px] text-white backdrop-blur">
+          {narrowScreen ? "Défilez pour avancer · touchez le sol ou une œuvre pour y aller" : "Défilez pour avancer · cliquez au sol pour vous déplacer · glissez pour regarder autour"}
+        </p>
+      </div>
+
       {/* timeline hint */}
       <p className={`pointer-events-none fixed bottom-24 left-4 z-20 text-[12px] text-[#6b6259] transition-opacity duration-700 md:bottom-28 md:left-8 ${here?.frieze ? "opacity-100" : "opacity-0"}`}>
         {narrowScreen ? "Touchez une date pour la dérouler" : "Cliquez sur une date pour la dérouler"}
@@ -239,7 +297,7 @@ function Museum3D() {
 
       <div ref={cursor} className="pointer-events-none fixed left-0 top-0 z-30">
         <div className={`-translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1c1916] px-4 py-2 text-[11px] uppercase tracking-[0.2em] text-white transition-opacity duration-300 ${hover !== null || overFrieze || overShop ? "opacity-100" : "opacity-0"}`}>
-          {overFrieze ? "Dérouler" : overShop ? "Emporter" : "Explorer"}
+          {overFrieze ? "Dérouler" : overShop ? "Emporter" : hover !== null && Math.abs(station - stations.findIndex((s) => s.art === hover)) < 0.5 ? "Explorer" : "S’approcher"}
         </div>
       </div>
 
@@ -261,6 +319,8 @@ function Museum3D() {
       </div>
       {souvenir && <Souvenir id={souvenir} onClose={() => setSouvenir(null)} />}
 
+      {/* a light veil at the bottom keeps the captions readable over the floor */}
+      <div aria-hidden className="pointer-events-none fixed inset-x-0 bottom-0 z-10 h-[24vh]" style={{ background: "linear-gradient(rgba(241,238,233,0), rgba(241,238,233,0.6))" }} />
       {/* soft photographic vignette */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-10" style={{ background: "radial-gradient(ellipse 85% 75% at 50% 48%, rgba(0,0,0,0) 60%, rgba(40,30,20,0.16) 100%)" }} />
 

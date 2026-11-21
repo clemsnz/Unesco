@@ -1,6 +1,10 @@
 import * as THREE from "three";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
+import { GTAOPass } from "three/examples/jsm/postprocessing/GTAOPass.js";
+import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import type { Work } from "@/content/museum";
 
 /**
@@ -44,6 +48,16 @@ export type MuseumApi = {
   hitShop: (x: number, y: number) => string | null;
   /** index of the timeline entry under the pointer, or null */
   hitFrieze: (x: number, y: number) => number | null;
+  /** floor point under the pointer, where a click would walk to (or null) */
+  floorAt: (x: number, y: number) => THREE.Vector3 | null;
+  /** show the Street View-style target ring on the floor (null hides it) */
+  showRing: (p: THREE.Vector3 | null) => void;
+  /** walk freely to a floor point; resolves with the nearest station index once arrived */
+  walkTo: (p: THREE.Vector3, onArrive: (nearest: number) => void) => void;
+  /** turn the head (drag to look around), in pixels */
+  lookAround: (dx: number, dy: number) => void;
+  /** index of the station the camera is currently closest to */
+  nearest: () => number;
   /** true once the camera has settled on its station */
   settled: () => boolean;
   resize: () => void;
@@ -328,12 +342,22 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const basic = (map: THREE.Texture, transparent = true) => keep(new THREE.MeshBasicMaterial({ map, transparent, toneMapped: false }));
 
   disposables.push(envRT);
-  const plaster = keep(plasterTexture());
-  const wallMat = keep(new THREE.MeshStandardMaterial({ map: plaster, roughness: 0.92 }));
-  const plasterLong = keep(plaster.clone());
-  plasterLong.needsUpdate = true;
-  plasterLong.repeat.set(len / 7, 1);
-  const wallMatLong = keep(new THREE.MeshStandardMaterial({ map: plasterLong, roughness: 0.92 }));
+  /* photographed materials (CC0, Poly Haven): painted plaster walls, herringbone oak parquet */
+  const texLoader = new THREE.TextureLoader();
+  const pbr = (name: string, rx: number, ry: number) => {
+    const load = (suffix: string, srgb: boolean) => {
+      const t = keep(texLoader.load(`/textures/${name}_${suffix}.jpg`));
+      t.wrapS = t.wrapT = THREE.RepeatWrapping;
+      t.repeat.set(rx, ry);
+      t.anisotropy = 8;
+      if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+      return t;
+    };
+    return { map: load("diff", true), normalMap: load("nor_gl", false), roughnessMap: load("rough", false) };
+  };
+  void plasterTexture;
+  const wallMat = keep(new THREE.MeshStandardMaterial({ ...pbr("plaster", 2, 1.4), roughness: 0.95, normalScale: new THREE.Vector2(0.35, 0.35) }));
+  const wallMatLong = keep(new THREE.MeshStandardMaterial({ ...pbr("plaster", len / 3.5, H / 3.5), roughness: 0.95, normalScale: new THREE.Vector2(0.35, 0.35) }));
   const gapMat = keep(new THREE.MeshBasicMaterial({ color: 0x77706a }));
   /** recessed shadow gap at the foot of a wall, as in real galleries */
   const shadowGap = (w: number, x: number, z: number, ry: number) => {
@@ -354,7 +378,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   floor.visible = false; // parquet covers the whole building
   if (!narrow) {
     const mirror = new Reflector(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), {
-      color: 0x6c6862,
+      color: 0x58544f,
       textureWidth: Math.round(window.innerWidth * 0.6),
       textureHeight: Math.round(window.innerHeight * 0.6),
     });
@@ -364,7 +388,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     disposables.push({ dispose: () => mirror.dispose() });
   }
 
-  const ceil = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), keep(new THREE.MeshBasicMaterial({ color: 0xcfcbc4 })));
+  const ceil = new THREE.Mesh(keep(new THREE.PlaneGeometry(HALF_W * 2, len)), keep(new THREE.MeshStandardMaterial({ ...pbr("plaster", (HALF_W * 2) / 4, len / 4), color: 0xe4e0da, roughness: 1 })));
   ceil.rotation.x = Math.PI / 2;
   ceil.position.set(0, H, midZ);
   scene.add(ceil);
@@ -549,12 +573,19 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   const parquet = keep(parquetTexture());
   const floorPiece = (z0: number, z1: number) => {
     const l = z0 - z1;
-    const tex = keep(parquet.clone());
-    tex.needsUpdate = true;
-    tex.repeat.set(HALF_W / 1.6, l / 1.6);
+    void parquet;
     const m = new THREE.Mesh(
       keep(new THREE.PlaneGeometry(HALF_W * 2, l)),
-      keep(new THREE.MeshStandardMaterial({ map: tex, roughness: 0.45, transparent: !narrow, opacity: narrow ? 1 : 0.9 })),
+      keep(
+        new THREE.MeshStandardMaterial({
+          ...pbr("parquet", (HALF_W * 2) / 2.2, l / 2.2),
+          color: 0xf4ece2,
+          roughness: 0.8,
+          normalScale: new THREE.Vector2(0.6, 0.6),
+          transparent: !narrow,
+          opacity: narrow ? 1 : 0.965,
+        }),
+      ),
     );
     m.rotation.x = -Math.PI / 2;
     m.position.set(0, 0.004, (z0 + z1) / 2);
@@ -891,16 +922,17 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
   bookcase(-1, Z_BACK + 1.6, 2.2);
 
   // central display table with piles of books, folded totes and mugs
-  const tblZ = L.wallShop - 3.3;
+  const tblZ = L.wallShop - 7.4;
+  const tblX = 0;
   const tbl = new THREE.Mesh(keep(new THREE.BoxGeometry(2.4, 0.72, 1.1)), mat(0xf2efe9, 0.85));
-  tbl.position.set(0, 0.36, tblZ);
+  tbl.position.set(tblX, 0.36, tblZ);
   scene.add(tbl);
   const tblTop = new THREE.Mesh(keep(new THREE.BoxGeometry(2.5, 0.04, 1.2)), mat(0xc8b192, 0.5));
-  tblTop.position.set(0, 0.74, tblZ);
+  tblTop.position.set(tblX, 0.74, tblZ);
   scene.add(tblTop);
   const tblSh = new THREE.Mesh(keep(new THREE.PlaneGeometry(3.2, 1.8)), keep(new THREE.MeshBasicMaterial({ map: shadowMap, transparent: true, opacity: 0.5, depthWrite: false })));
   tblSh.rotation.x = -Math.PI / 2;
-  tblSh.position.set(0, 0.008, tblZ);
+  tblSh.position.set(tblX, 0.008, tblZ);
   scene.add(tblSh);
   for (const [px, pz, nb] of [
     [-0.8, -0.25, 5],
@@ -912,7 +944,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     for (let k = 0; k < nb; k++) {
       const t = 0.03 + rnd() * 0.03;
       const book = new THREE.Mesh(keep(new THREE.BoxGeometry(0.28 + rnd() * 0.06, t, 0.36 + rnd() * 0.05)), merchMats[Math.floor(rnd() * merchMats.length)]);
-      book.position.set(px + (rnd() - 0.5) * 0.02, y + t / 2, tblZ + pz);
+      book.position.set(tblX + px + (rnd() - 0.5) * 0.02, y + t / 2, tblZ + pz);
       book.rotation.y = (rnd() - 0.5) * 0.12;
       scene.add(book);
       y += t;
@@ -924,7 +956,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     [0.62, 0.35, 1],
   ] as const) {
     const mug = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.05, 0.05, 0.11, 16)), merchMats[c]);
-    mug.position.set(px, 0.815, tblZ + pz);
+    mug.position.set(tblX + px, 0.815, tblZ + pz);
     scene.add(mug);
   }
 
@@ -958,7 +990,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
 
   // postcard spinner showing the works
   const spinner = new THREE.Group();
-  spinner.position.set(-3.2, 0, L.wallShop - 2.2);
+  spinner.position.set(-1.6, 0, L.wallShop - 2.0);
   const pole = new THREE.Mesh(keep(new THREE.CylinderGeometry(0.02, 0.02, 1.7, 8)), mat(0x2b2622, 0.5));
   pole.position.y = 0.85;
   spinner.add(pole);
@@ -1247,6 +1279,48 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     look.copy(pos).addScaledVector(fwd, 5);
   }
 
+  // ambient occlusion: the soft contact shadows that make a real room read as real
+  let composer: EffectComposer | null = null;
+  if (!narrow) {
+    composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const ao = new GTAOPass(scene, camera, canvas.clientWidth, canvas.clientHeight);
+    ao.updateGtaoMaterial({ radius: 0.5, distanceExponent: 1.4, thickness: 1.2, scale: 1.1, samples: 12 });
+    ao.blendIntensity = 0.9;
+    composer.addPass(ao);
+    composer.addPass(new OutputPass());
+    disposables.push({ dispose: () => composer?.dispose() });
+  }
+
+  /* ───────── free walk (Street View style) ───────── */
+  const free = { blend: 0, pos: new THREE.Vector3(), quat: new THREE.Quaternion(), anim: null as null | { pts: THREE.Vector3[]; seg: number; t: number; lens: number[]; total: number; done: () => void; yaw0: number; yaw1: number }, release: false, syncIdx: -1 };
+  let yawOff = 0;
+  let pitchOff = 0;
+  const ringMat = keep(new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false }));
+  const ring = new THREE.Mesh(keep(new THREE.RingGeometry(0.2, 0.26, 48)), ringMat);
+  ring.rotation.x = -Math.PI / 2;
+  ring.position.y = 0.012;
+  scene.add(ring);
+  const ringDisc = new THREE.Mesh(keep(new THREE.CircleGeometry(0.2, 48)), keep(new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0, depthWrite: false })));
+  ringDisc.rotation.x = -Math.PI / 2;
+  ringDisc.position.y = 0.011;
+  scene.add(ringDisc);
+  let ringGoal = 0;
+  const yawOf = (q: THREE.Quaternion) => {
+    const f = new THREE.Vector3(0, 0, -1).applyQuaternion(q);
+    return Math.atan2(-f.x, -f.z);
+  };
+  const quatFromYaw = (yaw: number, pitch = -0.04) => new THREE.Quaternion().setFromEuler(new THREE.Euler(pitch, yaw, 0, "YXZ"));
+  /** the room a z coordinate belongs to, and the walls separating rooms */
+  const walls = [-6, L.wallJourney, L.wallShop];
+  const doorX = (z: number) => (z === -6 ? 4.2 : 0);
+  const clampRoom = (p: THREE.Vector3) => {
+    p.x = Math.max(-HALF_W + 1.1, Math.min(HALF_W - 1.1, p.x));
+    p.z = Math.max(Z_BACK + 1.1, Math.min(Z_FRONT - 1.1, p.z));
+    for (const w of walls) if (Math.abs(p.z - w) < 0.9) p.z = w + (p.z > w ? 0.9 : -0.9);
+    return p;
+  };
+
   const clock = new THREE.Clock();
   let raf = 0;
   let visible = true;
@@ -1271,22 +1345,57 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     } else {
       current += (target - current) * (1 - Math.exp(-dt * 2.4));
       poseAt(current);
+      let speed = Math.min(Math.abs(target - current) * 1.2, 1);
+      // free walk towards a clicked point on the floor
+      if (free.anim) {
+        const a = free.anim;
+        a.t += (dt * 1.5) / Math.max(a.total, 0.5);
+        const e = a.t >= 1 ? 1 : a.t < 0.5 ? 2 * a.t * a.t : 1 - Math.pow(-2 * a.t + 2, 2) / 2;
+        let d = e * a.total;
+        let k = 0;
+        while (k < a.lens.length - 1 && d > a.lens[k]) d -= a.lens[k++];
+        free.pos.lerpVectors(a.pts[k], a.pts[k + 1], Math.min(d / Math.max(a.lens[k], 1e-6), 1));
+        let dy = a.yaw1 - a.yaw0;
+        dy = Math.atan2(Math.sin(dy), Math.cos(dy));
+        free.quat.copy(quatFromYaw(a.yaw0 + dy * Math.min(e * 1.4, 1)));
+        speed = Math.max(speed, 1 - Math.abs(2 * e - 1));
+        if (a.t >= 1) {
+          free.anim = null;
+          a.done();
+        }
+      }
+      if (free.release) {
+        free.blend = Math.max(0, free.blend - dt * 1.1);
+        if (free.blend === 0) free.release = false;
+      }
+      if (free.blend > 0) {
+        const b = free.blend * free.blend * (3 - 2 * free.blend);
+        pos.lerp(free.pos, b);
+        quat.slerp(free.quat, b);
+      }
+      // looking around eases back when walking along the path
+      if (speed > 0.05 && !free.anim) {
+        yawOff *= Math.exp(-dt * 2);
+        pitchOff *= Math.exp(-dt * 2);
+      }
       ptrSmooth.lerp(pointer, 1 - Math.exp(-dt * 3));
       camera.position.copy(pos);
-      const speed = Math.min(Math.abs(target - current) * 1.2, 1);
       walkT += dt * 7.5 * speed;
       camera.position.y += Math.sin(walkT * 2) * 0.012 * speed;
-      right.subVectors(look, pos).cross(camera.up).normalize();
-      camera.position.addScaledVector(right, Math.sin(walkT) * 0.01 * speed);
-      tmp.copy(look).addScaledVector(right, ptrSmooth.x * 0.35);
-      tmp.y -= ptrSmooth.y * 0.2;
-      camera.lookAt(tmp);
+      camera.quaternion.copy(quat);
+      camera.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), yawOff - ptrSmooth.x * 0.04);
+      camera.rotateX(pitchOff + ptrSmooth.y * 0.025);
+      fwd.set(0, 0, -1).applyQuaternion(camera.quaternion);
+      look.copy(camera.position).addScaledVector(fwd, 5);
     }
+    ringMat.opacity += (ringGoal * 0.85 - ringMat.opacity) * 0.2;
+    (ringDisc.material as THREE.MeshBasicMaterial).opacity = ringMat.opacity * 0.25;
     pools.forEach((m, i) => {
       const goal = i === hovered ? 0.62 : 0.42;
       m.opacity += (goal - m.opacity) * 0.1;
     });
-    renderer.render(scene, camera);
+    if (composer) composer.render();
+    else renderer.render(scene, camera);
   }
   const onVis = () => {
     visible = !document.hidden;
@@ -1298,6 +1407,7 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
     renderer.setSize(w, h, false);
+    composer?.setSize(w, h);
     camera.aspect = w / h;
     camera.fov = w / h < 0.8 ? 72 : w / h < 1.2 ? 62 : 50;
     camera.updateProjectionMatrix();
@@ -1328,8 +1438,86 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
       const h = raycaster.intersectObjects(shopHits, false)[0];
       return h && h.distance < 8 ? (h.object.userData.shop as string) : null;
     },
-    settled: () => !focusAnim && Math.abs(target - current) < 0.02,
-    setProgress: (s) => (target = s),
+    settled: () => !focusAnim && !free.anim && Math.abs(target - current) < 0.02,
+    setProgress: (s) => {
+      target = s;
+      if (free.blend > 0 && !free.anim && Math.abs(s - free.syncIdx) > 0.04) free.release = true;
+    },
+    floorAt: (x, y) => {
+      raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+      const hitW = raycaster.intersectObjects(hitMeshes.concat(shopHits, [frieze]), false)[0];
+      const p = new THREE.Vector3();
+      if (!raycaster.ray.intersectPlane(new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), p)) return null;
+      if (hitW && hitW.distance < camera.position.distanceTo(p)) return null;
+      const d = p.distanceTo(camera.position);
+      if (d > 16 || d < 0.8) return null;
+      if (Math.abs(p.x) > HALF_W - 0.3 || p.z > Z_FRONT - 0.3 || p.z < Z_BACK + 0.3) return null;
+      return p;
+    },
+    showRing: (p) => {
+      ringGoal = p ? 1 : 0;
+      if (p) {
+        ring.position.x = ringDisc.position.x = p.x;
+        ring.position.z = ringDisc.position.z = p.z;
+      }
+    },
+    walkTo: (p0, onArrive) => {
+      const start = camera.position.clone();
+      start.y = EYE;
+      const dest = clampRoom(p0.clone());
+      dest.y = EYE;
+      // pass through doorways when the destination is in another room
+      const pts = [start];
+      const lo = Math.min(start.z, dest.z);
+      const hi = Math.max(start.z, dest.z);
+      const crossing = walls.filter((w) => w > lo && w < hi).sort((a, b) => (start.z > dest.z ? b - a : a - b));
+      for (const w of crossing) {
+        const dir = start.z > dest.z ? -1 : 1;
+        pts.push(new THREE.Vector3(doorX(w), EYE, w - dir * 1.2), new THREE.Vector3(doorX(w), EYE, w + dir * 1.2));
+      }
+      pts.push(dest);
+      const lens = pts.slice(1).map((q, k) => q.distanceTo(pts[k]));
+      const total = lens.reduce((a, b) => a + b, 0);
+      if (total < 0.3) return;
+      // start from exactly what the visitor sees, then hand over to the free pose
+      free.pos.copy(camera.position);
+      free.quat.copy(camera.quaternion);
+      const yaw0 = yawOf(camera.quaternion);
+      const last = pts[pts.length - 1].clone().sub(pts[pts.length - 2]);
+      const yaw1 = Math.atan2(-last.x, -last.z);
+      yawOff = 0;
+      pitchOff = 0;
+      free.blend = 1;
+      free.release = false;
+      free.anim = {
+        pts,
+        seg: 0,
+        t: 0,
+        lens,
+        total,
+        yaw0,
+        yaw1,
+        done: () => {
+          let best = 0;
+          let bd = Infinity;
+          stations.forEach((st, k) => {
+            const dd = st.pos.distanceTo(dest) + (st.walk ? 1.5 : 0);
+            if (dd < bd) {
+              bd = dd;
+              best = k;
+            }
+          });
+          free.syncIdx = best;
+          target = current = best;
+          onArrive(best);
+        },
+      };
+    },
+    lookAround: (dx, dy) => {
+      yawOff -= dx * 0.004;
+      pitchOff = Math.max(-0.5, Math.min(0.45, pitchOff - dy * 0.003));
+    },
+    nearest: () => Math.round(current),
     jump: (s) => {
       frozen = null;
       target = current = s;
@@ -1351,6 +1539,8 @@ export function createMuseum(canvas: HTMLCanvasElement, input: MuseumInput): Mus
     setHover: (i) => (hovered = i),
     focus: (i, onDone) => {
       const { to, toLook } = focusTarget(i);
+      free.blend = 0;
+      free.anim = null;
       focusAnim = { from: camera.position.clone(), fromLook: look.clone(), to, toLook, t0: performance.now(), done: onDone };
     },
     resize,
